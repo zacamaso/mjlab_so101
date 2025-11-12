@@ -4,7 +4,7 @@
     <body name="blue_cylinder" pos="0.3 0.0 0.08">
       <freejoint name="blue_cylinder_free"/>
       <!-- Collision geoms (stacked lower + middle + upper) -->
-      <geom name="blue_cylinder_collision" type="cylinder" size="0.0175 0.035" pos="0 0 -0.0105" rgba="0.0 0.0 1.0 1" mass="0.7" group="0" contype="1" conaffinity="1" friction="1.5 0.2 0.01" solref="0.02 1" solimp="0.995 0.999 0.0005" condim="6"/>
+      <geom name="blue_cylinder_collision" type="cylinder" size="0.0175 0.035" pos="0 0 -0.0105" rgba="0.0 0.0 1.0 1" mass="0.02" group="0" contype="1" conaffinity="1" friction="0.3 0.01 0.001" solref="0.01 1" solimp="0.9 0.95 0.001" condim="6"/>
       <!-- Visual geoms -->
       <geom name="blue_cylinder_visual" type="cylinder" size="0.0175 0.035" pos="0 0 -0.0105" rgba="0.0 0.0 1.0 1" density="0" group="0" contype="0" conaffinity="0"/>
       <!-- <geom name="top_target" type="sphere" size="0.005" pos="0 0 0.0595" rgba="0.0 1.0 0.0 1" density="0" group="0" contype="0" conaffinity="0"/> -->

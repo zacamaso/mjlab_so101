@@ -12,9 +12,9 @@ three-stage curriculum that progressively enables reward terms:
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Tuple, cast
+from typing import TYPE_CHECKING, Dict, Optional, Tuple, cast
 
 import torch  # pyright: ignore[reportMissingImports]
 
@@ -23,6 +23,7 @@ from mjlab.asset_zoo.misc_assets.blue_cylinder.blue_cylinder_constants import (
 )
 from mjlab.asset_zoo.robots.SO_101.so101_constants import SO101_ROBOT_CFG
 from mjlab.envs import ManagerBasedEnv, ManagerBasedRlEnvCfg, mdp
+from mjlab.utils.spec_config import ContactSensorCfg
 from mjlab.envs.mdp.actions.actions_config import JointPositionActionCfg
 from mjlab.envs.mdp.events import reset_root_state_uniform
 from mjlab.managers.manager_term_config import (
@@ -57,15 +58,206 @@ __all__ = [
 ]
 
 
+# =============================================================================
+# HYPERPARAMETERS
+# =============================================================================
+# All tunable hyperparameters are organized here for easy modification.
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Scene & Simulation Hyperparameters
+# -----------------------------------------------------------------------------
+NUM_ENVS = 1024  # Number of parallel environments
+ENV_SPACING = 0.25  # Spacing between environments (meters)
+SIM_TIMESTEP = 0.008  # Simulation timestep (seconds)
+SIM_NCONMAX = 50000  # Maximum number of contacts
+SIM_NJMAX = 1024  # Maximum number of constraints
+EPISODE_LENGTH_S = 10.0  # Episode length in seconds
+DECIMATION = 2  # Action decimation factor
+
+# -----------------------------------------------------------------------------
+# Object Geometry Hyperparameters
+# -----------------------------------------------------------------------------
+OBJECT_RADIUS = 0.0175  # Object radius (meters)
+OBJECT_HALF_HEIGHT = 0.035 / 2.0  # Object half-height (meters)
+
+# -----------------------------------------------------------------------------
+# Gripper & Touch Hyperparameters
+# -----------------------------------------------------------------------------
+GRIPPER_APPROACH_THRESHOLD = 0.008  # Distance threshold for touch reward (meters)
+TOUCH_THRESHOLD = 0.0005  # Distance threshold for touching detection (meters)
+TOUCH_SUCCESS_THRESHOLD = 0.02  # Distance threshold for touch success metric (meters)
+GRIPPER_OPEN_TARGET_GAP = 0.035  # Target gap when opening gripper (meters)
+GRIPPER_CLOSE_TARGET_GAP = 0.0001  # Target gap when closing/touching (meters)
+GRIPPER_CLOSE_GAP_REWARD_WEIGHT = 0.5  # Weight for gap reward when touching
+
+# -----------------------------------------------------------------------------
+# Grasp Hyperparameters
+# -----------------------------------------------------------------------------
+GRASP_MIN_FORCE = 0.005  # Minimum force threshold for grasp success (Newtons)
+GRASP_FORCE_SATURATION = 0.2  # Force value at which grasp reward saturates (Newtons)
+GRASP_BOTH_CONTACTING_THRESHOLD = 0.05  # Force threshold for "both contacting" bonus (Newtons)
+GRASP_BALANCE_COEFFICIENT = 2.0  # Coefficient for balance bonus exponential
+GRASP_BASE_REWARD_WEIGHT = 0.7*1000  # Base reward weight (single finger)
+GRASP_BALANCED_REWARD_WEIGHT = 0.3*1000  # Additional reward weight when both fingers contact
+
+# -----------------------------------------------------------------------------
+# Reward Function Hyperparameters
+# -----------------------------------------------------------------------------
+
+# Reach reward
+REACH_XY_WEIGHT = 50.0  # Exponential weight for XY distance
+REACH_Z_WEIGHT = 15.0  # Exponential weight for Z distance
+REACH_TP_WEIGHT = 10.0  # Exponential weight for touch point distance
+REACH_SHARP_BONUS_WEIGHT = 20.0  # Exponential weight for sharp bonus
+REACH_SHARP_BONUS_SCALE = 0.75  # Scale factor for sharp bonus
+REACH_NEAR_MASK_THRESHOLD = 0.05  # Distance threshold for near mask (meters)
+REACH_XY_VELOCITY_WEIGHT = 0.1  # Weight for XY velocity component
+REACH_Z_VELOCITY_WEIGHT = 0.02  # Weight for Z velocity component
+REACH_VELOCITY_MAX_BONUS = 0.25  # Maximum velocity bonus
+REACH_REWARD_NORMALIZATION = 3.0  # Normalization factor for reach reward
+
+# Touch reward
+TOUCH_EXP_COEFFICIENT = 500.0  # Exponential coefficient for touch reward
+TOUCH_BONUS_1 = 80.0  # Bonus value for touch point 1
+TOUCH_BONUS_2 = 60.0  # Bonus value for touch point 2
+
+# Open gripper reward
+GRIPPER_OPEN_EXPLORATION_SCALE = 5.0  # Scale factor for exploration bonus
+GRIPPER_OPEN_EXPLORATION_MAX = 0.5  # Maximum exploration bonus
+
+# Close gripper reward
+GRIPPER_CLOSE_GAP_EXP_COEFFICIENT = 50.0  # Exponential coefficient for gap reward
+
+# Lift reward
+LIFT_MAX_HEIGHT = 0.05  # Maximum height for lift reward (meters)
+SETTLE_VELOCITY_THRESHOLD = 0.01  # Velocity threshold for considering object settled (m/s)
+SETTLE_STEPS_REQUIRED = 10  # Number of consecutive steps below threshold to consider settled
+
+# Upreach reward
+UPREACH_MAX_HEIGHT_GAIN = 0.1  # Maximum height gain for upreach reward (meters)
+
+# Wrist roll cost
+WRIST_ROLL_EXP_COEFFICIENT = 200.0  # Exponential coefficient for wrist roll cost
+
+# -----------------------------------------------------------------------------
+# Reward Weight Hyperparameters (Base weights, multiplied by curriculum)
+# -----------------------------------------------------------------------------
+REWARD_WEIGHT_REACH = 5.0
+REWARD_WEIGHT_TOUCH = 40.0
+REWARD_WEIGHT_GRIPPER_OPEN = 1.0
+REWARD_WEIGHT_GRIPPER_CLOSE = 50.0
+REWARD_WEIGHT_GRASP = 1500.0
+REWARD_WEIGHT_LIFT = 1.0
+REWARD_WEIGHT_UPREACH = 1.0
+REWARD_WEIGHT_WRIST_ROLL_COST = 120.0
+
+# -----------------------------------------------------------------------------
+# Curriculum Hyperparameters
+# -----------------------------------------------------------------------------
+
+# Stage multipliers: Each stage multiplies base reward weights
+# Stage 0: Reach + Open gripper
+# Stage 1: Touch + Close gripper (Stage 0 stays active)
+# Stage 2: Grasp (prior stages stay active)
+# Stage 3: Lift (prior stages stay active)
+STAGE_MULTIPLIERS: Tuple[Dict[str, float], ...] = (
+    {"reach": 2.0, "gripper_open": 1.0},  # Stage 0
+    {"reach": 2.0, "touch": 2.5, "gripper_close": 1.0},  # Stage 1
+    {"touch": 4.0, "gripper_close": 2.0, "grasp": 0.4},  # Stage 2: Emphasize closing to generate forces
+    {"touch": 4.0, "grasp": 0.2, "lift": 2000.0, "upreach": 100.0},  # Stage 3
+)
+
+# Success thresholds: EMA success rate required to progress to next stage
+CURRICULUM_THRESHOLD_REACH = 0.7  # 70% success rate
+CURRICULUM_THRESHOLD_TOUCH = 0.6  # 60% success rate
+CURRICULUM_THRESHOLD_GRASP = 0.3  # 30% success rate
+CURRICULUM_THRESHOLD_LIFT = 0.3  # 30% success rate
+
+# Success metric thresholds: Physical thresholds for computing success rates
+REACH_SUCCESS_THRESHOLD = 0.01  # Distance threshold (meters, 10mm)
+LIFT_SUCCESS_HEIGHT = 0.03  # Height threshold (meters, 30mm)
+
+# Curriculum EMA
+CURRICULUM_EMA_ALPHA = 0.05  # EMA smoothing factor for success metrics
+
+# -----------------------------------------------------------------------------
+# Action Hyperparameters
+# -----------------------------------------------------------------------------
+ACTION_SCALE = 0.5  # Scale factor for joint position actions
+ACTION_USE_DEFAULT_OFFSET = True  # Whether to use default joint positions as offset
+
+# -----------------------------------------------------------------------------
+# Termination Hyperparameters
+# -----------------------------------------------------------------------------
+TERMINATION_CYLINDER_FALL_ANGLE_DEG = 75.0  # Maximum angle before termination (degrees)
+
+# -----------------------------------------------------------------------------
+# Event (Reset) Hyperparameters
+# -----------------------------------------------------------------------------
+# Object reset pose ranges
+RESET_OBJECT_X_RANGE = (-0.02, 0.02)  # X position range (meters)
+RESET_OBJECT_Y_RANGE = (-0.02, 0.02)  # Y position range (meters)
+RESET_OBJECT_Z_RANGE = (0.0, 0.0)  # Z position range (meters)
+RESET_OBJECT_ROLL_RANGE = (0.0, 0.0)  # Roll angle range (radians)
+RESET_OBJECT_PITCH_RANGE = (0.0, 0.0)  # Pitch angle range (radians)
+RESET_OBJECT_YAW_RANGE = (-0.1, 0.1)  # Yaw angle range (radians)
+
+# Robot reset (all zeros for deterministic reset)
+RESET_ROBOT_POSE_RANGE = {
+    "x": (0.0, 0.0),
+    "y": (0.0, 0.0),
+    "z": (0.0, 0.0),
+    "roll": (0.0, 0.0),
+    "pitch": (0.0, 0.0),
+    "yaw": (0.0, 0.0),
+}
+RESET_ROBOT_VELOCITY_RANGE = {
+    "x": (0.0, 0.0),
+    "y": (0.0, 0.0),
+    "z": (0.0, 0.0),
+    "roll": (0.0, 0.0),
+    "pitch": (0.0, 0.0),
+    "yaw": (0.0, 0.0),
+}
+
+# =============================================================================
+# END OF HYPERPARAMETERS
+# =============================================================================
+
+
 # -----------------------------------------------------------------------------
 # Scene configuration
 # -----------------------------------------------------------------------------
 
+# Add contact sensors to robot for efficient force detection
+# Using body1 without geom2 to detect any contact with the touch point bodies
+# This avoids cross-entity reference issues since sensors are added before scene merge
+_GRIPPER_CONTACT_SENSORS = (
+    ContactSensorCfg(
+        name="touch_point1_contact",
+        body1="touch_point1",
+        num=1,
+        data=("force",),  # Get force magnitude
+        reduce="netforce",  # Net force magnitude
+    ),
+    ContactSensorCfg(
+        name="touch_point2_contact",
+        body1="touch_point2",
+        num=1,
+        data=("force",),  # Get force magnitude
+        reduce="netforce",  # Net force magnitude
+    ),
+)
+
+# Create robot config with contact sensors
+_ROBOT_CFG_WITH_SENSORS = replace(SO101_ROBOT_CFG, sensors=_GRIPPER_CONTACT_SENSORS)
+
 SCENE_CFG = SceneCfg(
-    terrain=TerrainImporterCfg(terrain_type="plane", env_spacing=1.0),
-    num_envs=1024,
+    terrain=TerrainImporterCfg(terrain_type="plane", env_spacing=ENV_SPACING),
+    num_envs=NUM_ENVS,
     entities={
-        "robot": SO101_ROBOT_CFG,
+        "robot": _ROBOT_CFG_WITH_SENSORS,
         "object": BLUE_CYLINDER_CFG,
     },
 )
@@ -113,29 +305,35 @@ def _object_collision_pos(env: ManagerBasedEnv) -> torch.Tensor:
     return env.scene["object"].data.geom_pos_w[:, geom_id, :]
 
 
-_OBJECT_RADIUS = 0.0175
-_OBJECT_HALF_HEIGHT = 0.035 / 2.0
-_GRASP_MIN_FORCE = 0.05  # Much lower threshold for success
-
-
 def _gripper_contact_forces(env: ManagerBasedEnv) -> tuple[torch.Tensor, torch.Tensor]:
-    """Return contact force magnitudes on each fingertip body."""
+    """Return contact force magnitudes on each fingertip using efficient contact sensors.
+    
+    Forces are clamped to prevent numerical instability and handle NaN/inf values.
+    """
     robot = env.scene["robot"]
     device = robot.data.body_link_pos_w.device
 
-    cfrc_ext = getattr(env.sim.data, "cfrc_ext", None)
-    if cfrc_ext is None:
+    # Use contact sensors for efficient force detection
+    try:
+        tp1_force = robot.data.sensor_data["touch_point1_contact"][:, 0]  # Net force magnitude
+        tp2_force = robot.data.sensor_data["touch_point2_contact"][:, 0]  # Net force magnitude
+    except (KeyError, AttributeError):
+        # Fallback to zeros if sensors not available (shouldn't happen with proper config)
         zeros = torch.zeros(env.num_envs, device=device)
         return zeros, zeros
 
-    body_ids_global = robot.data.indexing.body_ids
-    tp1_global = int(body_ids_global[_robot_body_index(env, "touch_point1")])
-    tp2_global = int(body_ids_global[_robot_body_index(env, "touch_point2")])
+    # Clamp forces to prevent numerical instability
+    # Max force of 100N should be more than enough for grasping
+    max_force = 100.0
+    tp1_force = torch.clamp(tp1_force, min=0.0, max=max_force)
+    tp2_force = torch.clamp(tp2_force, min=0.0, max=max_force)
+    
+    # Handle NaN/inf values (replace with zeros)
+    tp1_force = torch.where(torch.isfinite(tp1_force), tp1_force, torch.zeros_like(tp1_force))
+    tp2_force = torch.where(torch.isfinite(tp2_force), tp2_force, torch.zeros_like(tp2_force))
 
-    tp1_force_vec = cfrc_ext[:, tp1_global, :3]
-    tp2_force_vec = cfrc_ext[:, tp2_global, :3]
+    return tp1_force, tp2_force
 
-    return torch.norm(tp1_force_vec, dim=-1), torch.norm(tp2_force_vec, dim=-1)
 
 def _touch_point1_pos(env: ManagerBasedEnv) -> torch.Tensor:
     body_id = _robot_body_index(env, "touch_point1")
@@ -157,31 +355,84 @@ def _gripper_mid_pos(env: ManagerBasedEnv) -> torch.Tensor:
 
 def _object_surface1_pos(env: ManagerBasedEnv) -> torch.Tensor:
     object_pos = _object_collision_pos(env)
-    offset = object_pos.new_tensor([0.0, -_OBJECT_RADIUS, _OBJECT_HALF_HEIGHT])
+    offset = object_pos.new_tensor([0.0, -OBJECT_RADIUS, OBJECT_HALF_HEIGHT])
     return object_pos + offset
 
 
 def _object_surface2_pos(env: ManagerBasedEnv) -> torch.Tensor:
     object_pos = _object_collision_pos(env)
-    offset = object_pos.new_tensor([0.0, _OBJECT_RADIUS, _OBJECT_HALF_HEIGHT])
+    offset = object_pos.new_tensor([0.0, OBJECT_RADIUS, OBJECT_HALF_HEIGHT])
     return object_pos + offset
 
 
 def _object_middle_pos(env: ManagerBasedEnv) -> torch.Tensor:
     object_pos = _object_collision_pos(env)
-    offset = object_pos.new_tensor([0.0, 0.0, _OBJECT_HALF_HEIGHT])
+    offset = object_pos.new_tensor([0.0, 0.0, OBJECT_HALF_HEIGHT])
     return object_pos + offset
 
 
-def _touch_distances(env: ManagerBasedEnv) -> Tuple[torch.Tensor, torch.Tensor]:
-    middle = _object_middle_pos(env)
-    delta1 = middle - _touch_point1_pos(env)
-    delta2 = middle - _touch_point2_pos(env)
+def _gripper_gap(env: ManagerBasedEnv) -> torch.Tensor:
+    """Calculate distance between the two gripper touch points."""
+    return torch.norm(_touch_point1_pos(env) - _touch_point2_pos(env), dim=-1)
+
+
+def _touch_point_to_surface_distances(env: ManagerBasedEnv) -> Tuple[torch.Tensor, torch.Tensor]:
+    """Calculate distances from each touch point to its corresponding object surface.
+    
+    Returns:
+        (dist1, dist2): Distances from touch_point1 to surface1 and touch_point2 to surface2
+        Shape: ([num_envs], [num_envs]) for use in rewards/conditions
+    """
+    surface1 = _object_surface1_pos(env)
+    surface2 = _object_surface2_pos(env)
+    tp1 = _touch_point1_pos(env)
+    tp2 = _touch_point2_pos(env)
+    
+    delta1 = surface1 - tp1
+    delta2 = surface2 - tp2
+    
     return torch.norm(delta1, dim=-1), torch.norm(delta2, dim=-1)
 
 
-def _gripper_gap(env: ManagerBasedEnv) -> torch.Tensor:
-    return torch.norm(_touch_point1_pos(env) - _touch_point2_pos(env), dim=-1)
+def _gripper_to_object_distance(env: ManagerBasedEnv) -> torch.Tensor:
+    """Calculate distance from gripper center to object center."""
+    gripper_pos = _gripper_mid_pos(env)
+    object_pos = _object_middle_pos(env)
+    delta = object_pos - gripper_pos
+    return torch.norm(delta, dim=-1)
+
+
+def _is_touching(env: ManagerBasedEnv, threshold: Optional[float] = None) -> torch.Tensor:
+    """Check if both touch points are within threshold distance of object surfaces.
+    
+    Args:
+        env: Environment instance
+        threshold: Distance threshold (defaults to TOUCH_THRESHOLD)
+    
+    Returns:
+        Boolean tensor indicating if touching (both points within threshold)
+    """
+    if threshold is None:
+        threshold = TOUCH_THRESHOLD
+    dist1, dist2 = _touch_point_to_surface_distances(env)
+    return (dist1 <= threshold) & (dist2 <= threshold)
+
+
+def _is_near_object(env: ManagerBasedEnv, threshold: Optional[float] = None) -> torch.Tensor:
+    """Check if gripper is near object (for reach reward).
+    
+    Args:
+        env: Environment instance
+        threshold: Distance threshold (defaults to GRIPPER_APPROACH_THRESHOLD)
+    
+    Returns:
+        Boolean tensor indicating if near object
+    """
+    if threshold is None:
+        threshold = GRIPPER_APPROACH_THRESHOLD
+    dist1, dist2 = _touch_point_to_surface_distances(env)
+    # Near if either touch point is close (more forgiving)
+    return (dist1 <= threshold) | (dist2 <= threshold)
 
 
 # -----------------------------------------------------------------------------
@@ -193,6 +444,40 @@ def _obs_object_to_gripper(env: ManagerBasedEnv) -> torch.Tensor:
     return _object_middle_pos(env) - _gripper_mid_pos(env)
 
 
+def _obs_touch_dist1(env: ManagerBasedEnv) -> torch.Tensor:
+    """Distance from touch point 1 to object surface 1. Shape: [num_envs, 1]"""
+    dist1, _ = _touch_point_to_surface_distances(env)
+    return dist1.unsqueeze(-1)
+
+
+def _obs_touch_dist2(env: ManagerBasedEnv) -> torch.Tensor:
+    """Distance from touch point 2 to object surface 2. Shape: [num_envs, 1]"""
+    _, dist2 = _touch_point_to_surface_distances(env)
+    return dist2.unsqueeze(-1)
+
+
+def _obs_force_tp1(env: ManagerBasedEnv) -> torch.Tensor:
+    """Contact force magnitude on touch point 1. Shape: [num_envs, 1]
+    
+    Forces are normalized and clamped to prevent extreme values from destabilizing policy.
+    """
+    force_tp1, _ = _gripper_contact_forces(env)
+    # Normalize forces (same as reward) and clamp to reasonable range
+    normalized_force = torch.clamp(force_tp1 / GRASP_FORCE_SATURATION, 0.0, 10.0)
+    return normalized_force.unsqueeze(-1)
+
+
+def _obs_force_tp2(env: ManagerBasedEnv) -> torch.Tensor:
+    """Contact force magnitude on touch point 2. Shape: [num_envs, 1]
+    
+    Forces are normalized and clamped to prevent extreme values from destabilizing policy.
+    """
+    _, force_tp2 = _gripper_contact_forces(env)
+    # Normalize forces (same as reward) and clamp to reasonable range
+    normalized_force = torch.clamp(force_tp2 / GRASP_FORCE_SATURATION, 0.0, 10.0)
+    return normalized_force.unsqueeze(-1)
+
+
 @dataclass
 class ObservationCfg:
     """Observation terms exposed to both policy and critic."""
@@ -201,6 +486,10 @@ class ObservationCfg:
     class PolicyCfg(ObsGroup):
         joint_pos: ObsTerm = term(ObsTerm, func=mdp.joint_pos_rel)
         object_to_gripper: ObsTerm = term(ObsTerm, func=_obs_object_to_gripper)
+        touch_dist1: ObsTerm = term(ObsTerm, func=_obs_touch_dist1)
+        touch_dist2: ObsTerm = term(ObsTerm, func=_obs_touch_dist2)
+        force_tp1: ObsTerm = term(ObsTerm, func=_obs_force_tp1)
+        force_tp2: ObsTerm = term(ObsTerm, func=_obs_force_tp2)
 
     policy: PolicyCfg = field(default_factory=PolicyCfg)
     critic: PolicyCfg = field(default_factory=PolicyCfg)
@@ -217,8 +506,8 @@ class ActionCfg:
         JointPositionActionCfg,
         asset_name="robot",
         actuator_names=[".*"],
-        scale=0.5,
-        use_default_offset=True,
+        scale=ACTION_SCALE,
+        use_default_offset=ACTION_USE_DEFAULT_OFFSET,
     )
 
 
@@ -226,40 +515,30 @@ class ActionCfg:
 # Rewards
 # -----------------------------------------------------------------------------
 
-_GRIPPER_APPROACH_THRESHOLD = 0.008
-_TOUCH_THRESHOLD = 0.001
-
 
 def _reward_reach(env: ManagerBasedEnv) -> torch.Tensor:
-    object_collision = _object_collision_pos(env)
-    offset_z = object_collision.new_tensor([0.0, 0.0, _OBJECT_HALF_HEIGHT])
-    offset_y = object_collision.new_tensor([0.0, _OBJECT_RADIUS, 0.0])
-    obj_middle_pos = object_collision + offset_z
-    object_surface1_pos = object_collision + offset_z - offset_y
-    object_surface2_pos = object_collision + offset_z + offset_y
+    """Reward for reaching the object with gripper."""
     gripper_pos = _gripper_mid_pos(env)
-    touch_point1_pos = _touch_point1_pos(env)
-    touch_point2_pos = _touch_point2_pos(env)
+    object_pos = _object_middle_pos(env)
+    delta = object_pos - gripper_pos
 
-    delta = obj_middle_pos - gripper_pos
-    deltatp1 = object_surface1_pos - touch_point1_pos
-    deltatp2 = object_surface2_pos - touch_point2_pos
-
-    distance_tp = torch.norm(deltatp1 + deltatp2, dim=-1)
-
-    xy_weight = 50.0
-    z_weight = 15.0
-
+    # Distance components
     xy_distance = torch.norm(delta[:, :2], dim=-1)
     z_distance = torch.abs(delta[:, 2])
     total_distance = torch.norm(delta, dim=-1)
+    
+    # Touch point distances (for fine-grained control)
+    dist1, dist2 = _touch_point_to_surface_distances(env)
+    avg_tp_distance = 0.5 * (dist1 + dist2)
 
-    xy_reward = torch.exp(-xy_weight * xy_distance)
-    z_reward = torch.exp(-z_weight * z_distance)
-    tp_reward = torch.exp(-10.0 * distance_tp)
-    sharp_bonus = torch.exp(-20.0 * total_distance)
-    distance_reward = xy_reward * z_reward + 0.75 * sharp_bonus + tp_reward
+    # Distance-based rewards
+    xy_reward = torch.exp(-REACH_XY_WEIGHT * xy_distance)
+    z_reward = torch.exp(-REACH_Z_WEIGHT * z_distance)
+    tp_reward = torch.exp(-REACH_TP_WEIGHT * avg_tp_distance)
+    sharp_bonus = torch.exp(-REACH_SHARP_BONUS_WEIGHT * total_distance)
+    distance_reward = xy_reward * z_reward + REACH_SHARP_BONUS_SCALE * sharp_bonus + tp_reward
 
+    # Velocity bonus (encourage moving toward object)
     geom_id = _robot_geom_index(env, "gripper_mid_point")
     robot = env.scene["robot"]
     gripper_vel = robot.data.geom_lin_vel_w[:, geom_id, :]
@@ -268,42 +547,36 @@ def _reward_reach(env: ManagerBasedEnv) -> torch.Tensor:
     xy_vel_toward = torch.sum(gripper_vel[:, :2] * xy_unit, dim=-1)
     z_vel_toward = gripper_vel[:, 2] * torch.sign(delta[:, 2])
 
-    near_mask = (total_distance < 0.05).float()
-    velocity_components = 0.1 * torch.clamp(xy_vel_toward, min=0.0) + 0.02 * torch.clamp(
-        z_vel_toward, min=0.0
+    near_mask = (total_distance < REACH_NEAR_MASK_THRESHOLD).float()
+    velocity_components = (
+        REACH_XY_VELOCITY_WEIGHT * torch.clamp(xy_vel_toward, min=0.0)
+        + REACH_Z_VELOCITY_WEIGHT * torch.clamp(z_vel_toward, min=0.0)
     )
-    velocity_bonus = near_mask * torch.clamp(velocity_components, max=0.25)
+    velocity_bonus = near_mask * torch.clamp(velocity_components, max=REACH_VELOCITY_MAX_BONUS)
 
     raw_reward = distance_reward + velocity_bonus
-    return torch.clamp(raw_reward / 3.0, 0.0, 1.0)
+    return torch.clamp(raw_reward / REACH_REWARD_NORMALIZATION, 0.0, 1.0)
 
 
 def _reward_touch(env: ManagerBasedEnv) -> torch.Tensor:
-    object_surface1_pos = _object_surface1_pos(env)
-    object_surface2_pos = _object_surface2_pos(env)
-    touch_point1_pos = _touch_point1_pos(env)
-    touch_point2_pos = _touch_point2_pos(env)
+    """Reward for touching the object with gripper fingers."""
+    dist1, dist2 = _touch_point_to_surface_distances(env)
+    threshold = GRIPPER_APPROACH_THRESHOLD
 
-    delta1 = object_surface1_pos - touch_point1_pos
-    delta2 = object_surface2_pos - touch_point2_pos
+    # Normalize distances to [0, 1] within threshold
+    normalized1 = torch.clamp(dist1 / threshold, min=0.0, max=1.0)
+    normalized2 = torch.clamp(dist2 / threshold, min=0.0, max=1.0)
 
-    distance1 = torch.norm(delta1, dim=-1)
-    distance2 = torch.norm(delta2, dim=-1)
-
-    threshold = _GRIPPER_APPROACH_THRESHOLD
-
-    normalized1 = torch.clamp(distance1 / threshold, min=0.0, max=1.0)
-    normalized2 = torch.clamp(distance2 / threshold, min=0.0, max=1.0)
-
+    # Exponential reward when within threshold, zero otherwise
     touch_reward1 = torch.where(
-        distance1 <= threshold,
-        torch.exp(-500.0 * normalized1) + 20.0,
-        torch.zeros_like(distance1),
+        dist1 <= threshold,
+        torch.exp(-TOUCH_EXP_COEFFICIENT * normalized1) + TOUCH_BONUS_1,
+        torch.zeros_like(dist1),
     )
     touch_reward2 = torch.where(
-        distance2 <= threshold,
-        torch.exp(-500.0 * normalized2) + 100.0,
-        torch.zeros_like(distance2),
+        dist2 <= threshold,
+        torch.exp(-TOUCH_EXP_COEFFICIENT * normalized2) + TOUCH_BONUS_2,
+        torch.zeros_like(dist2),
     )
 
     touch_reward = touch_reward1 + touch_reward2
@@ -311,14 +584,14 @@ def _reward_touch(env: ManagerBasedEnv) -> torch.Tensor:
 
 
 def _reward_open_gripper(env: ManagerBasedEnv) -> torch.Tensor:
+    """Reward for opening gripper (before touching object)."""
     rl_env = cast("ManagerBasedRlEnv", env)
     gap = _gripper_gap(env)
 
-    target_gap = 0.035
     max_reward = 1.0
+    base_reward = torch.clamp((gap - GRIPPER_OPEN_TARGET_GAP) / GRIPPER_OPEN_TARGET_GAP, min=0.0, max=max_reward)
 
-    base_reward = torch.clamp((gap - target_gap) / target_gap, min=0.0, max=max_reward)
-
+    # Track gap changes for exploration bonus
     if (not hasattr(rl_env, "_prev_open_gap")) or rl_env._prev_open_gap.shape[0] != rl_env.num_envs:
         rl_env._prev_open_gap = gap.clone()
     else:
@@ -331,10 +604,10 @@ def _reward_open_gripper(env: ManagerBasedEnv) -> torch.Tensor:
     gap_delta = torch.clamp(gap - rl_env._prev_open_gap, min=0.0)
     rl_env._prev_open_gap = gap.clone()
 
-    exploration_bonus = torch.clamp(gap_delta * 5.0, max=0.5)
+    exploration_bonus = torch.clamp(gap_delta * GRIPPER_OPEN_EXPLORATION_SCALE, max=GRIPPER_OPEN_EXPLORATION_MAX)
 
-    dist1, dist2 = _touch_distances(env)
-    touching = dist1 <= _TOUCH_THRESHOLD
+    # If touching, give max reward (gripper should be open before touching)
+    touching = _is_touching(env, TOUCH_THRESHOLD)
 
     raw_reward = torch.where(
         touching,
@@ -346,10 +619,13 @@ def _reward_open_gripper(env: ManagerBasedEnv) -> torch.Tensor:
 
 
 def _reward_close_gripper(env: ManagerBasedEnv) -> torch.Tensor:
+    """Reward for closing gripper when near/touching object."""
     rl_env = cast("ManagerBasedRlEnv", env)
-    dist1, dist2 = _touch_distances(env)
-    touching = (dist1 <= _TOUCH_THRESHOLD) & (dist2 <= _TOUCH_THRESHOLD)
+    dist1, dist2 = _touch_point_to_surface_distances(env)
+    touching = _is_touching(env, TOUCH_THRESHOLD)
+    near = _is_near_object(env, GRIPPER_APPROACH_THRESHOLD)  # More forgiving threshold
 
+    # Track distance changes for progress reward
     if (not hasattr(rl_env, "_prev_close_dist1")) or rl_env._prev_close_dist1.shape[0] != rl_env.num_envs:
         rl_env._prev_close_dist1 = dist1.clone()
         rl_env._prev_close_dist2 = dist2.clone()
@@ -368,19 +644,27 @@ def _reward_close_gripper(env: ManagerBasedEnv) -> torch.Tensor:
     rl_env._prev_close_dist1 = dist1.clone()
     rl_env._prev_close_dist2 = dist2.clone()
 
-    progress_reward = (dist1_delta + dist2_delta) / (2.0 * _TOUCH_THRESHOLD)
+    progress_reward = (dist1_delta + dist2_delta) / (2.0 * TOUCH_THRESHOLD)
     progress_reward = torch.clamp(progress_reward, 0.0, 1.0)
 
-    # When touching, also reward gripper closing (smaller gap = more closed)
+    # Reward gripper closing when near object (not just touching)
+    # This encourages closing while positioning, not just after touching
     gap = _gripper_gap(env)
-    target_gap_when_touching = 0.01  # Small gap when grasping
-    gap_reward = torch.exp(-50.0 * torch.clamp(gap - target_gap_when_touching, min=0.0))
+    gap_reward = torch.exp(-GRIPPER_CLOSE_GAP_EXP_COEFFICIENT * torch.clamp(gap - GRIPPER_CLOSE_TARGET_GAP, min=0.0))
     
-    return torch.where(
-        touching,
-        torch.clamp(progress_reward + 0.5 * gap_reward, 0.0, 1.0),
+    # When near object, add gap reward (stronger when touching)
+    gap_bonus = GRIPPER_CLOSE_GAP_REWARD_WEIGHT * gap_reward
+    # Double the bonus when actually touching
+    gap_bonus = torch.where(touching, gap_bonus * 5.0, gap_bonus)
+    
+    # Only apply gap bonus when near object
+    final_reward = torch.where(
+        near,
+        torch.clamp(progress_reward + gap_bonus, 0.0, 1.0),
         progress_reward
     )
+    
+    return final_reward
 
 
 def _reward_grasp(env: ManagerBasedEnv) -> torch.Tensor:
@@ -390,49 +674,171 @@ def _reward_grasp(env: ManagerBasedEnv) -> torch.Tensor:
     # Reward based on average force (encourages both fingers to contact)
     avg_force = 0.5 * (force_tp1 + force_tp2)
     
-    # Scale reward by force magnitude (saturates around 0.2N)
-    force_reward = torch.clamp(avg_force / 0.2, 0.0, 1.0)
+    # Scale reward by force magnitude
+    force_reward = torch.clamp(avg_force / GRASP_FORCE_SATURATION, 0.0, 1.0)
     
     # Bonus for balanced forces (both fingers contacting)
-    both_contacting = (force_tp1 > 0.05) & (force_tp2 > 0.05)
-    balance_bonus = torch.exp(-2.0 * torch.abs(force_tp1 - force_tp2) / (avg_force + 0.01))
+    both_contacting = (force_tp1 > GRASP_BOTH_CONTACTING_THRESHOLD) & (force_tp2 > GRASP_BOTH_CONTACTING_THRESHOLD)
+    balance_bonus = torch.exp(-GRASP_BALANCE_COEFFICIENT * torch.abs(force_tp1 - force_tp2) / (avg_force + 0.01))
     
-    reward = force_reward * (0.7 + 0.3 * both_contacting.float() * balance_bonus)
+    # Multiply by touch detection to prevent exploiting self-closing
+    # Use gradual touch factor based on distance to object surfaces
+    dist1, dist2 = _touch_point_to_surface_distances(env)
+    touch_factor1 = torch.exp(-dist1 / TOUCH_THRESHOLD)
+    touch_factor2 = torch.exp(-dist2 / TOUCH_THRESHOLD)
+    touch_factor = 0.5 * (touch_factor1 + touch_factor2)
+    
+    reward = force_reward * touch_factor * (GRASP_BASE_REWARD_WEIGHT + GRASP_BALANCED_REWARD_WEIGHT * both_contacting.float() * balance_bonus)
     return torch.clamp(reward, 0.0, 1.0)
 
 
 def _reward_lift(env: ManagerBasedEnv) -> torch.Tensor:
+    """Reward for lifting object upward, only when grasping.
+    
+    Tracks the settled height of the object after it drops, then measures
+    lift relative to that settled position.
+    """
+    rl_env = cast("ManagerBasedRlEnv", env)
     obj = env.scene["object"]
     body_id = _object_body_index(env, "blue_cylinder")
     obj_height = obj.data.body_link_pos_w[:, body_id, 2]
-    base_height = obj_height.new_tensor(obj.cfg.init_state.pos[2])
-    lifted = torch.clamp(obj_height - base_height, min=0.0, max=0.05)
-    lift_reward = lifted / 0.05
+    obj_lin_vel = obj.data.root_link_vel_w[:, :3]  # Linear velocity (first 3 components)
+    obj_vel_magnitude = torch.norm(obj_lin_vel, dim=-1)
+    
+    # Initialize tracking variables (store on env, not rl_env, for consistency)
+    if not hasattr(env, "_object_settled_height"):
+        env._object_settled_height = obj_height.clone()  # type: ignore[attr-defined]
+        env._settle_step_counter = torch.zeros(env.num_envs, device=obj_height.device, dtype=torch.int32)  # type: ignore[attr-defined]
+        env._object_settled = torch.zeros(env.num_envs, device=obj_height.device, dtype=torch.bool)  # type: ignore[attr-defined]
+    else:
+        # Ensure shapes match (in case num_envs changed)
+        if env._object_settled_height.shape[0] != env.num_envs:  # type: ignore[attr-defined]
+            env._object_settled_height = obj_height.clone()  # type: ignore[attr-defined]
+            env._settle_step_counter = torch.zeros(env.num_envs, device=obj_height.device, dtype=torch.int32)  # type: ignore[attr-defined]
+            env._object_settled = torch.zeros(env.num_envs, device=obj_height.device, dtype=torch.bool)  # type: ignore[attr-defined]
+    
+    # Reset on environment resets
+    if hasattr(rl_env, "reset_buf"):
+        reset_buf = getattr(rl_env, "reset_buf")
+        if isinstance(reset_buf, torch.Tensor) and reset_buf.any():
+            reset_mask = reset_buf.bool()
+            env._object_settled_height = env._object_settled_height.clone()  # type: ignore[attr-defined]
+            env._object_settled_height[reset_mask] = obj_height[reset_mask]  # type: ignore[attr-defined]
+            env._settle_step_counter = env._settle_step_counter.clone()  # type: ignore[attr-defined]
+            env._settle_step_counter[reset_mask] = 0  # type: ignore[attr-defined]
+            env._object_settled = env._object_settled.clone()  # type: ignore[attr-defined]
+            env._object_settled[reset_mask] = False  # type: ignore[attr-defined]
+    
+    # Check if object is settling (low velocity)
+    is_low_velocity = obj_vel_magnitude < SETTLE_VELOCITY_THRESHOLD
+    
+    # Increment counter for low velocity, reset if velocity increases
+    env._settle_step_counter = torch.where(  # type: ignore[attr-defined]
+        is_low_velocity,
+        env._settle_step_counter + 1,  # type: ignore[attr-defined]
+        torch.zeros_like(env._settle_step_counter)  # type: ignore[attr-defined]
+    )
+    
+    # Mark as settled if we've had low velocity for enough steps
+    newly_settled = (env._settle_step_counter >= SETTLE_STEPS_REQUIRED) & (~env._object_settled)  # type: ignore[attr-defined]
+    env._object_settled = env._object_settled | newly_settled  # type: ignore[attr-defined]
+    
+    # Update settled height when object first settles
+    env._object_settled_height = torch.where(  # type: ignore[attr-defined]
+        newly_settled.unsqueeze(-1),
+        obj_height.unsqueeze(-1),
+        env._object_settled_height.unsqueeze(-1)  # type: ignore[attr-defined]
+    ).squeeze(-1)
+    
+    # Use settled height as baseline (or initial spawn height if not settled yet)
+    base_height = torch.where(
+        env._object_settled,  # type: ignore[attr-defined]
+        env._object_settled_height,  # type: ignore[attr-defined]
+        obj_height.new_tensor(obj.cfg.init_state.pos[2])
+    )
+    
+    height_diff = obj_height - base_height
+    
+    # Only reward when grasping/touching the object
+    touching = _is_touching(env, TOUCH_THRESHOLD)
+    force_tp1, force_tp2 = _gripper_contact_forces(env)
+    avg_force = 0.5 * (force_tp1 + force_tp2)
+    grasping = (avg_force > GRASP_MIN_FORCE) | touching
+    
+    # Clamp height difference
+    lifted = torch.clamp(height_diff, min=0.0, max=LIFT_MAX_HEIGHT)
+    
+    # Use exponential reward that's more sensitive to small movements
+    # This gives meaningful reward even for tiny lifts (encourages initiation)
+    exp_component = 1.0 - torch.exp(-20.0 * lifted / LIFT_MAX_HEIGHT)
+    
+    # Linear component for larger lifts
+    linear_component = lifted / LIFT_MAX_HEIGHT
+    
+    # Combine: exponential dominates for small lifts, linear for larger
+    lift_reward = 0.6 * exp_component + 0.4 * linear_component
+    
+    # Bonus for any upward movement when grasping (encourages initiation)
+    any_lift_bonus = torch.clamp(lifted * 20.0, 0.0, 0.3)  # Max 0.3 bonus for tiny lifts
+    
+    lift_reward = lift_reward + any_lift_bonus
+    
+    # Only give reward when grasping
+    lift_reward = lift_reward * grasping.float()
+    
     return torch.clamp(lift_reward, 0.0, 1.0)
 
 
 def _reward_upreach(env: ManagerBasedEnv) -> torch.Tensor:
+    """Reward for lifting gripper upward while touching/grasping object."""
     rl_env = cast("ManagerBasedRlEnv", env)
-    dist1, dist2 = _touch_distances(env)
-    touching = (dist1 <= _TOUCH_THRESHOLD) & (dist2 <= _TOUCH_THRESHOLD)
-    touch_mask = touching.float()
+    
+    # Check both touching and grasping
+    touching = _is_touching(env, TOUCH_THRESHOLD)
+    force_tp1, force_tp2 = _gripper_contact_forces(env)
+    avg_force = 0.5 * (force_tp1 + force_tp2)
+    grasping = (avg_force > GRASP_MIN_FORCE) | touching
+    grasp_mask = grasping.float()
 
     robot = env.scene["robot"]
     geom_ids, _ = robot.find_geoms("gripper_mid_point", preserve_order=True)
     gripper_pos = robot.data.geom_pos_w[:, geom_ids[0], :]
     gripper_height = gripper_pos[:, 2]
 
+    # Initialize or reset initial height
     if (
         not hasattr(rl_env, "_initial_gripper_height")
         or rl_env._initial_gripper_height.shape[0] != rl_env.num_envs
     ):
         rl_env._initial_gripper_height = gripper_height.clone()
+    else:
+        # Reset initial height on environment resets
+        if hasattr(rl_env, "reset_buf"):
+            reset_buf = getattr(rl_env, "reset_buf")
+            if isinstance(reset_buf, torch.Tensor) and reset_buf.any():
+                rl_env._initial_gripper_height = rl_env._initial_gripper_height.clone()
+                rl_env._initial_gripper_height[reset_buf.bool()] = gripper_height[reset_buf.bool()]
 
     height_gain = torch.clamp(
-        gripper_height - rl_env._initial_gripper_height, min=0.0, max=0.1
+        gripper_height - rl_env._initial_gripper_height, min=0.0, max=UPREACH_MAX_HEIGHT_GAIN
     )
-    lift_reward = height_gain / 0.1
-    up_reward = touch_mask * torch.clamp(lift_reward, 0.0, 1.0)
+    
+    # Use exponential reward for small movements to encourage initiation
+    exp_component = 1.0 - torch.exp(-20.0 * height_gain / UPREACH_MAX_HEIGHT_GAIN)
+    # Linear component for larger movements
+    linear_component = height_gain / UPREACH_MAX_HEIGHT_GAIN
+    
+    # Combine: exponential dominates for small movements
+    lift_reward = 0.6 * exp_component + 0.4 * linear_component
+    
+    # Bonus for any upward movement when grasping (encourages initiation)
+    any_lift_bonus = torch.clamp(height_gain * 20.0 / UPREACH_MAX_HEIGHT_GAIN, 0.0, 0.3)
+    
+    lift_reward = lift_reward + any_lift_bonus
+    
+    # Only give reward when grasping/touching
+    up_reward = grasp_mask * lift_reward
+    
     return torch.clamp(up_reward, 0.0, 1.0)
 
 
@@ -441,20 +847,20 @@ def _cost_wrist_roll(env: ManagerBasedEnv) -> torch.Tensor:
     joint_pos = robot.data.joint_pos[:, 4]
     target = torch.as_tensor(0, device=joint_pos.device, dtype=joint_pos.dtype)
     deviation = torch.abs(joint_pos - target)
-    reward = torch.exp(-100.0 * deviation)
+    reward = torch.exp(-WRIST_ROLL_EXP_COEFFICIENT * deviation)
     return -torch.clamp(reward, 0.0, 1.0)
 
 
 @dataclass
 class RewardCfg:
-    reach: RewardTerm = term(RewardTerm, func=_reward_reach, weight=5.0)
-    touch: RewardTerm = term(RewardTerm, func=_reward_touch, weight=40.0)
-    gripper_open: RewardTerm = term(RewardTerm, func=_reward_open_gripper, weight=1.0)
-    gripper_close: RewardTerm = term(RewardTerm, func=_reward_close_gripper, weight=50.0)
-    grasp: RewardTerm = term(RewardTerm, func=_reward_grasp, weight=15.0)
-    lift: RewardTerm = term(RewardTerm, func=_reward_lift, weight=1.0)
-    wrist_roll_cost: RewardTerm = term(RewardTerm, func=_cost_wrist_roll, weight=120.0)
-    upreach: RewardTerm = term(RewardTerm, func=_reward_upreach, weight=1.0)
+    reach: RewardTerm = term(RewardTerm, func=_reward_reach, weight=REWARD_WEIGHT_REACH)
+    touch: RewardTerm = term(RewardTerm, func=_reward_touch, weight=REWARD_WEIGHT_TOUCH)
+    gripper_open: RewardTerm = term(RewardTerm, func=_reward_open_gripper, weight=REWARD_WEIGHT_GRIPPER_OPEN)
+    gripper_close: RewardTerm = term(RewardTerm, func=_reward_close_gripper, weight=REWARD_WEIGHT_GRIPPER_CLOSE)
+    grasp: RewardTerm = term(RewardTerm, func=_reward_grasp, weight=REWARD_WEIGHT_GRASP)
+    lift: RewardTerm = term(RewardTerm, func=_reward_lift, weight=REWARD_WEIGHT_LIFT)
+    wrist_roll_cost: RewardTerm = term(RewardTerm, func=_cost_wrist_roll, weight=REWARD_WEIGHT_WRIST_ROLL_COST)
+    upreach: RewardTerm = term(RewardTerm, func=_reward_upreach, weight=REWARD_WEIGHT_UPREACH)
 
 
 # -----------------------------------------------------------------------------
@@ -475,7 +881,7 @@ class TerminationCfg:
         func=mdp.bad_orientation,
         params={
             "asset_cfg": SceneEntityCfg("object"),
-            "limit_angle": math.radians(75.0),
+            "limit_angle": math.radians(TERMINATION_CYLINDER_FALL_ANGLE_DEG),
         },
     )
 
@@ -498,22 +904,8 @@ class EventCfg:
         mode="reset",
         params={
             "asset_cfg": SceneEntityCfg("robot"),
-            "pose_range": {
-                "x": (0.0, 0.0),
-                "y": (0.0, 0.0),
-                "z": (0.0, 0.0),
-                "roll": (0.0, 0.0),
-                "pitch": (0.0, 0.0),
-                "yaw": (0.0, 0.0),
-            },
-            "velocity_range": {
-                "x": (0.0, 0.0),
-                "y": (0.0, 0.0),
-                "z": (0.0, 0.0),
-                "roll": (0.0, 0.0),
-                "pitch": (0.0, 0.0),
-                "yaw": (0.0, 0.0),
-            },
+            "pose_range": RESET_ROBOT_POSE_RANGE,
+            "velocity_range": RESET_ROBOT_VELOCITY_RANGE,
         },
     )
     reset_object: EventTerm = term(
@@ -523,12 +915,12 @@ class EventCfg:
         params={
             "asset_cfg": SceneEntityCfg("object"),
             "pose_range": {
-                "x": (-0.02, 0.02),
-                "y": (-0.02, 0.02),
-                "z": (0.0, 0.0),
-                "roll": (0.0, 0.0),
-                "pitch": (0.0, 0.0),
-                "yaw": (-0.1, 0.1),
+                "x": RESET_OBJECT_X_RANGE,
+                "y": RESET_OBJECT_Y_RANGE,
+                "z": RESET_OBJECT_Z_RANGE,
+                "roll": RESET_OBJECT_ROLL_RANGE,
+                "pitch": RESET_OBJECT_PITCH_RANGE,
+                "yaw": RESET_OBJECT_YAW_RANGE,
             },
             "velocity_range": {
                 "x": (0.0, 0.0),
@@ -547,9 +939,9 @@ class EventCfg:
 # -----------------------------------------------------------------------------
 
 SIM_CFG = SimulationCfg(
-    nconmax=50000,
-    njmax=1024,
-    mujoco=MujocoCfg(timestep=0.008),
+    nconmax=SIM_NCONMAX,
+    njmax=SIM_NJMAX,
+    mujoco=MujocoCfg(timestep=SIM_TIMESTEP),
 )  # pyright: ignore[reportGeneralTypeIssues]
 
 
@@ -569,23 +961,12 @@ _STAGE_CONTROLLED_TERMS = (
 _ALWAYS_ACTIVE_TERMS = ("wrist_roll_cost",)
 _STAGE_METRIC_NAMES = ("reach", "touch", "grasp", "lift")
 
-_STAGE_MULTIPLIERS: Tuple[Dict[str, float], ...] = (
-    {"reach": 2.0, "gripper_open": 1.0},
-    {"reach": 1.0, "touch": 2.0, "gripper_close": 1.0},
-    {"touch": 1.0, "gripper_close": 1.0, "grasp": 5.0},  # Emphasize closing and grasping
-    {"grasp": 2.0, "lift": 3.0, "upreach": 1.0},  # Emphasize lift when grasping
-)
-# % complete reach, touch, lift based on success thresholds
 _DEFAULT_THRESHOLDS: Dict[str, float] = {
-    "reach": 0.7, 
-    "touch": 0.8,
-    "grasp": 0.3,  # Lower threshold - easier to progress
-    "lift": 0.3,   # Lower threshold - easier to progress
+    "reach": CURRICULUM_THRESHOLD_REACH,
+    "touch": CURRICULUM_THRESHOLD_TOUCH,
+    "grasp": CURRICULUM_THRESHOLD_GRASP,
+    "lift": CURRICULUM_THRESHOLD_LIFT,
 }
-
-_REACH_SUCCESS_THRESHOLD = 0.01 #m 10mm
-_TOUCH_SUCCESS_THRESHOLD = 0.015 #m 20mm
-_LIFT_SUCCESS_HEIGHT = 0.03 #m 30mm
 
 
 def _find_checkpoint_directory() -> Path | None:
@@ -667,35 +1048,34 @@ def _compute_success_metrics(env: "ManagerBasedRlEnv") -> Dict[str, float]:
 
     if stage <= 0:
         reach_delta = _object_middle_pos(env) - _gripper_mid_pos(env)
-        reach_success = (torch.norm(reach_delta, dim=-1) <= _REACH_SUCCESS_THRESHOLD).float()
+        reach_success = (torch.norm(reach_delta, dim=-1) <= REACH_SUCCESS_THRESHOLD).float()
         metrics["reach"] = reach_success.mean().item()
     elif stage == 1:
-        object_surface1_pos = _object_surface1_pos(env)
-        object_surface2_pos = _object_surface2_pos(env)
-        touch_point1_pos = _touch_point1_pos(env)
-        touch_point2_pos = _touch_point2_pos(env)
-        
-        delta1 = object_surface1_pos - touch_point1_pos
-        delta2 = object_surface2_pos - touch_point2_pos
-        
-        distance1 = torch.norm(delta1, dim=-1)
-        distance2 = torch.norm(delta2, dim=-1)
-        
-        # Use OR condition to match reward function - reward is given when either touch point is close
-        touch_success = ((distance1 <= _GRIPPER_APPROACH_THRESHOLD) | (distance2 <= _GRIPPER_APPROACH_THRESHOLD)).float()
+        # Touch success: either touch point is close to its surface
+        touch_success = _is_near_object(env, GRIPPER_APPROACH_THRESHOLD).float()
         metrics["touch"] = touch_success.mean().item()
     elif stage == 2:
         # Simplified: just need any force on either finger
         force_tp1, force_tp2 = _gripper_contact_forces(env)
         max_force = torch.maximum(force_tp1, force_tp2)
-        grasp_success = max_force >= _GRASP_MIN_FORCE
+        grasp_success = max_force >= GRASP_MIN_FORCE
         metrics["grasp"] = grasp_success.float().mean().item()
     else:
         obj = env.scene["object"]
         body_id = _object_body_index(env, "blue_cylinder")
         obj_height = obj.data.body_link_pos_w[:, body_id, 2]
-        base_height = obj_height.new_tensor(obj.cfg.init_state.pos[2])
-        lift_success = (obj_height - base_height >= _LIFT_SUCCESS_HEIGHT).float()
+        
+        # Use settled height if available (from lift reward tracking), otherwise use initial spawn height
+        if hasattr(env, "_object_settled_height") and hasattr(env, "_object_settled"):
+            base_height = torch.where(
+                env._object_settled,
+                env._object_settled_height,
+                obj_height.new_tensor(obj.cfg.init_state.pos[2])
+            )
+        else:
+            base_height = obj_height.new_tensor(obj.cfg.init_state.pos[2])
+        
+        lift_success = (obj_height - base_height >= LIFT_SUCCESS_HEIGHT).float()
         metrics["lift"] = lift_success.mean().item()
 
     return metrics
@@ -713,10 +1093,10 @@ def _cache_base_reward_weights(env: "ManagerBasedRlEnv") -> Dict[str, float]:
 
 
 def _apply_reward_stage(env: "ManagerBasedRlEnv", stage: int) -> None:
-    stage = max(0, min(stage, len(_STAGE_MULTIPLIERS) - 1))
+    stage = max(0, min(stage, len(STAGE_MULTIPLIERS) - 1))
     base_weights = _cache_base_reward_weights(env)
     reward_manager = env.reward_manager
-    multipliers = _STAGE_MULTIPLIERS[stage]
+    multipliers = STAGE_MULTIPLIERS[stage]
 
     for term, base_weight in base_weights.items():
         if term in _STAGE_CONTROLLED_TERMS:
@@ -796,7 +1176,7 @@ def _curriculum_reward_schedule(
         stage = 3
     elif stage >= 3 and metrics_ema["lift"] >= thresholds["lift"]:
         stage = 3
-    stage = min(stage, len(_STAGE_MULTIPLIERS) - 1)
+    stage = min(stage, len(STAGE_MULTIPLIERS) - 1)
 
     if stage != env._curriculum_stage or not env._curriculum_stage_initialized:  # type: ignore[attr-defined]
         env._curriculum_stage = stage  # type: ignore[attr-defined]
@@ -846,7 +1226,7 @@ class CurriculumCfg:
         CurrTerm,
         func=_curriculum_reward_schedule,
         params={
-            "ema_alpha": 0.05,
+            "ema_alpha": CURRICULUM_EMA_ALPHA,
         },
     )
 
@@ -861,8 +1241,8 @@ class PPSimpleEnvCfg(ManagerBasedRlEnvCfg):
     events: EventCfg = field(default_factory=EventCfg)
     curriculum: CurriculumCfg = field(default_factory=CurriculumCfg)
     sim: SimulationCfg = field(default_factory=lambda: SIM_CFG)
-    decimation: int = 2
-    episode_length_s: float = 10.0
+    decimation: int = DECIMATION
+    episode_length_s: float = EPISODE_LENGTH_S
 
 
 @dataclass
