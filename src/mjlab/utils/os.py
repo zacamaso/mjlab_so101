@@ -62,16 +62,36 @@ def get_checkpoint_path(
   If `run_dir` and `checkpoint` are regex expressions, then the most recent
   (highest alphabetical order) run and checkpoint are selected. To disable this
   behavior, set `sort_alpha` to `False`.
+
+  If no local runs are found, checks for wandb checkpoints in wandb_checkpoints/ subdirectory.
   """
   runs = [
     log_path / run.name
     for run in log_path.iterdir()
     if run.is_dir() and re.match(run_dir, run.name)
   ]
-  if sort_alpha:
-    runs.sort()
-  else:
+
+  # If no runs found in the main directory, check wandb_checkpoints
+  is_wandb_checkpoint = False
+  if not runs:
+    wandb_checkpoints_dir = log_path / "wandb_checkpoints"
+    if wandb_checkpoints_dir.exists():
+      # For wandb checkpoints, match any run directory since run_dir might not match wandb run IDs
+      runs = [
+        wandb_checkpoints_dir / run.name
+        for run in wandb_checkpoints_dir.iterdir()
+        if run.is_dir()
+      ]
+      is_wandb_checkpoint = True
+
+  if not runs:
+    raise IndexError(f"No runs found in {log_path} or {log_path}/wandb_checkpoints matching {run_dir}")
+
+  # For wandb checkpoints, always sort by modification time to get the latest run
+  if is_wandb_checkpoint or not sort_alpha:
     runs = sorted(runs, key=lambda p: p.stat().st_mtime)
+  else:
+    runs.sort()
   run_path = runs[-1]
 
   model_checkpoints = [

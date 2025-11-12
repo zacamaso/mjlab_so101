@@ -30,14 +30,18 @@ def reset_scene_to_default(env: ManagerBasedEnv, env_ids: torch.Tensor) -> None:
       continue
 
     default_root_state = entity.data.default_root_state[env_ids].clone()
-    default_root_state[:, 0:3] += env.scene.env_origins[env_ids]
-    entity.write_root_state_to_sim(default_root_state, env_ids=env_ids)
+    # Only add origin offset and write root state for floating base entities
+    if default_root_state.shape[1] >= 3:
+        default_root_state[:, 0:3] += env.scene.env_origins[env_ids]
+        entity.write_root_state_to_sim(default_root_state, env_ids=env_ids)
 
-    default_joint_pos = entity.data.default_joint_pos[env_ids].clone()
-    default_joint_vel = entity.data.default_joint_vel[env_ids].clone()
-    entity.write_joint_state_to_sim(
-      default_joint_pos, default_joint_vel, env_ids=env_ids
-    )
+    # Only write joint state for articulated entities
+    if entity.data.is_articulated:
+        default_joint_pos = entity.data.default_joint_pos[env_ids].clone()
+        default_joint_vel = entity.data.default_joint_vel[env_ids].clone()
+        entity.write_joint_state_to_sim(
+          default_joint_pos, default_joint_vel, env_ids=env_ids
+        )
 
 
 def reset_root_state_uniform(
@@ -51,6 +55,10 @@ def reset_root_state_uniform(
   default_root_state = asset.data.default_root_state
   assert default_root_state is not None
   root_states = default_root_state[env_ids].clone()
+
+  # Fixed-base entities have no root state to randomize.
+  if root_states.numel() == 0:
+    return
 
   # Positions.
   range_list = [

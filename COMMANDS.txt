@@ -1,0 +1,621 @@
+DEMO
+uv run play Mjlab-Tracking-Flat-Unitree-G1-Play --wandb-run-path your-org/mjlab/run-id
+
+SO101-VIEWER
+uv run python -m mjlab.scripts.play Mjlab-SO101-Pick-Blue-Cylinder --viewer viser --agent random --device cuda:0
+
+uv run python -m mjlab.scripts.play Mjlab-so101_pick_blue_cylinder-Flat-SO101 --viewer viser --agent random --device cuda:0
+
+
+uv run play_og Mjlab-Tracking-Flat-Unitree-G1
+
+HELP TRAIN
+cd /home/zaca/Documents/CODE/mjlab && uv run python -m mjlab.scripts.train --help | head -20
+
+HELP PLAY
+cd /home/zaca/Documents/CODE/mjlab && uv run python -m mjlab.scripts.play --help | head -30
+
+COMMAND PATTERN
+[environment_variables] uv run [script] [task_id] [options...]
+
+Key Components
+1. Environment Variables (Optional)
+MUJOCO_GL=egl - Forces MuJoCo to use EGL for headless rendering (needed for training on servers without displays)
+2. Script Names
+train - Train an RL agent
+play - Run environment with a policy (trained or dummy)
+3. Task IDs
+Tasks follow the naming convention: Mjlab-[TaskType]-[Terrain]-[Robot]-[Variants]
+Examples:
+Mjlab-Tracking-Flat-Unitree-G1 - Motion tracking on flat terrain with G1 robot
+Mjlab-Velocity-Flat-SO101 - Velocity control on flat terrain with SO101 robot
+Mjlab-SO101-Pick-Blue-Cylinder-Play - Your pick task (play version)
+4. Common Options
+For Training (train):
+--registry-name your-org/motions/motion-name - W&B registry path for motion data (motion-tracking tasks only)
+--env.scene.num-envs 4096 - Number of parallel environments
+For Play (play):
+--viewer viser - Use web-based Viser viewer (default is native MuJoCo)
+--agent [zero|random|trained] - Agent type:
+zero - Always outputs zero actions
+random - Random actions
+trained - Load trained checkpoint
+--device cuda:0 - GPU device (or cpu)
+--wandb-run-path your-org/mjlab/run-id - Load trained model from W&B
+
+
+# Zero actions
+uv run play Mjlab-SO101-Pick-Blue-Cylinder-Play --agent zero --viewer viser --device cuda:0
+
+# Random actions  
+uv run play Mjlab-SO101-Pick-Blue-Cylinder-Play --agent random --viewer viser --device cuda:0
+
+# Play with Trained Agent (future):
+uv run play Mjlab-SO101-Pick-Blue-Cylinder-Play --wandb-run-path your-org/mjlab/run-id --viewer viser --device cuda:0
+
+LIST ENVS
+uv run python -m mjlab.scripts.list_envs
+
+
+TRAIN
+
+MUJOCO_GL=egl uv run python -m mjlab.scripts.train Mjlab-SO101-Pick-Blue-Cylinder \
+  --device cuda:0 \
+  --agent.experiment_name so101_pick_blue_cylinder \
+  --env.scene.num_envs 32 \
+  --agent.max_iterations 200 \
+  --agent.logger wandb --agent.wandb_project mjlab
+
+
+
+  MUJOCO_GL=egl uv run python -m mjlab.scripts.train Mjlab-SO101-Pick-Blue-Cylinder \
+  --device cuda:0 \
+  --agent.experiment_name so101_pick_blue_cylinder \
+  --env.scene.num_envs 64 \
+  --agent.max_iterations 400 \
+  --agent.logger wandb --agent.wandb_project mjlab
+
+
+
+  
+  find . -name "*.pyc" -delete && find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null
+MUJOCO_GL=egl uv run python -m mjlab.scripts.train Mjlab-SO101-Pick-Blue-Cylinder --device cuda:0 --agent.experiment_name so101_pick_blue_cylinder --env.scene.num_envs 4096 --agent.max_iterations 6000 --agent.logger wandb --agent.wandb_project mjlab
+
+
+MUJOCO_GL=egl uv run python -m mjlab.scripts.train Mjlab-pick_place \
+  --device cuda:0
+  --agent.experiment_name so101_pick_place \
+  --env.scene.num_envs 8192 \
+  --agent.max_iterations 10000 \
+  --agent.logger wandb --agent.wandb_project mjlab
+  
+
+
+RUN INFERENCE 
+
+uv run python -m mjlab.scripts.play Mjlab-pick_place-Play \
+  --wandb-run-path zaca-ai/mjlab/nisr031q \
+  --viewer viser \
+  --num-envs 5
+
+uv run python -m mjlab.scripts.play Mjlab-SO101-Pick-Blue-Cylinder-Play \
+  --wandb-run-path zaca-ai/mjlab/lamun7hg \
+  --viewer viser \
+  --num-envs 1
+
+RUN NAN_DUMP.PY IN GUI
+cd /home/zaca/Documents/CODE/mjlab && uv run python nan_dump.py
+
+RUN VIZ IN GUI
+uv run python -m mjlab.scripts.play Mjlab-pick_place-Play --agent zero --viewer native --num-envs 1
+
+uv run python -m mjlab.scripts.play Mjlab-pick_place-Play \
+  --wandb-run-path zaca-ai/mjlab/2ipnrh7i \
+  --viewer native \
+  --num-envs 1
+
+
+------------------------------------------------------------+
+| Active Observation Terms in Group: 'policy' (shape: (45,)) |
++---------------+----------------------------+---------------+
+|     Index     | Name                       |     Shape     |
++---------------+----------------------------+---------------+
+|       0       | joint_pos                  |      (6,)     |
+|       1       | joint_vel                  |      (6,)     |
+|       2       | object_pos                 |      (3,)     |
+|       3       | object_ori                 |      (4,)     |
+|       4       | target_pos                 |      (3,)     |
+|       5       | ee_pos                     |      (3,)     |
+|       6       | ee_ori                     |      (4,)     |
+|       7       | command                    |     (10,)     |
+|       8       | actions                    |      (6,)     |
++---------------+----------------------------+---------------+
++------------------------------------------------------------+
+| Active Observation Terms in Group: 'critic' (shape: (45,)) |
++---------------+----------------------------+---------------+
+|     Index     | Name                       |     Shape     |
++---------------+----------------------------+---------------+
+|       0       | joint_pos                  |      (6,)     |
+|       1       | joint_vel                  |      (6,)     |
+|       2       | object_pos                 |      (3,)     |
+|       3       | object_ori                 |      (4,)     |
+|       4       | target_pos                 |      (3,)     |
+|       5       | ee_pos                     |      (3,)     |
+|       6       | ee_ori                     |      (4,)     |
+|       7       | command                    |     (10,)     |
+|       8       | actions                    |      (6,)   
+
+
+
+
+
+26-10-2025
+
+TASK: so101_pick_blue_cylinder
+
+[INFO]: Base environment:
+        Environment device    : cuda:0
+        Environment seed      : None
+        Physics step-size     : 0.002
+        Environment step-size : 0.002
+[INFO] Command Manager: <NullCommandManager> (inactive)
+[INFO] Event manager: <EventManager> contains 1 active terms.
++-------------------------------------+
+| Active Event Terms in Mode: 'reset' |
++--------+----------------------------+
+| Index  | Name                       |
++--------+----------------------------+
+|   0    | randomize_cylinder_xy      |
+|   1    | reset_robot_joints         |
++--------+----------------------------+
+
+[INFO] Action Manager: <ActionManager> contains 1 active terms.
++--------------------------------+
+| Active Action Terms (shape: 6) |
++-------+-----------+------------+
+| Index | Name      |  Dimension |
++-------+-----------+------------+
+|   0   | joint_pos |          6 |
++-------+-----------+------------+
+
+[INFO] Observation Manager: <ObservationManager> contains 2 groups.
++------------------------------------------------------------+
+| Active Observation Terms in Group: 'policy' (shape: (10,)) |
++------------+---------------------------------+-------------+
+|   Index    | Name                            |    Shape    |
++------------+---------------------------------+-------------+
+|     0      | jaw_to_cyl_dist                 |     (1,)    |
+|     1      | joint_pos                       |     (6,)    |
+|     2      | rel_pos                         |     (3,)    |
++------------+---------------------------------+-------------+
++------------------------------------------------------------+
+| Active Observation Terms in Group: 'critic' (shape: (10,)) |
++------------+---------------------------------+-------------+
+|   Index    | Name                            |    Shape    |
++------------+---------------------------------+-------------+
+|     0      | jaw_to_cyl_dist                 |     (1,)    |
+|     1      | joint_pos                       |     (6,)    |
+|     2      | rel_pos                         |     (3,)    |
++------------+---------------------------------+-------------+
+
+[INFO] Termination Manager: <TerminationManager> contains 0 active terms.
++--------------------------+
+| Active Termination Terms |
++-------+------+-----------+
+| Index | Name |  Time Out |
++-------+------+-----------+
++-------+------+-----------+
+
+[INFO] Reward Manager: <RewardManager> contains 3 active terms.
++------------------------------------+
+|        Active Reward Terms         |
++-------+-------------------+--------+
+| Index | Name              | Weight |
++-------+-------------------+--------+
+|   0   | approach_cylinder |    5.0 |
+|   1   | contact           |   10.0 |
+|   2   | pick_success      |   20.0 |
++-------+-------------------+--------+
+
+TRAIN
+
+  MUJOCO_GL=egl uv run python -m mjlab.scripts.train Mjlab-SO101-Pick-Blue-Cylinder \
+  --device cuda:0 \
+  --agent.experiment_name so101_pick_blue_cylinder \
+  --env.scene.num_envs 128 \
+  --agent.max_iterations 10000 
+
+  # Continue training from a checkpoint
+
+  MUJOCO_GL=egl uv run python -m mjlab.scripts.train Mjlab-SO101-Pick-Blue-Cylinder \
+  --device cuda:0 \
+  --agent.experiment_name so101_pick_blue_cylinder \
+  --env.scene.num_envs 128 \
+  --agent.max_iterations 800 \
+  --agent.logger wandb --agent.wandb_project mjlab \
+  --agent.resume True \
+  --agent.load_run so101_pick_blue_cylinder \
+  --agent.load-checkpoint "model_.*\.pt"
+
+  # Or continue from a wandb run
+  MUJOCO_GL=egl uv run python -m mjlab.scripts.train Mjlab-SO101-Pick-Blue-Cylinder \
+  --device cuda:0 \
+  --agent.experiment_name so101_pick_blue_cylinder \
+  --env.scene.num_envs 128 \
+  --agent.max_iterations 800 \
+  --agent.logger wandb --agent.wandb_project mjlab \
+  --wandb-run-path zaca-ai/mjlab/u27am0wg
+
+
+RUN
+
+uv run python -m mjlab.scripts.play Mjlab-SO101-Pick-Blue-Cylinder-Play \
+  --wandb-run-path zaca-ai/mjlab/gih0wuw8 \
+  --viewer viser \
+  --num-envs 1
+
+# Play with latest checkpoint (automatically found from wandb/latest-run)
+uv run python -m mjlab.scripts.play Mjlab-SO101-Pick-Blue-Cylinder-Play \
+  --viewer viser \
+  --num-envs 1
+
+
+
+TRAIN FRESH
+
+uv run python -m mjlab.scripts.train Mjlab-SO101-Pick-Blue-Cylinder \
+--device cuda:0 \
+--agent.experiment_name so101_pick_blue_cylinder \
+--env.scene.num_envs 1024 \
+--agent.max_iterations 2000 \
+--env.episode-length-s 60.0
+
+
+CONTINUE TRAIN
+  cd /home/zaca/Documents/CODE/mjlab
+
+  uv run python -m mjlab.scripts.train Mjlab-SO101-Pick-Blue-Cylinder \
+  --device cuda:0 \
+  --agent.experiment_name so101_pick_blue_cylinder \
+  --env.scene.num_envs 256 \
+  --agent.max_iterations 50000 \
+  --agent.logger wandb --agent.wandb_project mjlab \
+  --agent.resume True \
+  --agent.load_run so101_pick_blue_cylinder \
+  --agent.load-checkpoint "model_.*\.pt"  \
+  --env.episode-length-s 6.0
+  
+
+RUN LATEST
+
+uv run python -m mjlab.scripts.play Mjlab-SO101-Pick-Blue-Cylinder-Play \
+  --viewer viser \
+  --num-envs 2 \
+  --env-spacing 0.5
+
+
+RUN NATIVE OVER VNC
+cd /home/zaca/Documents/CODE/mjlab/src/mjlab/asset_zoo/robots/SO_101/xmls/
+uv run python -m mujoco.viewer --mjcf SO-102.xml 
+
+
+uv run python -m mjlab.scripts.play Mjlab-SO101-Pick-Blue-Cylinder-Play \
+  --viewer viser \
+  --num-envs 2 \
+  --env-spacing 0.5
+  --load-checkpoint "model_.*\.pt"
+
+
+
+  ╭─ options ─────────────────────────────────────────────────────────────╮ ╭─ env options ─────────────────────────────────────────────────────────╮
+│ -h, --help                                                            │ │ SO-101 pick blue cylinder environment configuration.                  │
+│     show this help message and exit                                   │ │ ───────────────────────────────────────────────────────────────────── │
+│ --registry-name {None}|STR                                            │ │ --env.decimation INT                                                  │
+│     (default: None)                                                   │ │     (default: 1)                                                      │
+│ --device STR                                                          │ │ --env.seed {None}|INT                                                 │
+│     (default: cuda:0)                                                 │ │     (default: None)                                                   │
+│ --video {True,False}                                                  │ │ --env.episode-length-s FLOAT                                          │
+│     (default: False)                                                  │ │     (default: 10.0)                                                   │
+│ --video-length INT                                                    │ │ --env.commands {fixed}                                                │
+│     (default: 200)                                                    │ │     (fixed to: None)                                                  │
+│ --video-interval INT                                                  │ │ --env.curriculum {fixed}                                              │
+│     (default: 2000)                                                   │ │     (fixed to: None)                                                  │
+│ --enable-nan-guard {True,False}                                       │ │ --env.is-finite-horizon {True,False}                                  │
+│     (default: False)                                                  │ │     (default: False)                                                  │
+╰───────────────────────────────────────────────────────────────────────╯ ╰───────────────────────────────────────────────────────────────────────╯
+╭─ env.scene options ───────────────────────────────────────────────────╮ ╭─ env.scene.terrain options ───────────────────────────────────────────╮
+│ --env.scene.num-envs INT                                              │ │ Configuration for terrain import and environment placement.           │
+│     (default: 4096)                                                   │ │ ───────────────────────────────────────────────────────────────────── │
+│ --env.scene.env-spacing FLOAT                                         │ │ --env.scene.terrain.terrain-type {generator,plane}                    │
+│     (default: 2.0)                                                    │ │     Type of terrain to generate. "generator" uses procedural terrain  │
+│ --env.scene.extent {None}|FLOAT                                       │ │     with                                                              │
+│     (default: None)                                                   │ │     sub-terrain grid, "plane" creates a flat ground plane. (default:  │
+╰───────────────────────────────────────────────────────────────────────╯ │     plane)                                                            │
+╭─ env.scene.entities.robot options ────────────────────────────────────╮ │ --env.scene.terrain.env-spacing {None}|FLOAT                          │
+│ --env.scene.entities.robot.spec-fn {fixed}                            │ │     Distance between environment origins when using grid layout.      │
+│     (fixed to: <function get_spec at 0x721217fd8cc0>)                 │ │     Required for                                                      │
+│ --env.scene.entities.robot.debug-vis {True,False}                     │ │     "plane" terrain or when no sub-terrain origins exist. (default:   │
+│     Misc. (default: False)                                            │ │     2.0)                                                              │
+╰───────────────────────────────────────────────────────────────────────╯ │ --env.scene.terrain.max-init-terrain-level {None}|INT                 │
+╭─ env.scene.entities.robot.init-state options ─────────────────────────╮ │     Maximum initial difficulty level (row index) for environment      │
+│ --env.scene.entities.robot.init-state.pos FLOAT FLOAT FLOAT           │ │     placement in                                                      │
+│     Root position and orientation. (default: 0.0 0.0 0.0)             │ │     curriculum mode. None uses all available rows. (default: None)    │
+│ --env.scene.entities.robot.init-state.rot FLOAT FLOAT FLOAT FLOAT     │ │ --env.scene.terrain.num-envs INT                                      │
+│     Root position and orientation. (default: 1.0 0.0 0.0 0.0)         │ │     Number of parallel environments to create. This will get          │
+│ --env.scene.entities.robot.init-state.lin-vel FLOAT FLOAT FLOAT       │ │     overriden by the                                                  │
+│     Root linear and angular velocity (only for floating base          │ │     scene configuration if specified there. (default: 1)              │
+│     entities). (default: 0.0 0.0 0.0)                                 │ ╰───────────────────────────────────────────────────────────────────────╯
+│ --env.scene.entities.robot.init-state.ang-vel FLOAT FLOAT FLOAT       │ ╭─ env.scene.entities.robot.init-state.joint-pos options ───────────────╮
+│     Root linear and angular velocity (only for floating base          │ │ Articulation (only for articulated entities).                         │
+│     entities). (default: 0.0 0.0 0.0)                                 │ │ ───────────────────────────────────────────────────────────────────── │
+╰───────────────────────────────────────────────────────────────────────╯ │ --env.scene.entities.robot.init-state.joint-pos.* FLOAT               │
+╭─ env.scene.entities.robot.init-state.joint-vel options ───────────────╮ │     (default: 0.0)                                                    │
+│ Articulation (only for articulated entities).                         │ ╰───────────────────────────────────────────────────────────────────────╯
+│ ───────────────────────────────────────────────────────────────────── │ ╭─ env.scene.entities.robot.articulation options ───────────────────────╮
+│ --env.scene.entities.robot.init-state.joint-vel.* FLOAT               │ │ --env.scene.entities.robot.articulation.soft-joint-pos-limit-factor   │
+│     (default: 0.0)                                                    │ │ FLOAT                                                                 │
+╰───────────────────────────────────────────────────────────────────────╯ │     (default: 0.95)                                                   │
+╭─ env.scene.entities.cylinder options ─────────────────────────────────╮ ╰───────────────────────────────────────────────────────────────────────╯
+│ --env.scene.entities.cylinder.spec-fn {fixed}                         │ ╭─ env.scene.entities.cylinder.init-state options ──────────────────────╮
+│     (fixed to: <function get_spec at 0x721217fd9260>)                 │ │ --env.scene.entities.cylinder.init-state.pos FLOAT FLOAT FLOAT        │
+│ --env.scene.entities.cylinder.debug-vis {True,False}                  │ │     Root position and orientation. (default: 0.3 0.0 0.15)            │
+│     Misc. (default: False)                                            │ │ --env.scene.entities.cylinder.init-state.rot FLOAT FLOAT FLOAT FLOAT  │
+╰───────────────────────────────────────────────────────────────────────╯ │     Root position and orientation. (default: 1.0 0.0 0.0 0.0)         │
+╭─ env.scene.entities.cylinder.init-state.joint-pos options ────────────╮ │ --env.scene.entities.cylinder.init-state.lin-vel FLOAT FLOAT FLOAT    │
+│ Articulation (only for articulated entities).                         │ │     Root linear and angular velocity (only for floating base          │
+│ ───────────────────────────────────────────────────────────────────── │ │     entities). (default: 0.0 0.0 0.0)                                 │
+│ --env.scene.entities.cylinder.init-state.joint-pos.* FLOAT            │ │ --env.scene.entities.cylinder.init-state.ang-vel FLOAT FLOAT FLOAT    │
+│     (default: 0.0)                                                    │ │     Root linear and angular velocity (only for floating base          │
+╰───────────────────────────────────────────────────────────────────────╯ │     entities). (default: 0.0 0.0 0.0)                                 │
+╭─ env.scene.entities.cylinder.init-state.joint-vel options ────────────╮ ╰───────────────────────────────────────────────────────────────────────╯
+│ Articulation (only for articulated entities).                         │ ╭─ env.scene.entities.cylinder.articulation options ────────────────────╮
+│ ───────────────────────────────────────────────────────────────────── │ │ --env.scene.entities.cylinder.articulation.soft-joint-pos-limit-facto │
+│ --env.scene.entities.cylinder.init-state.joint-vel.* FLOAT            │ │ r FLOAT                                                               │
+│     (default: 0.0)                                                    │ │     (default: 1.0)                                                    │
+╰───────────────────────────────────────────────────────────────────────╯ ╰───────────────────────────────────────────────────────────────────────╯
+╭─ env.observations.policy options ─────────────────────────────────────╮ ╭─ env.observations.policy.jaw-to-cyl-dist options ─────────────────────╮
+│ --env.observations.policy.concatenate-terms {True,False}              │ │ Single-feature observation: jaw-to-cylinder distance.                 │
+│     (default: True)                                                   │ │ ───────────────────────────────────────────────────────────────────── │
+│ --env.observations.policy.concatenate-dim INT                         │ │ --env.observations.policy.jaw-to-cyl-dist.func {fixed}                │
+│     (default: -1)                                                     │ │     (fixed to: <function ObservationCfg.PolicyCfg.<lambda> at         │
+│ --env.observations.policy.enable-corruption {True,False}              │ │     0x721215b31120>)                                                  │
+│     (default: False)                                                  │ │ --env.observations.policy.jaw-to-cyl-dist.params {fixed}              │
+│ --env.observations.policy.history-length {None}|INT                   │ │     (fixed to: {})                                                    │
+│     (default: None)                                                   │ │ --env.observations.policy.jaw-to-cyl-dist.clip {None}|{FLOAT FLOAT}   │
+│ --env.observations.policy.flatten-history-dim {True,False}            │ │     Range (min, max) to clip the observation values. Defaults to      │
+│     (default: True)                                                   │ │     None. (default: None)                                             │
+╰───────────────────────────────────────────────────────────────────────╯ │ --env.observations.policy.jaw-to-cyl-dist.scale {fixed}               │
+╭─ env.observations.policy.joint-pos options ───────────────────────────╮ │     Scaling factor(s) to multiply the observation by. Defaults to     │
+│ Single-feature observation: jaw-to-cylinder distance.                 │ │     None. (fixed to: None)                                            │
+│ ───────────────────────────────────────────────────────────────────── │ │ --env.observations.policy.jaw-to-cyl-dist.history-length INT          │
+│ --env.observations.policy.joint-pos.func {fixed}                      │ │     Number of past observations to keep in history. 0 means no        │
+│     (fixed to: <function joint_pos_rel at 0x72121d30c9a0>)            │ │     history. Defaults to 0. (default: 0)                              │
+│ --env.observations.policy.joint-pos.params {fixed}                    │ │ --env.observations.policy.jaw-to-cyl-dist.flatten-history-dim         │
+│     (fixed to: {})                                                    │ │ {True,False}                                                          │
+│ --env.observations.policy.joint-pos.clip {None}|{FLOAT FLOAT}         │ │     Whether to flatten the history dimension into the observation.    │
+│     Range (min, max) to clip the observation values. Defaults to      │ │     Defaults to True. (default: True)                                 │
+│     None. (default: None)                                             │ ╰───────────────────────────────────────────────────────────────────────╯
+│ --env.observations.policy.joint-pos.scale {fixed}                     │ ╭─ env.observations.policy.rel-pos options ─────────────────────────────╮
+│     Scaling factor(s) to multiply the observation by. Defaults to     │ │ Single-feature observation: jaw-to-cylinder distance.                 │
+│     None. (fixed to: None)                                            │ │ ───────────────────────────────────────────────────────────────────── │
+│ --env.observations.policy.joint-pos.history-length INT                │ │ --env.observations.policy.rel-pos.func {fixed}                        │
+│     Number of past observations to keep in history. 0 means no        │ │     (fixed to: <function ObservationCfg.PolicyCfg.<lambda> at         │
+│     history. Defaults to 0. (default: 0)                              │ │     0x721215b320c0>)                                                  │
+│ --env.observations.policy.joint-pos.flatten-history-dim {True,False}  │ │ --env.observations.policy.rel-pos.params {fixed}                      │
+│     Whether to flatten the history dimension into the observation.    │ │     (fixed to: {})                                                    │
+│     Defaults to True. (default: True)                                 │ │ --env.observations.policy.rel-pos.clip {None}|{FLOAT FLOAT}           │
+╰───────────────────────────────────────────────────────────────────────╯ │     Range (min, max) to clip the observation values. Defaults to      │
+╭─ env.observations.critic options ─────────────────────────────────────╮ │     None. (default: None)                                             │
+│ --env.observations.critic.concatenate-terms {True,False}              │ │ --env.observations.policy.rel-pos.scale {fixed}                       │
+│     (default: True)                                                   │ │     Scaling factor(s) to multiply the observation by. Defaults to     │
+│ --env.observations.critic.concatenate-dim INT                         │ │     None. (fixed to: None)                                            │
+│     (default: -1)                                                     │ │ --env.observations.policy.rel-pos.history-length INT                  │
+│ --env.observations.critic.enable-corruption {True,False}              │ │     Number of past observations to keep in history. 0 means no        │
+│     (default: False)                                                  │ │     history. Defaults to 0. (default: 0)                              │
+│ --env.observations.critic.history-length {None}|INT                   │ │ --env.observations.policy.rel-pos.flatten-history-dim {True,False}    │
+│     (default: None)                                                   │ │     Whether to flatten the history dimension into the observation.    │
+│ --env.observations.critic.flatten-history-dim {True,False}            │ │     Defaults to True. (default: True)                                 │
+│     (default: True)                                                   │ ╰───────────────────────────────────────────────────────────────────────╯
+╰───────────────────────────────────────────────────────────────────────╯ ╭─ env.observations.critic.jaw-to-cyl-dist options ─────────────────────╮
+╭─ env.observations.critic.joint-pos options ───────────────────────────╮ │ Single-feature observation: jaw-to-cylinder distance.                 │
+│ Single-feature observation: jaw-to-cylinder distance.                 │ │ ───────────────────────────────────────────────────────────────────── │
+│ ───────────────────────────────────────────────────────────────────── │ │ --env.observations.critic.jaw-to-cyl-dist.func {fixed}                │
+│ --env.observations.critic.joint-pos.func {fixed}                      │ │     (fixed to: <function ObservationCfg.PolicyCfg.<lambda> at         │
+│     (fixed to: <function joint_pos_rel at 0x72121d30c9a0>)            │ │     0x721215b31120>)                                                  │
+│ --env.observations.critic.joint-pos.params {fixed}                    │ │ --env.observations.critic.jaw-to-cyl-dist.params {fixed}              │
+│     (fixed to: {})                                                    │ │     (fixed to: {})                                                    │
+│ --env.observations.critic.joint-pos.clip {None}|{FLOAT FLOAT}         │ │ --env.observations.critic.jaw-to-cyl-dist.clip {None}|{FLOAT FLOAT}   │
+│     Range (min, max) to clip the observation values. Defaults to      │ │     Range (min, max) to clip the observation values. Defaults to      │
+│     None. (default: None)                                             │ │     None. (default: None)                                             │
+│ --env.observations.critic.joint-pos.scale {fixed}                     │ │ --env.observations.critic.jaw-to-cyl-dist.scale {fixed}               │
+│     Scaling factor(s) to multiply the observation by. Defaults to     │ │     Scaling factor(s) to multiply the observation by. Defaults to     │
+│     None. (fixed to: None)                                            │ │     None. (fixed to: None)                                            │
+│ --env.observations.critic.joint-pos.history-length INT                │ │ --env.observations.critic.jaw-to-cyl-dist.history-length INT          │
+│     Number of past observations to keep in history. 0 means no        │ │     Number of past observations to keep in history. 0 means no        │
+│     history. Defaults to 0. (default: 0)                              │ │     history. Defaults to 0. (default: 0)                              │
+│ --env.observations.critic.joint-pos.flatten-history-dim {True,False}  │ │ --env.observations.critic.jaw-to-cyl-dist.flatten-history-dim         │
+│     Whether to flatten the history dimension into the observation.    │ │ {True,False}                                                          │
+│     Defaults to True. (default: True)                                 │ │     Whether to flatten the history dimension into the observation.    │
+╰───────────────────────────────────────────────────────────────────────╯ │     Defaults to True. (default: True)                                 │
+╭─ env.observations.critic.rel-pos options ─────────────────────────────╮ ╰───────────────────────────────────────────────────────────────────────╯
+│ Single-feature observation: jaw-to-cylinder distance.                 │ ╭─ env.actions.joint-pos options ───────────────────────────────────────╮
+│ ───────────────────────────────────────────────────────────────────── │ │ Map actions to all robot actuators as joint position targets.         │
+│ --env.observations.critic.rel-pos.func {fixed}                        │ │ ───────────────────────────────────────────────────────────────────── │
+│     (fixed to: <function ObservationCfg.PolicyCfg.<lambda> at         │ │ --env.actions.joint-pos.class-type {fixed}                            │
+│     0x721215b320c0>)                                                  │ │     (fixed to: <class                                                 │
+│ --env.observations.critic.rel-pos.params {fixed}                      │ │     'mjlab.envs.mdp.actions.joint_actions.JointPositionAction'>)      │
+│     (fixed to: {})                                                    │ │ --env.actions.joint-pos.asset-name STR                                │
+│ --env.observations.critic.rel-pos.clip {None}|{FLOAT FLOAT}           │ │     (default: robot)                                                  │
+│     Range (min, max) to clip the observation values. Defaults to      │ │ --env.actions.joint-pos.clip {None}|{[STR [STR [STR ...]] [STR [STR   │
+│     None. (default: None)                                             │ │ [STR ...]] ...]]}                                                     │
+│ --env.observations.critic.rel-pos.scale {fixed}                       │ │     (default: None)                                                   │
+│     Scaling factor(s) to multiply the observation by. Defaults to     │ │ --env.actions.joint-pos.actuator-names [STR [STR ...]]                │
+│     None. (fixed to: None)                                            │ │     List of actuator names or regex expressions that the action will  │
+│ --env.observations.critic.rel-pos.history-length INT                  │ │     be mapped to. (default: '.*')                                     │
+│     Number of past observations to keep in history. 0 means no        │ │ --env.actions.joint-pos.scale FLOAT|{[STR FLOAT [STR FLOAT ...]]}     │
+│     history. Defaults to 0. (default: 0)                              │ │     Scale factor for the action (float or dict of regex expressions). │
+│ --env.observations.critic.rel-pos.flatten-history-dim {True,False}    │ │     Defaults to 1.0. (default: 0.5)                                   │
+│     Whether to flatten the history dimension into the observation.    │ │ --env.actions.joint-pos.offset FLOAT|{[STR FLOAT [STR FLOAT ...]]}    │
+│     Defaults to True. (default: True)                                 │ │     Offset factor for the action (float or dict of regex              │
+╰───────────────────────────────────────────────────────────────────────╯ │     expressions). Defaults to 0.0. (default: 0.0)                     │
+╭─ env.events.randomize-cylinder-xy options ────────────────────────────╮ │ --env.actions.joint-pos.preserve-order {True,False}                   │
+│ Randomize cylinder XY position each episode by ±10% relative to its   │ │     Whether to preserve the order of the joint names in the action    │
+│ nominal pos.                                                          │ │     output. Defaults to False. (default: False)                       │
+│ ───────────────────────────────────────────────────────────────────── │ │ --env.actions.joint-pos.use-default-offset {True,False}               │
+│ --env.events.randomize-cylinder-xy.func {fixed}                       │ │     (default: True)                                                   │
+│     (fixed to: <function EventCfg.<lambda> at 0x721215b339c0>)        │ ╰───────────────────────────────────────────────────────────────────────╯
+│ --env.events.randomize-cylinder-xy.params {fixed}                     │ ╭─ env.events.reset-robot-joints options ───────────────────────────────╮
+│     (fixed to: {})                                                    │ │ Reset robot to default joint positions                                │
+│ --env.events.randomize-cylinder-xy.mode {startup,reset,interval}      │ │ ───────────────────────────────────────────────────────────────────── │
+│     (default: reset)                                                  │ │ --env.events.reset-robot-joints.func {fixed}                          │
+│ --env.events.randomize-cylinder-xy.interval-range-s {None}|{FLOAT     │ │     (fixed to: <function reset_joints_by_scale at 0x721256242de0>)    │
+│ FLOAT}                                                                │ │ --env.events.reset-robot-joints.mode {startup,reset,interval}         │
+│     (default: None)                                                   │ │     (default: reset)                                                  │
+│ --env.events.randomize-cylinder-xy.is-global-time {True,False}        │ │ --env.events.reset-robot-joints.interval-range-s {None}|{FLOAT FLOAT} │
+│     (default: False)                                                  │ │     (default: None)                                                   │
+│ --env.events.randomize-cylinder-xy.min-step-count-between-reset INT   │ │ --env.events.reset-robot-joints.is-global-time {True,False}           │
+│     (default: 0)                                                      │ │     (default: False)                                                  │
+╰───────────────────────────────────────────────────────────────────────╯ │ --env.events.reset-robot-joints.min-step-count-between-reset INT      │
+╭─ env.events.reset-robot-joints.params options ────────────────────────╮ │     (default: 0)                                                      │
+│ --env.events.reset-robot-joints.params.position-range [FLOAT [FLOAT   │ ╰───────────────────────────────────────────────────────────────────────╯
+│ ...]]                                                                 │ ╭─ env.sim options ─────────────────────────────────────────────────────╮
+│     (default: 1.0 1.0)                                                │ │ --env.sim.nconmax {None}|INT                                          │
+│ --env.events.reset-robot-joints.params.velocity-range [FLOAT [FLOAT   │ │     (default: None)                                                   │
+│ ...]]                                                                 │ │ --env.sim.njmax {None}|INT                                            │
+│     (default: 0.0 0.0)                                                │ │     (default: 300)                                                    │
+╰───────────────────────────────────────────────────────────────────────╯ │ --env.sim.ls-parallel {True,False}                                    │
+╭─ env.sim.mujoco options ──────────────────────────────────────────────╮ │     Boosts perf quite noticeably. (default: True)                     │
+│ Configuration for MuJoCo simulation parameters.                       │ ╰───────────────────────────────────────────────────────────────────────╯
+│ ───────────────────────────────────────────────────────────────────── │ ╭─ env.sim.nan-guard options ───────────────────────────────────────────╮
+│ --env.sim.mujoco.timestep FLOAT                                       │ │ Configuration for NaN guard.                                          │
+│     Integrator settings. (default: 0.002)                             │ │ ───────────────────────────────────────────────────────────────────── │
+│ --env.sim.mujoco.integrator {euler,implicitfast}                      │ │ --env.sim.nan-guard.enabled {True,False}                              │
+│     Integrator settings. (default: implicitfast)                      │ │     (default: True)                                                   │
+│ --env.sim.mujoco.impratio FLOAT                                       │ │ --env.sim.nan-guard.buffer-size INT                                   │
+│     Friction settings. (default: 1.0)                                 │ │     (default: 100)                                                    │
+│ --env.sim.mujoco.cone {pyramidal,elliptic}                            │ │ --env.sim.nan-guard.output-dir STR                                    │
+│     Friction settings. (default: pyramidal)                           │ │     (default: /tmp/mjlab/nan_dumps)                                   │
+│ --env.sim.mujoco.jacobian {auto,dense,sparse}                         │ │ --env.sim.nan-guard.max-envs-to-capture INT                           │
+│     Solver settings. (default: auto)                                  │ │     Max number of NaN envs to save. (default: 1)                      │
+│ --env.sim.mujoco.solver {newton,cg,pgs}                               │ ╰───────────────────────────────────────────────────────────────────────╯
+│     Solver settings. (default: newton)                                │ ╭─ env.viewer options ──────────────────────────────────────────────────╮
+│ --env.sim.mujoco.iterations INT                                       │ │ --env.viewer.lookat FLOAT FLOAT FLOAT                                 │
+│     Solver settings. (default: 100)                                   │ │     (default: 0.0 0.0 0.0)                                            │
+│ --env.sim.mujoco.tolerance FLOAT                                      │ │ --env.viewer.distance FLOAT                                           │
+│     Solver settings. (default: 1e-08)                                 │ │     (default: 5.0)                                                    │
+│ --env.sim.mujoco.ls-iterations INT                                    │ │ --env.viewer.elevation FLOAT                                          │
+│     Solver settings. (default: 50)                                    │ │     (default: -45.0)                                                  │
+│ --env.sim.mujoco.ls-tolerance FLOAT                                   │ │ --env.viewer.azimuth FLOAT                                            │
+│     Solver settings. (default: 0.01)                                  │ │     (default: 90.0)                                                   │
+│ --env.sim.mujoco.gravity FLOAT FLOAT FLOAT                            │ │ --env.viewer.origin-type {WORLD,ASSET_ROOT,ASSET_BODY}                │
+│     Other. (default: 0 0 -9.81)                                       │ │     (default: WORLD)                                                  │
+╰───────────────────────────────────────────────────────────────────────╯ │ --env.viewer.asset-name {None}|STR                                    │
+╭─ env.rewards.approach-cylinder options ───────────────────────────────╮ │     (default: None)                                                   │
+│ Encourage the robot's moving jaw to approach the cylinder by          │ │ --env.viewer.body-name {None}|STR                                     │
+│ minimizing distance. The lambda creates an anonymous function that    │ │     (default: None)                                                   │
+│ takes 'env' as parameter and calls _reward_approach_cylinder(env)     │ │ --env.viewer.env-idx INT                                              │
+│ This is equivalent to: def anonymous_func(env): return                │ │     (default: 0)                                                      │
+│ _reward_approach_cylinder(env)                                        │ │ --env.viewer.enable-reflections {True,False}                          │
+│ ───────────────────────────────────────────────────────────────────── │ │     (default: True)                                                   │
+│ --env.rewards.approach-cylinder.func {fixed}                          │ │ --env.viewer.enable-shadows {True,False}                              │
+│     (fixed to: <function RewardCfg.<lambda> at 0x721215b32a20>)       │ │     (default: True)                                                   │
+│ --env.rewards.approach-cylinder.params {fixed}                        │ │ --env.viewer.height INT                                               │
+│     (fixed to: {})                                                    │ │     (default: 240)                                                    │
+│ --env.rewards.approach-cylinder.weight FLOAT                          │ │ --env.viewer.width INT                                                │
+│     (default: 5.0)                                                    │ │     (default: 320)                                                    │
+╰───────────────────────────────────────────────────────────────────────╯ ╰───────────────────────────────────────────────────────────────────────╯
+╭─ env.rewards.contact options ─────────────────────────────────────────╮ ╭─ env.rewards.pick-success options ────────────────────────────────────╮
+│ Encourage the robot's moving jaw to approach the cylinder by          │ │ Encourage the robot's moving jaw to approach the cylinder by          │
+│ minimizing distance. The lambda creates an anonymous function that    │ │ minimizing distance. The lambda creates an anonymous function that    │
+│ takes 'env' as parameter and calls _reward_approach_cylinder(env)     │ │ takes 'env' as parameter and calls _reward_approach_cylinder(env)     │
+│ This is equivalent to: def anonymous_func(env): return                │ │ This is equivalent to: def anonymous_func(env): return                │
+│ _reward_approach_cylinder(env)                                        │ │ _reward_approach_cylinder(env)                                        │
+│ ───────────────────────────────────────────────────────────────────── │ │ ───────────────────────────────────────────────────────────────────── │
+│ --env.rewards.contact.func {fixed}                                    │ │ --env.rewards.pick-success.func {fixed}                               │
+│     (fixed to: <function RewardCfg.<lambda> at 0x721215b32d40>)       │ │     (fixed to: <function RewardCfg.<lambda> at 0x721215b32e80>)       │
+│ --env.rewards.contact.params {fixed}                                  │ │ --env.rewards.pick-success.params {fixed}                             │
+│     (fixed to: {})                                                    │ │     (fixed to: {})                                                    │
+│ --env.rewards.contact.weight FLOAT                                    │ │ --env.rewards.pick-success.weight FLOAT                               │
+│     (default: 10.0)                                                   │ │     (default: 20.0)                                                   │
+╰───────────────────────────────────────────────────────────────────────╯ ╰───────────────────────────────────────────────────────────────────────╯
+╭─ agent options ───────────────────────────────────────────────────────╮ ╭─ agent.obs-groups options ────────────────────────────────────────────╮
+│ --agent.seed INT                                                      │ │ --agent.obs-groups.policy [STR [STR ...]]                             │
+│     The seed for the experiment. Default is 42. (default: 42)         │ │     (default: policy)                                                 │
+│ --agent.num-steps-per-env INT                                         │ │ --agent.obs-groups.critic [STR [STR ...]]                             │
+│     The number of steps per environment update. (default: 24)         │ │     (default: policy critic)                                          │
+│ --agent.max-iterations INT                                            │ ╰───────────────────────────────────────────────────────────────────────╯
+│     The maximum number of iterations. (default: 300)                  │ ╭─ agent.policy options ────────────────────────────────────────────────╮
+│ --agent.save-interval INT                                             │ │ The policy configuration.                                             │
+│     The number of iterations between saves. (default: 50)             │ │ ───────────────────────────────────────────────────────────────────── │
+│ --agent.experiment-name STR                                           │ │ --agent.policy.init-noise-std FLOAT                                   │
+│     The experiment name. (default: so101_pick_blue_cylinder)          │ │     The initial noise standard deviation of the policy. (default:     │
+│ --agent.run-name STR                                                  │ │     1.0)                                                              │
+│     The run name. Default is empty string. (default: '')              │ │ --agent.policy.noise-std-type {scalar,log}                            │
+│ --agent.logger {wandb,tensorboard}                                    │ │     The type of noise standard deviation for the policy. Default is   │
+│     The logger to use. Default is wandb. (default: wandb)             │ │     scalar. (default: scalar)                                         │
+│ --agent.wandb-project STR                                             │ │ --agent.policy.actor-obs-normalization {True,False}                   │
+│     The wandb project name. (default: mjlab)                          │ │     Whether to normalize the observation for the actor network.       │
+│ --agent.resume {True,False}                                           │ │     Default is False. (default: False)                                │
+│     Whether to resume the experiment. Default is False. (default:     │ │ --agent.policy.critic-obs-normalization {True,False}                  │
+│     False)                                                            │ │     Whether to normalize the observation for the critic network.      │
+│ --agent.load-run STR                                                  │ │     Default is False. (default: False)                                │
+│     The run directory to load. Default is ".*" which means all runs.  │ │ --agent.policy.actor-hidden-dims [INT [INT ...]]                      │
+│     If regex                                                          │ │     The hidden dimensions of the actor network. (default: 128 128     │
+│     expression, the latest (alphabetical order) matching run will be  │ │     128)                                                              │
+│     loaded. (default: '.*')                                           │ │ --agent.policy.critic-hidden-dims [INT [INT ...]]                     │
+│ --agent.load-checkpoint STR                                           │ │     The hidden dimensions of the critic network. (default: 128 128    │
+│     The checkpoint file to load. Default is "model_.*.pt" (all). If   │ │     128)                                                              │
+│     regex expression,                                                 │ │ --agent.policy.activation STR                                         │
+│     the latest (alphabetical order) matching file will be loaded.     │ │     The activation function to use in the actor and critic networks.  │
+│     (default: 'model_.*.pt')                                          │ │     (default: elu)                                                    │
+│ --agent.clip-actions FLOAT                                            │ │ --agent.policy.class-name STR                                         │
+│     The clipping range for action values. If None (default), no       │ │     Ignore, required by RSL-RL. (default: ActorCritic)                │
+│     clipping is applied. (default: 1.0)                               │ ╰───────────────────────────────────────────────────────────────────────╯
+│ --agent.class-name STR                                                │ ╭─ agent.algorithm options ─────────────────────────────────────────────╮
+│     The runner class name. Default is OnPolicyRunner. (default:       │ │ The algorithm configuration.                                          │
+│     OnPolicyRunner)                                                   │ │ ───────────────────────────────────────────────────────────────────── │
+│ --agent.num-envs INT                                                  │ │ --agent.algorithm.num-learning-epochs INT                             │
+│     (default: 2048)                                                   │ │     The number of learning epochs per update. (default: 5)            │
+╰───────────────────────────────────────────────────────────────────────╯ │ --agent.algorithm.num-mini-batches INT                                │
+╭─ agent.ppo options ───────────────────────────────────────────────────╮ │     The number of mini-batches per update.                            │
+│ --agent.ppo.mini-batch-size INT                                       │ │     mini batch size = num_envs * num_steps / num_mini_batches         │
+│     (default: 64)                                                     │ │     (default: 4)                                                      │
+│ --agent.ppo.num-learning-epochs INT                                   │ │ --agent.algorithm.learning-rate FLOAT                                 │
+│     (default: 4)                                                      │ │     The learning rate. (default: 0.001)                               │
+│ --agent.ppo.clip-range FLOAT                                          │ │ --agent.algorithm.schedule {adaptive,fixed}                           │
+│     (default: 0.2)                                                    │ │     The learning rate schedule. (default: adaptive)                   │
+│ --agent.ppo.min-std FLOAT                                             │ │ --agent.algorithm.gamma FLOAT                                         │
+│     (default: 0.05)                                                   │ │     The discount factor. (default: 0.99)                              │
+│ --agent.ppo.init-noise-std FLOAT                                      │ │ --agent.algorithm.lam FLOAT                                           │
+│     (default: 1.5)                                                    │ │     The lambda parameter for Generalized Advantage Estimation (GAE).  │
+│ --agent.ppo.actor-obs-normalization {True,False}                      │ │     (default: 0.95)                                                   │
+│     (default: False)                                                  │ │ --agent.algorithm.entropy-coef FLOAT                                  │
+│ --agent.ppo.critic-obs-normalization {True,False}                     │ │     The coefficient for the entropy loss. (default: 0.005)            │
+│     (default: False)                                                  │ │ --agent.algorithm.desired-kl FLOAT                                    │
+│ --agent.ppo.actor-hidden-dims [INT [INT ...]]                         │ │     The desired KL divergence between the new and old policies.       │
+│     (default: 128 128 128)                                            │ │     (default: 0.01)                                                   │
+│ --agent.ppo.critic-hidden-dims [INT [INT ...]]                        │ │ --agent.algorithm.max-grad-norm FLOAT                                 │
+│     (default: 128 128 128)                                            │ │     The maximum gradient norm for the policy. (default: 1.0)          │
+│ --agent.ppo.activation STR                                            │ │ --agent.algorithm.value-loss-coef FLOAT                               │
+│     (default: elu)                                                    │ │     The coefficient for the value loss. (default: 1.0)                │
+│ --agent.ppo.class-name STR                                            │ │ --agent.algorithm.use-clipped-value-loss {True,False}                 │
+│     (default: ActorCritic)                                            │ │     Whether to use clipped value loss. (default: True)                │
+│ --agent.ppo.value-loss-coef FLOAT                                     │ │ --agent.algorithm.clip-param FLOAT                                    │
+│     (default: 1.0)                                                    │ │     The clipping parameter for the policy. (default: 0.2)             │
+│ --agent.ppo.use-clipped-value-loss {True,False}                       │ │ --agent.algorithm.normalize-advantage-per-mini-batch {True,False}     │
+│     (default: True)                                                   │ │     Whether to normalize the advantage per mini-batch. Default is     │
+│ --agent.ppo.clip-param FLOAT                                          │ │     False. If True, the                                               │
+│     (default: 0.2)                                                    │ │     advantage is normalized over the mini-batches only. Otherwise,    │
+│ --agent.ppo.entropy-coef FLOAT                                        │ │     the advantage is                                                  │
+│     (default: 0.02)                                                   │ │     normalized over the entire collected trajectories. (default:      │
+│ --agent.ppo.num-mini-batches INT                                      │ │     False)                                                            │
+│     (default: 4)                                                      │ │ --agent.algorithm.class-name STR                                      │
+│ --agent.ppo.learning-rate FLOAT                                       │ │     Ignore, required by RSL-RL. (default: PPO)                        │
+│     (default: 0.0015)                                                 │ ╰───────────────────────────────────────────────────────────────────────╯
+│ --agent.ppo.episode-length-s FLOAT                                    │ ╭─ agent.ppo.mujoco options ────────────────────────────────────────────╮
+│     (default: 7.0)                                                    │ │ --agent.ppo.mujoco.timestep FLOAT                                     │
+│ --agent.ppo.nconmax INT                                               │ │     (default: 0.005)                                                  │
+│     (default: 100000)                                                 │ ╰───────────────────────────────────────────────────────────────────────╯
+│ --agent.ppo.njmax INT                                                 │                                                                          
+│     (default: 200)                                                    │                                                                          
+╰───────────────────────────────────────────────────────────────────────╯        

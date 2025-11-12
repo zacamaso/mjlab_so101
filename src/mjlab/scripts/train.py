@@ -66,6 +66,20 @@ def run_train(task: str, cfg: TrainConfig) -> None:
     log_dir += f"_{cfg.agent.run_name}"
   log_dir = log_root_path / log_dir
 
+  curriculum_cfg = getattr(cfg.env, "curriculum", None)
+  if curriculum_cfg is not None:
+    reward_stages_cfg = getattr(curriculum_cfg, "reward_stages", None)
+    if reward_stages_cfg is not None:
+      if getattr(reward_stages_cfg, "params", None) is None:
+        reward_stages_cfg.params = {}
+      reward_stages_cfg.params["resume_curriculum"] = cfg.agent.resume
+    
+    reward_schedule_cfg = getattr(curriculum_cfg, "reward_schedule", None)
+    if reward_schedule_cfg is not None:
+      if getattr(reward_schedule_cfg, "params", None) is None:
+        reward_schedule_cfg.params = {}
+      reward_schedule_cfg.params["resume_curriculum"] = cfg.agent.resume
+
   env = gym.make(
     task, cfg=cfg.env, device=cfg.device, render_mode="rgb_array" if cfg.video else None
   )
@@ -75,6 +89,17 @@ def run_train(task: str, cfg: TrainConfig) -> None:
     if cfg.agent.resume
     else None
   )
+
+  # When resuming, use the checkpoint's directory as the log directory
+  # so that new checkpoints overwrite the old ones
+  if cfg.agent.resume and resume_path is not None:
+    log_dir = resume_path.parent
+    print(f"[INFO] Resuming training, using checkpoint directory as log dir: {log_dir}")
+  else:
+    log_dir = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    if cfg.agent.run_name:
+      log_dir += f"_{cfg.agent.run_name}"
+    log_dir = log_root_path / log_dir
 
   if cfg.video:
     env = gym.wrappers.RecordVideo(
@@ -95,6 +120,8 @@ def run_train(task: str, cfg: TrainConfig) -> None:
     runner = MotionTrackingOnPolicyRunner(
       env, agent_cfg, str(log_dir), cfg.device, registry_name
     )
+  # elif PickPlaceEnvCfg is not None and isinstance(cfg.env, PickPlaceEnvCfg):
+  #   runner = PickPlaceOnPolicyRunner(env, agent_cfg, str(log_dir), cfg.device)
   else:
     runner = VelocityOnPolicyRunner(env, agent_cfg, str(log_dir), cfg.device)
 
