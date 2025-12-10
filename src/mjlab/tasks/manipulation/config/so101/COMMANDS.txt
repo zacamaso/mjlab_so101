@@ -1,0 +1,14 @@
+
+
+TRAIN
+uv run train Mjlab-Lift-Cube-Yam --env.scene.num-envs 4096
+
+uv run train Mjlab-Lift-Cube-SO101 --env.scene.num-envs 4096
+
+RESUME TRAINING
+uv run train Mjlab-Lift-Cube-SO101 --agent.resume True --wandb-run-path zaca-ai/mjlab/e4wmttul --env.scene.num-envs 4096
+
+RUN
+uv run play Mjlab-Lift-Cube-Yam --wandb-run-path zaca-ai/mjlab/nfzafsqy
+
+uv run play Mjlab-Lift-Cube-SO101 --wandb-run-path zaca-ai/mjlab/e4wmttul

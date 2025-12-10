@@ -182,7 +182,7 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
     "action_rate_l2": RewardTermCfg(func=mdp.action_rate_l2, weight=-0.01),
     "joint_pos_limits": RewardTermCfg(
       func=mdp.joint_pos_limits,
-      weight=-10.0,
+      weight=-8.0,
       params={"asset_cfg": SceneEntityCfg("robot", joint_names=(".*",))},
     ),
     "joint_vel_hinge": RewardTermCfg(
@@ -240,8 +240,8 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
       azimuth=120.0,
     ),
     sim=SimulationCfg(
-      nconmax=55,
-      njmax=600,
+      nconmax=110,
+      njmax=1200,
       mujoco=MujocoCfg(
         timestep=0.005,
         iterations=10,

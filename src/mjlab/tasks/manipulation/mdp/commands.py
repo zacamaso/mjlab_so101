@@ -109,7 +109,7 @@ class LiftingCommand(CommandTerm):
     target_pos = self.target_pos[batch].cpu().numpy()
     visualizer.add_sphere(
       center=target_pos,
-      radius=0.03,
+      radius=self.cfg.viz.target_sphere_radius,
       color=self.cfg.viz.target_color,
       label="target_position",
     )
@@ -151,5 +151,6 @@ class LiftingCommandCfg(CommandTermCfg):
   @dataclass
   class VizCfg:
     target_color: tuple[float, float, float, float] = (1.0, 0.5, 0.0, 0.3)
+    target_sphere_radius: float = 0.03
 
   viz: VizCfg = field(default_factory=VizCfg)

@@ -1,0 +1,14 @@
+{
+    "configuration": "default",
+    "documentId": "a1b2c3d4e5f6789012345678",
+    "documentMicroversion": "b2c3d4e5f678901234567890",
+    "documentVersion": "c3d4e5f67890123456789012",
+    "elementId": "d4e5f6789012345678901234",
+    "fullConfiguration": "default",
+    "id": "Board1PartId12345",
+    "isStandardContent": false,
+    "name": "Board_1 <1>",
+    "partId": "JFD",
+    "suppressed": false,
+    "type": "Part"
+}
