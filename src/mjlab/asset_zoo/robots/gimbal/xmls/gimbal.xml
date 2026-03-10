@@ -1,0 +1,59 @@
+<mujoco model="gimbal">
+  <compiler angle="radian" meshdir="../assets" autolimits="true"/>
+  <option timestep="0.0025"/>
+
+  <visual>
+    <headlight ambient="0.4 0.4 0.4" diffuse="0.8 0.8 0.8" specular="0.1 0.1 0.1"/>
+    <quality shadowsize="4096"/> <!-- High resolution shadows -->
+    <global offwidth="1920" offheight="1080"/>
+  </visual>
+
+  <default>
+    <geom rgba="1 1 1 1" condim="3"/>
+    <joint armature="0.001" damping="0.1"/>
+    <mesh scale="0.001 0.001 0.001"/> 
+  </default>
+
+  <asset>
+    <!-- Newly added assets -->
+    <mesh name="base_mesh" file="Base.stl"/>
+    <mesh name="main_body_mesh" file="Main Body.stl"/>
+    <mesh name="cam_mount_mesh" file="Cam_mount_2.stl"/>
+    <mesh name="ov_cam_mesh" file="OV Cam.stl"/>
+    <mesh name="motor_mesh_1" file="ML2204B 2204-260kv 2.step.stl"/>
+    <mesh name="motor_mesh_2" file="ML2204B 2204-260kv 2.step (1).stl"/>
+    
+    <texture name="grid" type="2d" builtin="checker" rgb1=".1 .2 .3" rgb2=".2 .3 .4" width="300" height="300" mark="edge" markrgb=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="2 2" texuniform="true" reflectance=".2"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 2" dir="0 0 -1" castshadow="true"/>
+    <light pos="2 2 2" dir="-1 -1 -1" castshadow="true"/>
+    
+    <!-- Floor to catch shadows -->
+    <geom name="floor" size="0 0 .05" type="plane" material="grid" pos="0 0 -0.1"/>
+
+    <body name="base" pos="0 0 0">
+      <geom name="base_geom" type="mesh" mesh="base_mesh"/>
+      <geom name="yaw_motor_geom" type="mesh" mesh="motor_mesh_1"/>
+      
+      <body name="yaw_arm" pos="0 0 0">
+        <joint name="yaw" type="hinge" pos="0 0 0.0031" axis="0 0 1" range="-3.14 3.14"/>
+        <geom name="main_body_geom" type="mesh" mesh="main_body_mesh"/>
+        <geom name="pitch_motor_geom" type="mesh" mesh="motor_mesh_2"/>
+        
+        <body name="camera_body" pos="0 0 0">
+          <joint name="pitch" type="hinge" pos="-0.022 0 0.0353" axis="1 0 0" range="-3.14 3.14"/>
+          <geom name="cam_mount_geom" type="mesh" mesh="cam_mount_mesh"/>
+          <geom name="ov_cam_geom" type="mesh" mesh="ov_cam_mesh" rgba="0.2 0.2 0.2 1"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <position name="yaw_act" joint="yaw" forcelimited="true" forcerange="-5 5" kp="10" ctrllimited="true" ctrlrange="-3.14 3.14"/>
+    <position name="pitch_act" joint="pitch" forcelimited="true" forcerange="-5 5" kp="10" ctrllimited="true" ctrlrange="-3.14 3.14"/>
+  </actuator>
+</mujoco>

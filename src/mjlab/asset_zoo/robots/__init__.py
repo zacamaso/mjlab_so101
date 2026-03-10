@@ -25,3 +25,9 @@ from mjlab.asset_zoo.robots.SO_101.so101_constants import (
 from mjlab.asset_zoo.robots.SO_101.so101_constants import (
   get_so101_robot_cfg as get_so101_robot_cfg,
 )
+from mjlab.asset_zoo.robots.gimbal.gimbal_constants import (
+  GIMBAL_ACTION_SCALE as GIMBAL_ACTION_SCALE,
+)
+from mjlab.asset_zoo.robots.gimbal.gimbal_constants import (
+  get_gimbal_robot_cfg as get_gimbal_robot_cfg,
+)
