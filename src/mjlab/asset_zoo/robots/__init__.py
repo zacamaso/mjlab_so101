@@ -16,9 +16,6 @@ from mjlab.asset_zoo.robots.unitree_go1.go1_constants import (
 from mjlab.asset_zoo.robots.unitree_go1.go1_constants import (
   get_go1_robot_cfg as get_go1_robot_cfg,
 )
-from mjlab.asset_zoo.robots.unitree_go1.go1_constants import (
-  get_go1_robot_cfg_learned as get_go1_robot_cfg_learned,
-)
 from mjlab.asset_zoo.robots.SO_101.so101_constants import (
   SO101_ACTION_SCALE as SO101_ACTION_SCALE,
 )
@@ -31,4 +28,3 @@ from mjlab.asset_zoo.robots.gimbal.gimbal_constants import (
 from mjlab.asset_zoo.robots.gimbal.gimbal_constants import (
   get_gimbal_robot_cfg as get_gimbal_robot_cfg,
 )
-

@@ -115,7 +115,6 @@ class LiftingCommand(CommandTerm):
       )
 
 
-
 @dataclass(kw_only=True)
 class LiftingCommandCfg(CommandTermCfg):
   entity_name: str

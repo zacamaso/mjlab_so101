@@ -5,8 +5,9 @@ from pathlib import Path
 import mujoco
 from mjlab.actuator import BuiltinPositionActuatorCfg
 from mjlab.entity import EntityArticulationInfoCfg, EntityCfg
+from mjlab.utils import spec_config
 from mjlab.utils.os import update_assets
-from mjlab.utils.spec_config import CollisionCfg
+from mjlab.utils.spec_config import CameraCfg, CollisionCfg
 
 _HERE = Path(__file__).parent
 
@@ -36,7 +37,7 @@ STIFFNESS = ARMATURE * NATURAL_FREQ**2
 DAMPING = 2 * DAMPING_RATIO * ARMATURE * NATURAL_FREQ
 
 GIMBAL_ACTUATOR_CFG = BuiltinPositionActuatorCfg(
-  joint_names_expr=("yaw", "pitch"),
+  target_names_expr=("yaw", "pitch"),
   stiffness=STIFFNESS,
   damping=DAMPING,
   effort_limit=EFFORT_LIMIT,
@@ -60,6 +61,14 @@ def get_gimbal_robot_cfg() -> EntityCfg:
   return EntityCfg(
     init_state=INIT_STATE,
     collisions=(CollisionCfg(geom_names_expr=(".*",), condim=3, priority=1),),
+    cameras=(
+      CameraCfg(
+        name="gimbal_cam",
+        body="camera_body",
+        pos=(0, 0, 0),
+        quat=(0.707, 0, 0.707, 0),  # Look forward (+Y or +Z depending on orientation)
+      ),
+    ),
     spec_fn=get_spec,
     articulation=GIMBAL_ARTICULATION,
   )
@@ -71,5 +80,5 @@ for _a in GIMBAL_ARTICULATION.actuators:
   _e = _a.effort_limit
   _s = _a.stiffness
   assert _e is not None
-  for _n in _a.joint_names_expr:
+  for _n in _a.target_names_expr:
     GIMBAL_ACTION_SCALE[_n] = 0.25 * _e / _s

@@ -30,27 +30,28 @@ def get_spec() -> mujoco.MjSpec:
 
 
 SO101_ARTICULATION = EntityArticulationInfoCfg(
-  actuators=(XmlPositionActuatorCfg(joint_names_expr=(".*",)),),
+  actuators=(XmlPositionActuatorCfg(target_names_expr=(".*",)),),
   soft_joint_pos_limit_factor=0.95,
 )
 
+
 def get_so101_robot_cfg() -> EntityCfg:
   return EntityCfg(
-  init_state=EntityCfg.InitialStateCfg(
-    pos=(0.0, 0.0, 0.0055),
-    rot=(1.0, 0.0, 0.0, 0.0),
-    joint_pos={
-      "shoulder_pan": 0.0,
-      "shoulder_lift": -1.745,
-      "elbow_flex": 1.69,
-      "wrist_flex": 1.3264,
-      "wrist_roll": 1.02588,
-      "gripper": 0.0,
-    },
-  ),
-  spec_fn=get_spec,
-  articulation=SO101_ARTICULATION,
-)
+    init_state=EntityCfg.InitialStateCfg(
+      pos=(0.0, 0.0, 0.0055),
+      rot=(1.0, 0.0, 0.0, 0.0),
+      joint_pos={
+        "shoulder_pan": 0.0,
+        "shoulder_lift": -1.745,
+        "elbow_flex": 1.69,
+        "wrist_flex": 1.3264,
+        "wrist_roll": 1.02588,
+        "gripper": 0.0,
+      },
+    ),
+    spec_fn=get_spec,
+    articulation=SO101_ARTICULATION,
+  )
 
 
 # Calculate action scales from XML actuator properties
@@ -74,10 +75,3 @@ if __name__ == "__main__":
 
   robot = Entity(get_so101_robot_cfg())
   viewer.launch(robot.spec.compile())
-
-
-
-
-
-
-

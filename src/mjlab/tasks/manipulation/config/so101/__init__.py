@@ -9,4 +9,3 @@ register_mjlab_task(
   play_env_cfg=so101_lift_cube_env_cfg(play=True),
   rl_cfg=so101_lift_cube_ppo_runner_cfg(),
 )
-

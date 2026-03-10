@@ -49,7 +49,10 @@ def so101_lift_cube_env_cfg(
   # Bring target position 50% closer to arm (multiply ranges by 0.5)
   lift_command.object_pose_range.x = (0.2, 0.3)  # was (0.2, 0.4)
   lift_command.object_pose_range.y = (-0.12, 0.12)  # was (-0.2, 0.2)
-  lift_command.object_pose_range.z = (0.015, 0.035)  # was (0.02, 0.05), also 50% smaller
+  lift_command.object_pose_range.z = (
+    0.015,
+    0.035,
+  )  # was (0.02, 0.05), also 50% smaller
   # Bring target sphere 50% closer and make it 50% smaller
   lift_command.target_position_range.x = (0.15, 0.25)  # was (0.3, 0.5)
   lift_command.target_position_range.y = (-0.1, 0.1)  # was (-0.2, 0.2)
@@ -59,7 +62,7 @@ def so101_lift_cube_env_cfg(
   # # Disable mid-episode resampling to synchronize cube reset with robot reset
   # lift_command.resampling_time_range = (1e9, 1e9)
 
-  cfg.observations["policy"].terms["ee_to_cube"].params["asset_cfg"].site_names = (
+  cfg.observations["actor"].terms["ee_to_cube"].params["asset_cfg"].site_names = (
     "gripperframe",
   )
   cfg.rewards["lift"].params["asset_cfg"].site_names = ("gripperframe",)
@@ -83,8 +86,7 @@ def so101_lift_cube_env_cfg(
   # Apply play mode overrides.
   if play:
     cfg.episode_length_s = int(1e9)
-    cfg.observations["policy"].enable_corruption = False
+    cfg.observations["actor"].enable_corruption = False
     cfg.events.pop("push_robot", None)
 
   return cfg
-
