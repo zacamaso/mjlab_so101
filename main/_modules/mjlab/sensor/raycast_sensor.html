@@ -1,0 +1,1361 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mjlab.sensor.raycast_sensor &#8212; mjlab Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/twemoji.css" />
+    <link rel="stylesheet" type="text/css" href="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/css/all.min.css?v=53359634" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ea80bc3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js"></script>
+    <script src="../../../_static/twemoji.js"></script>
+    <script src="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/js/all.min.js?v=ec35c6c9"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mjlab/sensor/raycast_sensor';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Mar 10, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mjlab Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+<div class="sidebar-version-switcher">
+  <label class="sidebar-version-label" for="version-select">Version</label>
+  <select id="version-select" class="sidebar-version-select" onchange="location = this.value;">
+    <option value="raycast_sensor.html" selected>main</option>
+  </select>
+</div>
+</div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/architecture_overview.html">Architecture Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/entity/index.html">Entity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/entity/entity_data.html">Entity Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actuators.html">Actuators</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/sensors/index.html">Sensors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/raycast_sensor.html">RayCast Sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/rgbd_camera.html">RGB-D Camera</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/scene.html">Scene</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terrain.html">Terrain</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Manager Layer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/environment_config.html">Environment Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/observations.html">Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/rewards.html">Rewards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terminations.html">Terminations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/events.html">Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/randomization.html">Domain Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/curriculum.html">Curriculum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/metrics.html">Metrics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Training &amp; Debugging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/rsl_rl.html">Training with RSL-RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/viewers.html">Viewers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/distributed_training.html">Distributed Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/cloud.html">Cloud Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/nan_guard.html">NaN Guard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/export_scene.html">Export Scene</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/envs.html">mjlab.envs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/scene.html">mjlab.scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sim.html">mjlab.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/entity.html">mjlab.entity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/actuator.html">mjlab.actuator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sensor.html">mjlab.sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/managers.html">mjlab.managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/terrains.html">mjlab.terrains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/rl.html">mjlab.rl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/viewer.html">mjlab.viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/tasks.html">mjlab.tasks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Further Reading</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/motivation.html">Why mjlab?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/faq.html">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab/issues/new?title=Issue%20on%20page%20%2F_modules/mjlab/sensor/raycast_sensor.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mjlab.sensor.raycast_sensor</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Raycast sensor for terrain and obstacle detection.</span>
+
+<span class="sd">Ray Patterns</span>
+<span class="sd">------------</span>
+
+<span class="sd">This module provides two ray pattern types for different use cases:</span>
+
+<span class="sd">**Grid Pattern** - Parallel rays in a 2D grid::</span>
+
+<span class="sd">    Camera at any height:</span>
+<span class="sd">          ↓   ↓   ↓   ↓   ↓      ← All rays point same direction</span>
+<span class="sd">          ↓   ↓   ↓   ↓   ↓</span>
+<span class="sd">          ↓   ↓   ↓   ↓   ↓</span>
+<span class="sd">        ──●───●───●───●───●──    ← Fixed spacing (e.g., 10cm apart)</span>
+<span class="sd">             Ground</span>
+
+<span class="sd">- Rays are parallel (all point in the same direction, e.g., -Z down)</span>
+<span class="sd">- Spacing is defined in world units (meters)</span>
+<span class="sd">- Height doesn&#39;t affect the hit pattern - same footprint regardless of altitude</span>
+<span class="sd">- Good for: height maps, terrain scanning with consistent spatial sampling</span>
+
+<span class="sd">**Pinhole Camera Pattern** - Diverging rays from a single point::</span>
+
+<span class="sd">    Camera LOW:                    Camera HIGH:</span>
+<span class="sd">             📷                            📷</span>
+<span class="sd">            /|\\                          /  |  \\</span>
+<span class="sd">           / | \\                        /   |   \\</span>
+<span class="sd">          /  |  \\                      /    |    \\</span>
+<span class="sd">        ─●───●───●─                 ───●─────●─────●───</span>
+<span class="sd">        (small footprint)           (large footprint)</span>
+
+<span class="sd">- Rays diverge from a single point (like light entering a camera)</span>
+<span class="sd">- FOV is fixed in angular units (degrees)</span>
+<span class="sd">- Higher altitude → wider ground coverage, more spread between hits</span>
+<span class="sd">- Lower altitude → tighter ground coverage, denser hits</span>
+<span class="sd">- Good for: simulating depth cameras, LiDAR with angular resolution</span>
+
+<span class="sd">**Pattern Comparison**:</span>
+
+<span class="sd">============== ==================== ==========================</span>
+<span class="sd">Aspect         Grid                 Pinhole</span>
+<span class="sd">============== ==================== ==========================</span>
+<span class="sd">Ray direction  All parallel         Diverge from origin</span>
+<span class="sd">Spacing        Meters               Degrees (FOV)</span>
+<span class="sd">Height affect  No                   Yes</span>
+<span class="sd">Real-world     Orthographic proj.   Perspective camera / LiDAR</span>
+<span class="sd">============== ==================== ==========================</span>
+
+<span class="sd">The pinhole behavior matches real depth sensors (RealSense, LiDAR) - when</span>
+<span class="sd">you&#39;re farther from an object, each pixel covers more area.</span>
+
+
+<span class="sd">Frame Attachment</span>
+<span class="sd">----------------</span>
+
+<span class="sd">Rays are attached to a frame in the scene via ``ObjRef``. Supported frame types:</span>
+
+<span class="sd">- **body**: Attach to a body&#39;s origin. Rays follow body position and orientation.</span>
+<span class="sd">- **site**: Attach to a site. Useful for precise placement or offset from body.</span>
+<span class="sd">- **geom**: Attach to a geometry. Useful for sensors mounted on specific parts.</span>
+
+<span class="sd">Example::</span>
+
+<span class="sd">    from mjlab.sensor import ObjRef, RayCastSensorCfg, GridPatternCfg</span>
+
+<span class="sd">    cfg = RayCastSensorCfg(</span>
+<span class="sd">        name=&quot;terrain_scan&quot;,</span>
+<span class="sd">        frame=ObjRef(type=&quot;body&quot;, name=&quot;base&quot;, entity=&quot;robot&quot;),</span>
+<span class="sd">        pattern=GridPatternCfg(size=(1.0, 1.0), resolution=0.1),</span>
+<span class="sd">    )</span>
+
+<span class="sd">The ``exclude_parent_body`` option (default: True) prevents rays from hitting</span>
+<span class="sd">the body they&#39;re attached to.</span>
+
+
+<span class="sd">Ray Alignment</span>
+<span class="sd">-------------</span>
+
+<span class="sd">The ``ray_alignment`` setting controls how rays orient relative to the frame::</span>
+
+<span class="sd">    Robot tilted 30°:</span>
+
+<span class="sd">    &quot;base&quot; (default)          &quot;yaw&quot;                    &quot;world&quot;</span>
+<span class="sd">    Rays tilt with body       Rays stay level          Rays fixed to world</span>
+<span class="sd">          ↘ ↓ ↙                    ↓ ↓ ↓                    ↓ ↓ ↓</span>
+<span class="sd">           \\|/                     |||                      |||</span>
+<span class="sd">            🤖  ← tilted            🤖  ← tilted             🤖  ← tilted</span>
+<span class="sd">           /                       /                        /</span>
+
+<span class="sd">- **base**: Full position + rotation. Rays rotate with the body. Good for</span>
+<span class="sd">  body-mounted sensors that should scan relative to the robot&#39;s orientation.</span>
+
+<span class="sd">- **yaw**: Position + yaw only, ignores pitch/roll. Rays always point straight</span>
+<span class="sd">  down regardless of body tilt. Good for height maps where you want consistent</span>
+<span class="sd">  vertical sampling even when the robot is on a slope.</span>
+
+<span class="sd">- **world**: Fixed in world frame, only position follows body. Rays always</span>
+<span class="sd">  point in a fixed world direction. Good for gravity-aligned measurements.</span>
+
+
+<span class="sd">Debug Visualization</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">Enable visualization with ``debug_vis=True`` and customize via ``VizCfg``::</span>
+
+<span class="sd">    cfg = RayCastSensorCfg(</span>
+<span class="sd">        name=&quot;scan&quot;,</span>
+<span class="sd">        frame=ObjRef(type=&quot;body&quot;, name=&quot;base&quot;, entity=&quot;robot&quot;),</span>
+<span class="sd">        pattern=GridPatternCfg(),</span>
+<span class="sd">        debug_vis=True,</span>
+<span class="sd">        viz=RayCastSensorCfg.VizCfg(</span>
+<span class="sd">            hit_color=(0, 1, 0, 0.8),      # Green for hits</span>
+<span class="sd">            miss_color=(1, 0, 0, 0.4),     # Red for misses</span>
+<span class="sd">            show_rays=True,                 # Draw ray arrows</span>
+<span class="sd">            show_normals=True,              # Draw surface normals</span>
+<span class="sd">            normal_color=(1, 1, 0, 1),     # Yellow normals</span>
+<span class="sd">        ),</span>
+<span class="sd">    )</span>
+
+<span class="sd">Visualization options:</span>
+
+<span class="sd">- ``hit_color`` / ``miss_color``: RGBA colors for ray arrows</span>
+<span class="sd">- ``hit_sphere_color`` / ``hit_sphere_radius``: Spheres at hit points</span>
+<span class="sd">- ``show_rays``: Draw arrows from origin to hit/miss points</span>
+<span class="sd">- ``show_normals`` / ``normal_color`` / ``normal_length``: Surface normal arrows</span>
+
+
+<span class="sd">Geom Group Filtering</span>
+<span class="sd">--------------------</span>
+
+<span class="sd">MuJoCo geoms can be assigned to groups 0-5. Use ``include_geom_groups`` to</span>
+<span class="sd">filter which groups the rays can hit::</span>
+
+<span class="sd">    cfg = RayCastSensorCfg(</span>
+<span class="sd">        name=&quot;terrain_only&quot;,</span>
+<span class="sd">        frame=ObjRef(type=&quot;body&quot;, name=&quot;base&quot;, entity=&quot;robot&quot;),</span>
+<span class="sd">        pattern=GridPatternCfg(),</span>
+<span class="sd">        include_geom_groups=(0, 1),  # Only hit geoms in groups 0 and 1</span>
+<span class="sd">    )</span>
+
+<span class="sd">This is useful for ignoring certain geometry (e.g., visual-only geoms in</span>
+<span class="sd">group 3) while still detecting collisions with terrain (group 0).</span>
+
+
+<span class="sd">Output Data</span>
+<span class="sd">-----------</span>
+
+<span class="sd">Access sensor data via the ``data`` property, which returns ``RayCastData``:</span>
+
+<span class="sd">- ``distances``: [B, N] Distance to hit, or -1 if no hit / beyond max_distance</span>
+<span class="sd">- ``hit_pos_w``: [B, N, 3] World-space hit positions</span>
+<span class="sd">- ``normals_w``: [B, N, 3] Surface normals at hit points (world frame)</span>
+<span class="sd">- ``pos_w``: [B, 3] Sensor frame position</span>
+<span class="sd">- ``quat_w``: [B, 4] Sensor frame orientation (w, x, y, z)</span>
+
+<span class="sd">Where B = number of environments, N = number of rays.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">mujoco</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">mujoco_warp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mjwarp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">wp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mujoco_warp</span><span class="w"> </span><span class="kn">import</span> <span class="n">rays</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.entity</span><span class="w"> </span><span class="kn">import</span> <span class="n">Entity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.sensor.builtin_sensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.sensor.sensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sensor</span><span class="p">,</span> <span class="n">SensorCfg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.utils.lab_api.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">quat_from_matrix</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.sensor.sensor_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">SensorContext</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.viewer.debug_visualizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">DebugVisualizer</span>
+
+
+<span class="c1"># NOTE: Need to define this here because it&#39;s not publicly exposed by mujoco_warp.</span>
+<span class="n">vec6</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="c1"># Type aliases for configuration choices.</span>
+<span class="n">RayAlignment</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="s2">&quot;yaw&quot;</span><span class="p">,</span> <span class="s2">&quot;world&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="GridPatternCfg">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.GridPatternCfg">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GridPatternCfg</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Grid pattern - parallel rays in a 2D grid.&quot;&quot;&quot;</span>
+
+  <span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Grid size (length, width) in meters.&quot;&quot;&quot;</span>
+
+  <span class="n">resolution</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Spacing between rays in meters.&quot;&quot;&quot;</span>
+
+  <span class="n">direction</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Ray direction in frame-local coordinates.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GridPatternCfg.generate_rays">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.GridPatternCfg.generate_rays">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">generate_rays</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">mj_model</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjModel</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate ray pattern.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      mj_model: MuJoCo model (unused for grid pattern).</span>
+<span class="sd">      device: Device for tensor operations.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Tuple of (local_offsets [N, 3], local_directions [N, 3]).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">del</span> <span class="n">mj_model</span>  <span class="c1"># Unused for grid pattern</span>
+    <span class="n">size_x</span><span class="p">,</span> <span class="n">size_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+      <span class="o">-</span><span class="n">size_x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size_x</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">res</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+    <span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+      <span class="o">-</span><span class="n">size_y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size_y</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">res</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+    <span class="p">)</span>
+    <span class="n">grid_x</span><span class="p">,</span> <span class="n">grid_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+
+    <span class="n">num_rays</span> <span class="o">=</span> <span class="n">grid_x</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span>
+    <span class="n">local_offsets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_rays</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">local_offsets</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_x</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">local_offsets</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    <span class="c1"># All rays share the same direction for grid pattern.</span>
+    <span class="n">direction</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">direction</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span> <span class="o">/</span> <span class="n">direction</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span>
+    <span class="n">local_directions</span> <span class="o">=</span> <span class="n">direction</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">num_rays</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">local_offsets</span><span class="p">,</span> <span class="n">local_directions</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PinholeCameraPatternCfg">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.PinholeCameraPatternCfg">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PinholeCameraPatternCfg</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Pinhole camera pattern - rays diverging from origin like a camera.</span>
+
+<span class="sd">  Can be configured with explicit parameters (width, height, fovy) or created</span>
+<span class="sd">  via factory methods like from_mujoco_camera() or from_intrinsic_matrix().</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Image width in pixels.&quot;&quot;&quot;</span>
+
+  <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Image height in pixels.&quot;&quot;&quot;</span>
+
+  <span class="n">fovy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">45.0</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Vertical field of view in degrees (matches MuJoCo convention).&quot;&quot;&quot;</span>
+
+  <span class="n">_camera_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Internal: MuJoCo camera name for deferred parameter resolution.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PinholeCameraPatternCfg.from_mujoco_camera">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.PinholeCameraPatternCfg.from_mujoco_camera">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">from_mujoco_camera</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">camera_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PinholeCameraPatternCfg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create config that references a MuJoCo camera.</span>
+
+<span class="sd">    Camera parameters (resolution, FOV) are resolved at runtime from the model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      camera_name: Name of the MuJoCo camera to reference.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Config that will resolve parameters from the MuJoCo camera.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Placeholder values; actual values resolved in generate_rays().</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fovy</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">_camera_name</span><span class="o">=</span><span class="n">camera_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PinholeCameraPatternCfg.from_intrinsic_matrix">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.PinholeCameraPatternCfg.from_intrinsic_matrix">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">from_intrinsic_matrix</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span> <span class="n">intrinsic_matrix</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PinholeCameraPatternCfg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create from 3x3 intrinsic matrix [fx, 0, cx, 0, fy, cy, 0, 0, 1].</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      intrinsic_matrix: Flattened 3x3 intrinsic matrix.</span>
+<span class="sd">      width: Image width in pixels.</span>
+<span class="sd">      height: Image height in pixels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Config with fovy computed from the intrinsic matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fy</span> <span class="o">=</span> <span class="n">intrinsic_matrix</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>  <span class="c1"># fy is at position [1,1] in the matrix</span>
+    <span class="n">fovy</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">height</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">fy</span><span class="p">))</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">fovy</span><span class="o">=</span><span class="n">fovy</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PinholeCameraPatternCfg.generate_rays">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.PinholeCameraPatternCfg.generate_rays">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">generate_rays</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">mj_model</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjModel</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate ray pattern.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      mj_model: MuJoCo model (required if using from_mujoco_camera).</span>
+<span class="sd">      device: Device for tensor operations.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Tuple of (local_offsets [N, 3], local_directions [N, 3]).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Resolve camera parameters.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">mj_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;MuJoCo model required when using from_mujoco_camera()&quot;</span><span class="p">)</span>
+      <span class="c1"># Get parameters from MuJoCo camera.</span>
+      <span class="n">cam_id</span> <span class="o">=</span> <span class="n">mj_model</span><span class="o">.</span><span class="n">camera</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_camera_name</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+      <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">mj_model</span><span class="o">.</span><span class="n">cam_resolution</span><span class="p">[</span><span class="n">cam_id</span><span class="p">]</span>
+
+      <span class="c1"># MuJoCo has two camera modes:</span>
+      <span class="c1"># 1. fovy mode: sensorsize is zero, use cam_fovy directly</span>
+      <span class="c1"># 2. Physical sensor mode: sensorsize &gt; 0, compute from focal/sensorsize</span>
+      <span class="n">sensorsize</span> <span class="o">=</span> <span class="n">mj_model</span><span class="o">.</span><span class="n">cam_sensorsize</span><span class="p">[</span><span class="n">cam_id</span><span class="p">]</span>
+      <span class="k">if</span> <span class="n">sensorsize</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">sensorsize</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Physical sensor model.</span>
+        <span class="n">intrinsic</span> <span class="o">=</span> <span class="n">mj_model</span><span class="o">.</span><span class="n">cam_intrinsic</span><span class="p">[</span><span class="n">cam_id</span><span class="p">]</span>  <span class="c1"># [fx, fy, cx, cy]</span>
+        <span class="n">focal</span> <span class="o">=</span> <span class="n">intrinsic</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># [fx, fy]</span>
+        <span class="n">h_fov_rad</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">sensorsize</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">focal</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">v_fov_rad</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">sensorsize</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">focal</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Read vertical FOV directly from MuJoCo.</span>
+        <span class="n">v_fov_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">mj_model</span><span class="o">.</span><span class="n">cam_fovy</span><span class="p">[</span><span class="n">cam_id</span><span class="p">])</span>
+        <span class="n">aspect</span> <span class="o">=</span> <span class="n">width</span> <span class="o">/</span> <span class="n">height</span>
+        <span class="n">h_fov_rad</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">v_fov_rad</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">aspect</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># Use explicit parameters.</span>
+      <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
+      <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span>
+      <span class="n">v_fov_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fovy</span><span class="p">)</span>
+      <span class="n">aspect</span> <span class="o">=</span> <span class="n">width</span> <span class="o">/</span> <span class="n">height</span>
+      <span class="n">h_fov_rad</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">v_fov_rad</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">aspect</span><span class="p">)</span>
+
+    <span class="c1"># Create normalized pixel coordinates [-1, 1].</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">grid_u</span><span class="p">,</span> <span class="n">grid_v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Convert to ray directions (MuJoCo camera: -Z forward, +X right, +Y down).</span>
+    <span class="n">ray_x</span> <span class="o">=</span> <span class="n">grid_u</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">h_fov_rad</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ray_y</span> <span class="o">=</span> <span class="n">grid_v</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">v_fov_rad</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ray_z</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ray_x</span><span class="p">)</span>  <span class="c1"># Negative Z for MuJoCo camera forward</span>
+
+    <span class="n">num_rays</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span>
+    <span class="n">local_offsets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_rays</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">local_directions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">ray_x</span><span class="p">,</span> <span class="n">ray_y</span><span class="p">,</span> <span class="n">ray_z</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">local_directions</span> <span class="o">=</span> <span class="n">local_directions</span> <span class="o">/</span> <span class="n">local_directions</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">local_offsets</span><span class="p">,</span> <span class="n">local_directions</span></div>
+</div>
+
+
+
+<span class="n">PatternCfg</span> <span class="o">=</span> <span class="n">GridPatternCfg</span> <span class="o">|</span> <span class="n">PinholeCameraPatternCfg</span>
+
+
+<div class="viewcode-block" id="RayCastData">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastData">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RayCastData</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Raycast sensor output data.</span>
+
+<span class="sd">  Note:</span>
+<span class="sd">    Fields are views into GPU buffers and are valid until the next</span>
+<span class="sd">    ``sense()`` call.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">distances</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;[B, N] Distance to hit point. -1 if no hit.&quot;&quot;&quot;</span>
+
+  <span class="n">normals_w</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;[B, N, 3] Surface normal at hit point (world frame). Zero if no hit.&quot;&quot;&quot;</span>
+
+  <span class="n">hit_pos_w</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;[B, N, 3] Hit position in world frame. Ray origin if no hit.&quot;&quot;&quot;</span>
+
+  <span class="n">pos_w</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;[B, 3] Frame position in world coordinates.&quot;&quot;&quot;</span>
+
+  <span class="n">quat_w</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;[B, 4] Frame orientation quaternion (w, x, y, z) in world coordinates.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="RayCastSensorCfg">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensorCfg">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RayCastSensorCfg</span><span class="p">(</span><span class="n">SensorCfg</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Raycast sensor configuration.</span>
+
+<span class="sd">  Supports multiple ray patterns (grid, pinhole camera) and alignment modes.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RayCastSensorCfg.VizCfg">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensorCfg.VizCfg">[docs]</a>
+  <span class="nd">@dataclass</span>
+  <span class="k">class</span><span class="w"> </span><span class="nc">VizCfg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Visualization settings for debug rendering.&quot;&quot;&quot;</span>
+
+    <span class="n">hit_color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;RGBA color for rays that hit a surface.&quot;&quot;&quot;</span>
+
+    <span class="n">miss_color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;RGBA color for rays that miss.&quot;&quot;&quot;</span>
+
+    <span class="n">hit_sphere_color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;RGBA color for spheres drawn at hit points.&quot;&quot;&quot;</span>
+
+    <span class="n">hit_sphere_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Radius of spheres drawn at hit points (multiplier of meansize).&quot;&quot;&quot;</span>
+
+    <span class="n">show_rays</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether to draw ray arrows.&quot;&quot;&quot;</span>
+
+    <span class="n">show_normals</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether to draw surface normals at hit points.&quot;&quot;&quot;</span>
+
+    <span class="n">normal_color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;RGBA color for surface normal arrows.&quot;&quot;&quot;</span>
+
+    <span class="n">normal_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Length of surface normal arrows (multiplier of meansize).&quot;&quot;&quot;</span></div>
+
+
+  <span class="n">frame</span><span class="p">:</span> <span class="n">ObjRef</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Body or site to attach rays to.&quot;&quot;&quot;</span>
+
+  <span class="n">pattern</span><span class="p">:</span> <span class="n">PatternCfg</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">GridPatternCfg</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Ray pattern configuration. Defaults to GridPatternCfg.&quot;&quot;&quot;</span>
+
+  <span class="n">ray_alignment</span><span class="p">:</span> <span class="n">RayAlignment</span> <span class="o">=</span> <span class="s2">&quot;base&quot;</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;How rays align with the frame.</span>
+
+<span class="sd">  - &quot;base&quot;: Full position + rotation (default).</span>
+<span class="sd">  - &quot;yaw&quot;: Position + yaw only, ignores pitch/roll (good for height maps).</span>
+<span class="sd">  - &quot;world&quot;: Fixed in world frame, position only follows body.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">max_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Maximum ray distance. Rays beyond this report -1.&quot;&quot;&quot;</span>
+
+  <span class="n">exclude_parent_body</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Exclude parent body from ray intersection tests.&quot;&quot;&quot;</span>
+
+  <span class="n">include_geom_groups</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Geom groups (0-5) to include in raycasting.</span>
+
+<span class="sd">  Defaults to (0, 1, 2). Set to None to include all groups.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">debug_vis</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Enable debug visualization.&quot;&quot;&quot;</span>
+
+  <span class="n">viz</span><span class="p">:</span> <span class="n">VizCfg</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">VizCfg</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Visualization settings.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RayCastSensorCfg.build">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensorCfg.build">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RayCastSensor</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">RayCastSensor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RayCastSensor">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RayCastSensor</span><span class="p">(</span><span class="n">Sensor</span><span class="p">[</span><span class="n">RayCastData</span><span class="p">]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Raycast sensor for terrain and obstacle detection.&quot;&quot;&quot;</span>
+
+  <span class="n">requires_sensor_context</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="RayCastSensor.__init__">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensor.__init__">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">RayCastSensorCfg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">Data</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">Model</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjModel</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_wp_device</span><span class="p">:</span> <span class="n">wp</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_frame_site_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_frame_geom_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_frame_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;site&quot;</span><span class="p">,</span> <span class="s2">&quot;geom&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;body&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_local_offsets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_local_directions</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># [N, 3] per-ray directions</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_pnt</span><span class="p">:</span> <span class="n">wp</span><span class="o">.</span><span class="n">array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_vec</span><span class="p">:</span> <span class="n">wp</span><span class="o">.</span><span class="n">array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_dist</span><span class="p">:</span> <span class="n">wp</span><span class="o">.</span><span class="n">array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_geomid</span><span class="p">:</span> <span class="n">wp</span><span class="o">.</span><span class="n">array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_normal</span><span class="p">:</span> <span class="n">wp</span><span class="o">.</span><span class="n">array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_bodyexclude</span><span class="p">:</span> <span class="n">wp</span><span class="o">.</span><span class="n">array</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_geomgroup</span> <span class="o">=</span> <span class="n">vec6</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_distances</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_normals_w</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_hit_pos_w</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pos_w</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_quat_w</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_world_origins</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_world_rays</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_frame_pos</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_frame_mat</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="p">:</span> <span class="n">SensorContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="RayCastSensor.edit_spec">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensor.edit_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">edit_spec</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">scene_spec</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjSpec</span><span class="p">,</span>
+    <span class="n">entities</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Entity</span><span class="p">],</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">del</span> <span class="n">scene_spec</span><span class="p">,</span> <span class="n">entities</span></div>
+
+
+<div class="viewcode-block" id="RayCastSensor.initialize">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensor.initialize">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">mj_model</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjModel</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">Data</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span> <span class="o">=</span> <span class="n">mj_model</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_wp_device</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">num_envs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">nworld</span>
+
+    <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">frame</span>
+    <span class="n">frame_name</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">prefixed_name</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">frame</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;body&quot;</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span> <span class="o">=</span> <span class="n">mj_model</span><span class="o">.</span><span class="n">body</span><span class="p">(</span><span class="n">frame_name</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_frame_type</span> <span class="o">=</span> <span class="s2">&quot;body&quot;</span>
+    <span class="k">elif</span> <span class="n">frame</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;site&quot;</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_frame_site_id</span> <span class="o">=</span> <span class="n">mj_model</span><span class="o">.</span><span class="n">site</span><span class="p">(</span><span class="n">frame_name</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+      <span class="c1"># Look up parent body for exclusion.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj_model</span><span class="o">.</span><span class="n">site_bodyid</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame_site_id</span><span class="p">])</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_frame_type</span> <span class="o">=</span> <span class="s2">&quot;site&quot;</span>
+    <span class="k">elif</span> <span class="n">frame</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;geom&quot;</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_frame_geom_id</span> <span class="o">=</span> <span class="n">mj_model</span><span class="o">.</span><span class="n">geom</span><span class="p">(</span><span class="n">frame_name</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+      <span class="c1"># Look up parent body for exclusion.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mj_model</span><span class="o">.</span><span class="n">geom_bodyid</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame_geom_id</span><span class="p">])</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_frame_type</span> <span class="o">=</span> <span class="s2">&quot;geom&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;RayCastSensor frame must be &#39;body&#39;, &#39;site&#39;, or &#39;geom&#39;, got &#39;</span><span class="si">{</span><span class="n">frame</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+      <span class="p">)</span>
+
+    <span class="c1"># Generate ray pattern.</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">pattern</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_local_offsets</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_directions</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">generate_rays</span><span class="p">(</span>
+      <span class="n">mj_model</span><span class="p">,</span> <span class="n">device</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_offsets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_pnt</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">wp</span><span class="o">.</span><span class="n">vec3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_vec</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">wp</span><span class="o">.</span><span class="n">vec3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_dist</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_geomid</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_normal</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+      <span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">wp</span><span class="o">.</span><span class="n">vec3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span>
+    <span class="p">)</span>
+
+    <span class="n">body_exclude</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">exclude_parent_body</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+      <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ray_bodyexclude</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">,),</span>
+      <span class="n">body_exclude</span><span class="p">,</span>
+      <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
+      <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Convert include_geom_groups to vec6 format (-1 = include, 0 = exclude).</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">include_geom_groups</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+      <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">include_geom_groups</span><span class="p">:</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">g</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+          <span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_geomgroup</span> <span class="o">=</span> <span class="n">vec6</span><span class="p">(</span><span class="o">*</span><span class="n">groups</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_geomgroup</span> <span class="o">=</span> <span class="n">vec6</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># All groups</span>
+
+    <span class="c1"># Pre-allocate output tensors so shape inference works before</span>
+    <span class="c1"># the first sense() call.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_distances</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_normals_w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_hit_pos_w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pos_w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_quat_w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wp_device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="RayCastSensor.set_context">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensor.set_context">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">SensorContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wire this sensor to a SensorContext for BVH-accelerated raycasting.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="o">=</span> <span class="n">ctx</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_compute_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RayCastData</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+        <span class="s2">&quot;RayCastSensor requires a SensorContext. &quot;</span>
+        <span class="s2">&quot;Ensure the sensor is part of a scene with &quot;</span>
+        <span class="s2">&quot;sim.sense() calls.&quot;</span>
+      <span class="p">)</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distances</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normals_w</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hit_pos_w</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos_w</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quat_w</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">RayCastData</span><span class="p">(</span>
+      <span class="n">distances</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_distances</span><span class="p">,</span>
+      <span class="n">normals_w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_normals_w</span><span class="p">,</span>
+      <span class="n">hit_pos_w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_hit_pos_w</span><span class="p">,</span>
+      <span class="n">pos_w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pos_w</span><span class="p">,</span>
+      <span class="n">quat_w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_quat_w</span><span class="p">,</span>
+    <span class="p">)</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">num_rays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span>
+
+<div class="viewcode-block" id="RayCastSensor.debug_vis">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensor.debug_vis">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">debug_vis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visualizer</span><span class="p">:</span> <span class="n">DebugVisualizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">debug_vis</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_offsets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+    <span class="n">env_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">visualizer</span><span class="o">.</span><span class="n">get_env_indices</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">distances</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">env_indices</span><span class="p">:</span>
+      <span class="k">return</span>
+
+    <span class="c1"># Gather frame poses for selected environments only.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_type</span> <span class="o">==</span> <span class="s2">&quot;body&quot;</span><span class="p">:</span>
+      <span class="n">frame_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">xpos</span><span class="p">[</span><span class="n">env_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span><span class="p">]</span>
+      <span class="n">frame_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">xmat</span><span class="p">[</span><span class="n">env_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_type</span> <span class="o">==</span> <span class="s2">&quot;site&quot;</span><span class="p">:</span>
+      <span class="n">frame_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">site_xpos</span><span class="p">[</span><span class="n">env_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_site_id</span><span class="p">]</span>
+      <span class="n">frame_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">site_xmat</span><span class="p">[</span><span class="n">env_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_site_id</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># geom</span>
+      <span class="n">frame_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">geom_xpos</span><span class="p">[</span><span class="n">env_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_geom_id</span><span class="p">]</span>
+      <span class="n">frame_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">geom_xmat</span><span class="p">[</span><span class="n">env_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_geom_id</span><span class="p">]</span>
+
+    <span class="n">rot_mats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_alignment_rotation</span><span class="p">(</span><span class="n">frame_mat</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">origins</span> <span class="o">=</span> <span class="n">frame_pos</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">offsets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_offsets</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">directions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_directions</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">hit_positions</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">hit_pos_w</span><span class="p">[</span><span class="n">env_indices</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">distances</span><span class="p">[</span><span class="n">env_indices</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">normals</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">normals_w</span><span class="p">[</span><span class="n">env_indices</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="n">meansize</span> <span class="o">=</span> <span class="n">visualizer</span><span class="o">.</span><span class="n">meansize</span>
+    <span class="n">ray_width</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">meansize</span>
+    <span class="n">sphere_radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">hit_sphere_radius</span> <span class="o">*</span> <span class="n">meansize</span>
+    <span class="n">normal_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">normal_length</span> <span class="o">*</span> <span class="n">meansize</span>
+    <span class="n">normal_width</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">meansize</span>
+    <span class="n">miss_extent</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">max_distance</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">env_indices</span><span class="p">)):</span>
+      <span class="n">rot</span> <span class="o">=</span> <span class="n">rot_mats</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">):</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="n">origins</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">rot</span> <span class="o">@</span> <span class="n">offsets</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">hit</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">hit</span><span class="p">:</span>
+          <span class="n">end</span> <span class="o">=</span> <span class="n">hit_positions</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+          <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">hit_color</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">end</span> <span class="o">=</span> <span class="n">origin</span> <span class="o">+</span> <span class="n">rot</span> <span class="o">@</span> <span class="n">directions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">miss_extent</span>
+          <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">miss_color</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">show_rays</span><span class="p">:</span>
+          <span class="n">visualizer</span><span class="o">.</span><span class="n">add_arrow</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">origin</span><span class="p">,</span>
+            <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">ray_width</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_ray_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+          <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">hit</span><span class="p">:</span>
+          <span class="n">visualizer</span><span class="o">.</span><span class="n">add_sphere</span><span class="p">(</span>
+            <span class="n">center</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">sphere_radius</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">hit_sphere_color</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_hit_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+          <span class="p">)</span>
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">show_normals</span><span class="p">:</span>
+            <span class="n">normal_end</span> <span class="o">=</span> <span class="n">end</span> <span class="o">+</span> <span class="n">normals</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">normal_length</span>
+            <span class="n">visualizer</span><span class="o">.</span><span class="n">add_arrow</span><span class="p">(</span>
+              <span class="n">start</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+              <span class="n">end</span><span class="o">=</span><span class="n">normal_end</span><span class="p">,</span>
+              <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">normal_color</span><span class="p">,</span>
+              <span class="n">width</span><span class="o">=</span><span class="n">normal_width</span><span class="p">,</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_normal_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+  <span class="c1"># Private methods.</span>
+
+<div class="viewcode-block" id="RayCastSensor.prepare_rays">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensor.prepare_rays">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">prepare_rays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;PRE-GRAPH: Transform local rays to world frame.</span>
+
+<span class="sd">    Reads body/site/geom poses via PyTorch and writes world-frame ray</span>
+<span class="sd">    origins and directions into Warp arrays. Caches the frame pose and</span>
+<span class="sd">    world-frame tensors for postprocess_rays().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_offsets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_type</span> <span class="o">==</span> <span class="s2">&quot;body&quot;</span><span class="p">:</span>
+      <span class="n">frame_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">xpos</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span><span class="p">]</span>
+      <span class="n">frame_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">xmat</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_body_id</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_type</span> <span class="o">==</span> <span class="s2">&quot;site&quot;</span><span class="p">:</span>
+      <span class="n">frame_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">site_xpos</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_site_id</span><span class="p">]</span>
+      <span class="n">frame_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">site_xmat</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_site_id</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># geom</span>
+      <span class="n">frame_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">geom_xpos</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_geom_id</span><span class="p">]</span>
+      <span class="n">frame_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">geom_xmat</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_geom_id</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">num_envs</span> <span class="o">=</span> <span class="n">frame_pos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">rot_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_alignment_rotation</span><span class="p">(</span><span class="n">frame_mat</span><span class="p">)</span>
+
+    <span class="n">world_offsets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;bij,nj-&gt;bni&quot;</span><span class="p">,</span> <span class="n">rot_mat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_offsets</span><span class="p">)</span>
+    <span class="n">world_origins</span> <span class="o">=</span> <span class="n">frame_pos</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">world_offsets</span>
+    <span class="n">world_rays</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;bij,nj-&gt;bni&quot;</span><span class="p">,</span> <span class="n">rot_mat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_directions</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ray_pnt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ray_vec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">pnt_torch</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">to_torch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_pnt</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">vec_torch</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">to_torch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_vec</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">pnt_torch</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">world_origins</span><span class="p">)</span>
+    <span class="n">vec_torch</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">world_rays</span><span class="p">)</span>
+
+    <span class="c1"># Cache for postprocess_rays().</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_world_origins</span> <span class="o">=</span> <span class="n">world_origins</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_world_rays</span> <span class="o">=</span> <span class="n">world_rays</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_frame_pos</span> <span class="o">=</span> <span class="n">frame_pos</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_frame_mat</span> <span class="o">=</span> <span class="n">frame_mat</span></div>
+
+
+<div class="viewcode-block" id="RayCastSensor.raycast_kernel">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensor.raycast_kernel">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">raycast_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">:</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">RenderContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;IN-GRAPH: Execute BVH-accelerated raycast kernel.&quot;&quot;&quot;</span>
+    <span class="n">rays</span><span class="p">(</span>
+      <span class="n">m</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">struct</span><span class="p">,</span>  <span class="c1"># type: ignore[attr-defined]</span>
+      <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">struct</span><span class="p">,</span>  <span class="c1"># type: ignore[attr-defined]</span>
+      <span class="n">pnt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_pnt</span><span class="p">,</span>
+      <span class="n">vec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_vec</span><span class="p">,</span>
+      <span class="n">geomgroup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_geomgroup</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
+      <span class="n">flg_static</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+      <span class="n">bodyexclude</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_bodyexclude</span><span class="p">,</span>
+      <span class="n">dist</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_dist</span><span class="p">,</span>
+      <span class="n">geomid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_geomid</span><span class="p">,</span>
+      <span class="n">normal</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_normal</span><span class="p">,</span>
+      <span class="n">rc</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RayCastSensor.postprocess_rays">
+<a class="viewcode-back" href="../../../source/api/sensor.html#mjlab.sensor.RayCastSensor.postprocess_rays">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">postprocess_rays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;POST-GRAPH: Convert Warp outputs to PyTorch, compute hit positions.&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_world_origins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_world_rays</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_frame_pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_frame_mat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="n">num_envs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_frame_pos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ray_dist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ray_normal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_distances</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">to_torch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_dist</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_normals_w</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">to_torch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ray_normal</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rays</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_distances</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_distances</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">max_distance</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+
+    <span class="n">hit_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distances</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="n">hit_pos_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_world_origins</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">hit_pos_w</span><span class="p">[</span><span class="n">hit_mask</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_world_origins</span><span class="p">[</span>
+      <span class="n">hit_mask</span>
+    <span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_world_rays</span><span class="p">[</span><span class="n">hit_mask</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distances</span><span class="p">[</span><span class="n">hit_mask</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_hit_pos_w</span> <span class="o">=</span> <span class="n">hit_pos_w</span>
+
+    <span class="c1"># Zero out normals for misses.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_normals_w</span><span class="p">[</span><span class="o">~</span><span class="n">hit_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pos_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_frame_pos</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_quat_w</span> <span class="o">=</span> <span class="n">quat_from_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cached_frame_mat</span><span class="p">)</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_compute_alignment_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_mat</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute rotation matrix based on ray_alignment setting.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ray_alignment</span> <span class="o">==</span> <span class="s2">&quot;base&quot;</span><span class="p">:</span>
+      <span class="c1"># Full rotation.</span>
+      <span class="k">return</span> <span class="n">frame_mat</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ray_alignment</span> <span class="o">==</span> <span class="s2">&quot;yaw&quot;</span><span class="p">:</span>
+      <span class="c1"># Extract yaw only, zero out pitch/roll.</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_yaw_rotation</span><span class="p">(</span><span class="n">frame_mat</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ray_alignment</span> <span class="o">==</span> <span class="s2">&quot;world&quot;</span><span class="p">:</span>
+      <span class="c1"># Identity rotation (world-aligned).</span>
+      <span class="n">num_envs</span> <span class="o">=</span> <span class="n">frame_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">return</span> <span class="p">(</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">frame_mat</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">frame_mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown ray_alignment: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ray_alignment</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_extract_yaw_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rot_mat</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract yaw-only rotation matrix (rotation around Z axis).</span>
+
+<span class="sd">    Handles the singularity at ±90° pitch by falling back to the Y-axis</span>
+<span class="sd">    when the X-axis projection onto the XY plane is too small.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">rot_mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">rot_mat</span><span class="o">.</span><span class="n">device</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">rot_mat</span><span class="o">.</span><span class="n">dtype</span>
+
+    <span class="c1"># Project X-axis onto XY plane.</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="n">rot_mat</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># First column [B, 3]</span>
+    <span class="n">x_proj</span> <span class="o">=</span> <span class="n">x_axis</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">x_proj</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Zero out Z component</span>
+    <span class="n">x_norm</span> <span class="o">=</span> <span class="n">x_proj</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [B]</span>
+
+    <span class="c1"># Check for singularity (X-axis nearly vertical).</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">singular</span> <span class="o">=</span> <span class="n">x_norm</span> <span class="o">&lt;</span> <span class="n">threshold</span>  <span class="c1"># [B]</span>
+
+    <span class="c1"># For singular cases, use Y-axis instead.</span>
+    <span class="k">if</span> <span class="n">singular</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+      <span class="n">y_axis</span> <span class="o">=</span> <span class="n">rot_mat</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># Second column [B, 3]</span>
+      <span class="n">y_proj</span> <span class="o">=</span> <span class="n">y_axis</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+      <span class="n">y_proj</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="n">y_norm</span> <span class="o">=</span> <span class="n">y_proj</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+      <span class="n">y_proj</span> <span class="o">=</span> <span class="n">y_proj</span> <span class="o">/</span> <span class="n">y_norm</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="c1"># Y-axis points left; rotate -90° around Z to get forward direction.</span>
+      <span class="c1"># [y_x, y_y] -&gt; [y_y, -y_x]</span>
+      <span class="n">x_from_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y_proj</span><span class="p">)</span>
+      <span class="n">x_from_y</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_proj</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+      <span class="n">x_from_y</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">y_proj</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+      <span class="n">x_proj</span><span class="p">[</span><span class="n">singular</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_from_y</span><span class="p">[</span><span class="n">singular</span><span class="p">]</span>
+      <span class="n">x_norm</span><span class="p">[</span><span class="n">singular</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Already normalized</span>
+
+    <span class="c1"># Normalize X projection.</span>
+    <span class="n">x_norm</span> <span class="o">=</span> <span class="n">x_norm</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="n">x_proj</span> <span class="o">=</span> <span class="n">x_proj</span> <span class="o">/</span> <span class="n">x_norm</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Build yaw-only rotation matrix.</span>
+    <span class="n">yaw_mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">yaw_mat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_proj</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">yaw_mat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_proj</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">yaw_mat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">x_proj</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">yaw_mat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_proj</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">yaw_mat</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">yaw_mat</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The mjlab Developers
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, The mjlab Developers.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Mar 10, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

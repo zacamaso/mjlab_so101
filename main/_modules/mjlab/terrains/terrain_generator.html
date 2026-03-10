@@ -1,0 +1,872 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mjlab.terrains.terrain_generator &#8212; mjlab Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/twemoji.css" />
+    <link rel="stylesheet" type="text/css" href="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/css/all.min.css?v=53359634" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ea80bc3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js"></script>
+    <script src="../../../_static/twemoji.js"></script>
+    <script src="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/js/all.min.js?v=ec35c6c9"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mjlab/terrains/terrain_generator';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Mar 10, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mjlab Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+<div class="sidebar-version-switcher">
+  <label class="sidebar-version-label" for="version-select">Version</label>
+  <select id="version-select" class="sidebar-version-select" onchange="location = this.value;">
+    <option value="terrain_generator.html" selected>main</option>
+  </select>
+</div>
+</div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/architecture_overview.html">Architecture Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/entity/index.html">Entity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/entity/entity_data.html">Entity Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actuators.html">Actuators</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/sensors/index.html">Sensors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/raycast_sensor.html">RayCast Sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/rgbd_camera.html">RGB-D Camera</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/scene.html">Scene</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terrain.html">Terrain</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Manager Layer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/environment_config.html">Environment Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/observations.html">Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/rewards.html">Rewards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terminations.html">Terminations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/events.html">Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/randomization.html">Domain Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/curriculum.html">Curriculum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/metrics.html">Metrics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Training &amp; Debugging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/rsl_rl.html">Training with RSL-RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/viewers.html">Viewers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/distributed_training.html">Distributed Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/cloud.html">Cloud Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/nan_guard.html">NaN Guard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/export_scene.html">Export Scene</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/envs.html">mjlab.envs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/scene.html">mjlab.scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sim.html">mjlab.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/entity.html">mjlab.entity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/actuator.html">mjlab.actuator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sensor.html">mjlab.sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/managers.html">mjlab.managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/terrains.html">mjlab.terrains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/rl.html">mjlab.rl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/viewer.html">mjlab.viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/tasks.html">mjlab.tasks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Further Reading</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/motivation.html">Why mjlab?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/faq.html">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab/issues/new?title=Issue%20on%20page%20%2F_modules/mjlab/terrains/terrain_generator.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mjlab.terrains.terrain_generator</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">mujoco</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.terrains.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_border</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.utils.color</span><span class="w"> </span><span class="kn">import</span> <span class="n">RGBA</span>
+
+<span class="n">_DARK_GRAY</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FlatPatchSamplingCfg">
+<a class="viewcode-back" href="../../../source/api/terrains.html#mjlab.terrains.FlatPatchSamplingCfg">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FlatPatchSamplingCfg</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for sampling flat patches on a heightfield surface.&quot;&quot;&quot;</span>
+
+  <span class="n">num_patches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Number of flat patches to sample per sub-terrain.&quot;&quot;&quot;</span>
+  <span class="n">patch_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Radius of the circular footprint used to test flatness, in meters.&quot;&quot;&quot;</span>
+  <span class="n">max_height_diff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Maximum allowed height variation within the patch footprint, in meters.&quot;&quot;&quot;</span>
+  <span class="n">x_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Allowed range of x coordinates for sampled patches, in meters.&quot;&quot;&quot;</span>
+  <span class="n">y_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Allowed range of y coordinates for sampled patches, in meters.&quot;&quot;&quot;</span>
+  <span class="n">z_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Allowed range of z coordinates (world height) for sampled patches, in meters.&quot;&quot;&quot;</span>
+  <span class="n">grid_resolution</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Resolution of the grid used for flat-patch detection, in meters. When</span>
+<span class="sd">  ``None`` (default), the terrain&#39;s own ``horizontal_scale`` is used. Set to a</span>
+<span class="sd">  smaller value (e.g. 0.025) for finer boundary precision at the cost of a</span>
+<span class="sd">  larger intermediate grid.&quot;&quot;&quot;</span></div>
+
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TerrainGeometry</span><span class="p">:</span>
+  <span class="n">geom</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjsGeom</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;MuJoCo geometry spec element, or None.&quot;&quot;&quot;</span>
+  <span class="n">hfield</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjsHField</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;MuJoCo heightfield spec element, or None.&quot;&quot;&quot;</span>
+  <span class="n">color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;RGBA color override for this geometry, or None to use default.&quot;&quot;&quot;</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TerrainOutput</span><span class="p">:</span>
+  <span class="n">origin</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Spawn origin position (x, y, z) in the sub-terrain&#39;s local frame.&quot;&quot;&quot;</span>
+  <span class="n">geometries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TerrainGeometry</span><span class="p">]</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;List of geometry elements comprising this terrain.&quot;&quot;&quot;</span>
+  <span class="n">flat_patches</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Named sets of flat patch positions, each an (N, 3) array. None if not configured.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="SubTerrainCfg">
+<a class="viewcode-back" href="../../../source/api/terrains.html#mjlab.terrains.SubTerrainCfg">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SubTerrainCfg</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+  <span class="n">proportion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Terrain type allocation weight (behavior depends on curriculum mode):</span>
+
+<span class="sd">  - curriculum=True: Controls column allocation. Normalized proportions determine</span>
+<span class="sd">    how many columns each terrain type occupies via cumulative distribution.</span>
+<span class="sd">    Example: proportions [0.5, 0.5] with num_cols=2 gives one terrain per column.</span>
+
+<span class="sd">  - curriculum=False: Sampling probability for each patch. Each patch independently</span>
+<span class="sd">    samples a terrain type weighted by normalized proportions.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Width and length of the terrain patch, in meters.&quot;&quot;&quot;</span>
+  <span class="n">flat_patch_sampling</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FlatPatchSamplingCfg</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Named flat-patch sampling configurations, or None to disable.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SubTerrainCfg.function">
+<a class="viewcode-back" href="../../../source/api/terrains.html#mjlab.terrains.SubTerrainCfg.function">[docs]</a>
+  <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjSpec</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerrainOutput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate terrain geometry.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      TerrainOutput containing spawn origin and list of geometries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TerrainGeneratorCfg">
+<a class="viewcode-back" href="../../../source/api/terrains.html#mjlab.terrains.TerrainGeneratorCfg">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TerrainGeneratorCfg</span><span class="p">:</span>
+  <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Random seed for terrain generation. None uses a random seed.&quot;&quot;&quot;</span>
+  <span class="n">curriculum</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Controls terrain allocation mode:</span>
+
+<span class="sd">  - curriculum=True: Each column gets ONE terrain type (deterministic allocation).</span>
+<span class="sd">    Difficulty increases along rows. Use this to ensure each terrain type occupies</span>
+<span class="sd">    its own column(s).</span>
+
+<span class="sd">  - curriculum=False: Every patch is randomly sampled from all terrain types.</span>
+<span class="sd">    Proportions control sampling probability. Use this for random variety.</span>
+
+<span class="sd">  Example: With 2 terrain types and num_cols=2, curriculum=True gives one terrain</span>
+<span class="sd">  per column. curriculum=False gives a random mix of both types in all patches.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Width and length of each sub-terrain patch, in meters.&quot;&quot;&quot;</span>
+  <span class="n">border_width</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Width of the flat border around the entire terrain grid, in meters.&quot;&quot;&quot;</span>
+  <span class="n">border_height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Height of the border wall around the terrain grid, in meters.&quot;&quot;&quot;</span>
+  <span class="n">num_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Number of sub-terrain rows in the grid. Represents difficulty levels in</span>
+<span class="sd">  curriculum mode. Note: Environments are randomly assigned to rows, so multiple</span>
+<span class="sd">  envs can share the same patch.&quot;&quot;&quot;</span>
+  <span class="n">num_cols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Number of sub-terrain columns in the grid. Represents terrain type variants.</span>
+<span class="sd">  Note: Environments are evenly distributed across columns (not random).&quot;&quot;&quot;</span>
+  <span class="n">color_scheme</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Coloring strategy for terrain geometry. &quot;height&quot; colors by elevation,</span>
+<span class="sd">  &quot;random&quot; assigns random colors, &quot;none&quot; uses uniform gray.&quot;&quot;&quot;</span>
+  <span class="n">sub_terrains</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SubTerrainCfg</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Named sub-terrain configurations to populate the grid.&quot;&quot;&quot;</span>
+  <span class="n">difficulty_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Min and max difficulty values used when generating sub-terrains.&quot;&quot;&quot;</span>
+  <span class="n">add_lights</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;If True, adds a directional light above the terrain grid.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="TerrainGenerator">
+<a class="viewcode-back" href="../../../source/api/terrains.html#mjlab.terrains.TerrainGenerator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TerrainGenerator</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Generates procedural terrain grids with configurable difficulty.</span>
+
+<span class="sd">  Creates a grid of terrain patches where each patch can be a different</span>
+<span class="sd">  terrain type. Supports two modes:</span>
+
+<span class="sd">  - **Random mode** (curriculum=False): Every patch independently samples a</span>
+<span class="sd">    terrain type weighted by proportions. Results in random variety across</span>
+<span class="sd">    all patches.</span>
+
+<span class="sd">  - **Curriculum mode** (curriculum=True): Columns are deterministically</span>
+<span class="sd">    assigned to terrain types based on proportions. All patches in a column</span>
+<span class="sd">    share the same terrain type, with difficulty increasing along rows.</span>
+<span class="sd">    Use this to ensure each terrain type occupies specific column(s).</span>
+
+<span class="sd">  Terrain types are weighted by proportion and their geometry is generated</span>
+<span class="sd">  based on a difficulty value in the configured range. The grid is centered</span>
+<span class="sd">  at the world origin. A border can be added around the entire grid along with</span>
+<span class="sd">  optional overhead lighting.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TerrainGenerator.__init__">
+<a class="viewcode-back" href="../../../source/api/terrains.html#mjlab.terrains.TerrainGenerator.__init__">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">TerrainGeneratorCfg</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">sub_terrains</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one sub_terrain must be specified.&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+
+    <span class="k">for</span> <span class="n">sub_cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">sub_terrains</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+      <span class="n">sub_cfg</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">seed</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">seed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">np_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">terrain_origins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="c1"># Pre-allocate flat patch storage by scanning all sub-terrain configs.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">flat_patches</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">flat_patch_radii</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">patch_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">sub_cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">sub_terrains</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">sub_cfg</span><span class="o">.</span><span class="n">flat_patch_sampling</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">patch_cfg</span> <span class="ow">in</span> <span class="n">sub_cfg</span><span class="o">.</span><span class="n">flat_patch_sampling</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+          <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">patch_names</span><span class="p">:</span>
+            <span class="n">patch_names</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">patch_names</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">patch_cfg</span><span class="o">.</span><span class="n">num_patches</span><span class="p">)</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="n">patch_names</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">patch_cfg</span><span class="o">.</span><span class="n">num_patches</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">flat_patch_radii</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">flat_patch_radii</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">patch_cfg</span><span class="o">.</span><span class="n">patch_radius</span>
+          <span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">max_num_patches</span> <span class="ow">in</span> <span class="n">patch_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">flat_patches</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span><span class="p">,</span> <span class="n">max_num_patches</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+      <span class="p">)</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">worldbody</span><span class="o">.</span><span class="n">add_body</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;terrain&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">curriculum</span><span class="p">:</span>
+      <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_generate_curriculum_terrains</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+      <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Curriculum terrain generation took </span><span class="si">{</span><span class="n">toc</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tic</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_generate_random_terrains</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+      <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Terrain generation took </span><span class="si">{</span><span class="n">toc</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tic</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_add_terrain_border</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_add_grid_lights</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="n">body</span><span class="o">.</span><span class="n">geoms</span><span class="p">:</span>
+      <span class="n">geom</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;terrain_</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="c1"># Terrain is static (no joints), so body mass is physically meaningless.</span>
+      <span class="c1"># Without this, the thousands of dense geoms give the terrain body millions of kg</span>
+      <span class="c1"># of mass, which inflates stat.meanmass and makes MuJoCo&#39;s force arrow</span>
+      <span class="c1"># visualization invisible (arrows scale as force / meanmass).</span>
+      <span class="n">geom</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_generate_random_terrains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Normalize the proportions of the sub-terrains.</span>
+    <span class="n">proportions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+      <span class="p">[</span><span class="n">sub_cfg</span><span class="o">.</span><span class="n">proportion</span> <span class="k">for</span> <span class="n">sub_cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">sub_terrains</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+    <span class="p">)</span>
+    <span class="n">proportions</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">proportions</span><span class="p">)</span>
+
+    <span class="n">sub_terrains_cfgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">sub_terrains</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="c1"># Randomly sample and place sub-terrains in the grid.</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span><span class="p">):</span>
+      <span class="n">sub_row</span><span class="p">,</span> <span class="n">sub_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span><span class="p">))</span>
+      <span class="n">sub_row</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sub_row</span><span class="p">)</span>
+      <span class="n">sub_col</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sub_col</span><span class="p">)</span>
+
+      <span class="c1"># Randomly select a sub-terrain type and difficulty.</span>
+      <span class="n">sub_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">proportions</span><span class="p">),</span> <span class="n">p</span><span class="o">=</span><span class="n">proportions</span><span class="p">)</span>
+      <span class="n">difficulty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">difficulty_range</span><span class="p">)</span>
+
+      <span class="c1"># Calculate the world position for this sub-terrain.</span>
+      <span class="n">world_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sub_terrain_position</span><span class="p">(</span><span class="n">sub_row</span><span class="p">,</span> <span class="n">sub_col</span><span class="p">)</span>
+
+      <span class="c1"># Create the terrain mesh and get the spawn origin in world coordinates.</span>
+      <span class="n">spawn_origin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_terrain_geom</span><span class="p">(</span>
+        <span class="n">spec</span><span class="p">,</span>
+        <span class="n">world_position</span><span class="p">,</span>
+        <span class="n">difficulty</span><span class="p">,</span>
+        <span class="n">sub_terrains_cfgs</span><span class="p">[</span><span class="n">sub_index</span><span class="p">],</span>
+        <span class="n">sub_row</span><span class="p">,</span>
+        <span class="n">sub_col</span><span class="p">,</span>
+      <span class="p">)</span>
+
+      <span class="c1"># Store the spawn origin for this terrain.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">terrain_origins</span><span class="p">[</span><span class="n">sub_row</span><span class="p">,</span> <span class="n">sub_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">spawn_origin</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_generate_curriculum_terrains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Normalize the proportions of the sub-terrains.</span>
+    <span class="n">proportions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+      <span class="p">[</span><span class="n">sub_cfg</span><span class="o">.</span><span class="n">proportion</span> <span class="k">for</span> <span class="n">sub_cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">sub_terrains</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+    <span class="p">)</span>
+    <span class="n">proportions</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">proportions</span><span class="p">)</span>
+
+    <span class="n">sub_indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span><span class="p">):</span>
+      <span class="n">sub_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">index</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span> <span class="o">+</span> <span class="mf">0.001</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">proportions</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="p">)</span>
+      <span class="n">sub_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_index</span><span class="p">)</span>
+    <span class="n">sub_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sub_indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+    <span class="n">sub_terrains_cfgs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">sub_terrains</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">sub_col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">sub_row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span><span class="p">):</span>
+        <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">difficulty_range</span>
+        <span class="n">difficulty</span> <span class="o">=</span> <span class="p">(</span><span class="n">sub_row</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">())</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span>
+        <span class="n">difficulty</span> <span class="o">=</span> <span class="n">lower</span> <span class="o">+</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span> <span class="o">*</span> <span class="n">difficulty</span>
+        <span class="n">world_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sub_terrain_position</span><span class="p">(</span><span class="n">sub_row</span><span class="p">,</span> <span class="n">sub_col</span><span class="p">)</span>
+        <span class="n">spawn_origin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_terrain_geom</span><span class="p">(</span>
+          <span class="n">spec</span><span class="p">,</span>
+          <span class="n">world_position</span><span class="p">,</span>
+          <span class="n">difficulty</span><span class="p">,</span>
+          <span class="n">sub_terrains_cfgs</span><span class="p">[</span><span class="n">sub_indices</span><span class="p">[</span><span class="n">sub_col</span><span class="p">]],</span>
+          <span class="n">sub_row</span><span class="p">,</span>
+          <span class="n">sub_col</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terrain_origins</span><span class="p">[</span><span class="n">sub_row</span><span class="p">,</span> <span class="n">sub_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">spawn_origin</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_get_sub_terrain_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the world position for a sub-terrain at the given grid indices.</span>
+
+<span class="sd">    This returns the position of the sub-terrain&#39;s corner (not center).</span>
+<span class="sd">    The entire grid is centered at the world origin.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculate position relative to grid corner.</span>
+    <span class="n">rel_x</span> <span class="o">=</span> <span class="n">row</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">rel_y</span> <span class="o">=</span> <span class="n">col</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Offset to center the entire grid at world origin.</span>
+    <span class="n">grid_offset_x</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="n">grid_offset_y</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">grid_offset_x</span> <span class="o">+</span> <span class="n">rel_x</span><span class="p">,</span> <span class="n">grid_offset_y</span> <span class="o">+</span> <span class="n">rel_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_create_terrain_geom</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">spec</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjSpec</span><span class="p">,</span>
+    <span class="n">world_position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">difficulty</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">cfg</span><span class="p">:</span> <span class="n">SubTerrainCfg</span><span class="p">,</span>
+    <span class="n">sub_row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">sub_col</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a terrain geometry at the specified world position.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      spec: MuJoCo spec to add geometry to.</span>
+<span class="sd">      world_position: World position of the terrain&#39;s corner.</span>
+<span class="sd">      difficulty: Difficulty parameter for terrain generation.</span>
+<span class="sd">      cfg: Sub-terrain configuration.</span>
+<span class="sd">      sub_row: Row index in the terrain grid.</span>
+<span class="sd">      sub_col: Column index in the terrain grid.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      The spawn origin in world coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">difficulty</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_rng</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">terrain_geom</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">geometries</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">terrain_geom</span><span class="o">.</span><span class="n">geom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">terrain_geom</span><span class="o">.</span><span class="n">geom</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">terrain_geom</span><span class="o">.</span><span class="n">geom</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="o">+</span> <span class="n">world_position</span>
+        <span class="k">if</span> <span class="n">terrain_geom</span><span class="o">.</span><span class="n">geom</span><span class="o">.</span><span class="n">material</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">color_scheme</span> <span class="o">==</span> <span class="s2">&quot;height&quot;</span> <span class="ow">and</span> <span class="n">terrain_geom</span><span class="o">.</span><span class="n">color</span><span class="p">:</span>
+            <span class="n">terrain_geom</span><span class="o">.</span><span class="n">geom</span><span class="o">.</span><span class="n">rgba</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">terrain_geom</span><span class="o">.</span><span class="n">color</span>
+          <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">color_scheme</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+            <span class="n">terrain_geom</span><span class="o">.</span><span class="n">geom</span><span class="o">.</span><span class="n">rgba</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">terrain_geom</span><span class="o">.</span><span class="n">geom</span><span class="o">.</span><span class="n">rgba</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+          <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">color_scheme</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+            <span class="n">terrain_geom</span><span class="o">.</span><span class="n">geom</span><span class="o">.</span><span class="n">rgba</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Collect flat patches into pre-allocated arrays.</span>
+    <span class="n">spawn_origin</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">origin</span> <span class="o">+</span> <span class="n">world_position</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flat_patches</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">flat_patches</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">flat_patches</span><span class="p">:</span>
+        <span class="n">patches</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">flat_patches</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">sub_row</span><span class="p">,</span> <span class="n">sub_col</span><span class="p">,</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">patches</span><span class="p">)]</span> <span class="o">=</span> <span class="n">patches</span> <span class="o">+</span> <span class="n">world_position</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">sub_row</span><span class="p">,</span> <span class="n">sub_col</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">patches</span><span class="p">)</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">spawn_origin</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Sub-terrain didn&#39;t produce patches: fill with spawn origin so that</span>
+        <span class="c1"># every slot contains a valid position for reset_root_state_from_flat_patches.</span>
+        <span class="n">arr</span><span class="p">[</span><span class="n">sub_row</span><span class="p">,</span> <span class="n">sub_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">spawn_origin</span>
+
+    <span class="k">return</span> <span class="n">spawn_origin</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_add_terrain_border</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">border_width</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">body</span><span class="p">(</span><span class="s2">&quot;terrain&quot;</span><span class="p">)</span>
+    <span class="n">border_size</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">border_width</span><span class="p">,</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">border_width</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">inner_size</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="c1"># Border should be centered at origin since the terrain grid is centered.</span>
+    <span class="n">border_center</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">border_height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">boxes</span> <span class="o">=</span> <span class="n">make_border</span><span class="p">(</span>
+      <span class="n">body</span><span class="p">,</span>
+      <span class="n">border_size</span><span class="p">,</span>
+      <span class="n">inner_size</span><span class="p">,</span>
+      <span class="n">height</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">border_height</span><span class="p">),</span>
+      <span class="n">position</span><span class="o">=</span><span class="n">border_center</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="n">boxes</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">color_scheme</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+        <span class="n">box</span><span class="o">.</span><span class="n">rgba</span> <span class="o">=</span> <span class="n">RGBA</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">np_rng</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">box</span><span class="o">.</span><span class="n">rgba</span> <span class="o">=</span> <span class="n">_DARK_GRAY</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_add_grid_lights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_lights</span><span class="p">:</span>
+      <span class="k">return</span>
+
+    <span class="n">total_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_rows</span>
+    <span class="n">total_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_cols</span>
+    <span class="n">light_height</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">total_width</span><span class="p">,</span> <span class="n">total_height</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.6</span>
+
+    <span class="n">spec</span><span class="o">.</span><span class="n">body</span><span class="p">(</span><span class="s2">&quot;terrain&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">add_light</span><span class="p">(</span>
+      <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">light_height</span><span class="p">),</span>
+      <span class="nb">type</span><span class="o">=</span><span class="n">mujoco</span><span class="o">.</span><span class="n">mjtLightType</span><span class="o">.</span><span class="n">mjLIGHT_DIRECTIONAL</span><span class="p">,</span>
+      <span class="nb">dir</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The mjlab Developers
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, The mjlab Developers.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Mar 10, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

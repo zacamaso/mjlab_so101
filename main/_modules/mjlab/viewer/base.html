@@ -1,0 +1,968 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mjlab.viewer.base &#8212; mjlab Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/twemoji.css" />
+    <link rel="stylesheet" type="text/css" href="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/css/all.min.css?v=53359634" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ea80bc3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js"></script>
+    <script src="../../../_static/twemoji.js"></script>
+    <script src="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/js/all.min.js?v=ec35c6c9"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mjlab/viewer/base';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Mar 10, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mjlab Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+<div class="sidebar-version-switcher">
+  <label class="sidebar-version-label" for="version-select">Version</label>
+  <select id="version-select" class="sidebar-version-select" onchange="location = this.value;">
+    <option value="base.html" selected>main</option>
+  </select>
+</div>
+</div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/architecture_overview.html">Architecture Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/entity/index.html">Entity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/entity/entity_data.html">Entity Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actuators.html">Actuators</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/sensors/index.html">Sensors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/raycast_sensor.html">RayCast Sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/rgbd_camera.html">RGB-D Camera</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/scene.html">Scene</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terrain.html">Terrain</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Manager Layer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/environment_config.html">Environment Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/observations.html">Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/rewards.html">Rewards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terminations.html">Terminations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/events.html">Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/randomization.html">Domain Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/curriculum.html">Curriculum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/metrics.html">Metrics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Training &amp; Debugging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/rsl_rl.html">Training with RSL-RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/viewers.html">Viewers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/distributed_training.html">Distributed Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/cloud.html">Cloud Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/nan_guard.html">NaN Guard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/export_scene.html">Export Scene</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/envs.html">mjlab.envs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/scene.html">mjlab.scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sim.html">mjlab.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/entity.html">mjlab.entity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/actuator.html">mjlab.actuator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sensor.html">mjlab.sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/managers.html">mjlab.managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/terrains.html">mjlab.terrains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/rl.html">mjlab.rl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/viewer.html">mjlab.viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/tasks.html">mjlab.tasks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Further Reading</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/motivation.html">Why mjlab?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/faq.html">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab/issues/new?title=Issue%20on%20page%20%2F_modules/mjlab/viewer/base.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mjlab.viewer.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Base class for environment viewers.</span>
+
+<span class="sd">The viewer runs a policy against an RL environment and displays the</span>
+<span class="sd">result in real time.</span>
+
+<span class="sd">The Problem</span>
+<span class="sd">===========</span>
+
+<span class="sd">Each call to ``env.step()`` advances the simulation by a fixed amount</span>
+<span class="sd">of sim time (``step_dt``, set by the env config). The simplest viewer</span>
+<span class="sd">would call ``env.step()`` once per loop iteration, but iterations take</span>
+<span class="sd">however long the hardware needs. A fast machine loops 67 times per</span>
+<span class="sd">second and the simulation runs too fast; a slow machine loops 30 times</span>
+<span class="sd">and it runs too slow. Playback speed would depend on hardware.</span>
+
+<span class="sd">The viewer needs to answer a different question: given how much real</span>
+<span class="sd">time just elapsed, how many calls to ``env.step()`` will keep the</span>
+<span class="sd">simulation advancing at the right pace?</span>
+
+<span class="sd">Budget Accumulator</span>
+<span class="sd">==================</span>
+
+<span class="sd">A single variable, ``_sim_budget``, tracks how much sim time has</span>
+<span class="sd">accumulated but not yet been simulated. Each tick of the main loop:</span>
+
+<span class="sd">  1. Measure real time elapsed since the last tick.</span>
+<span class="sd">  2. Multiply by the speed setting and add to the budget.</span>
+<span class="sd">  3. Call ``env.step()`` in a loop, subtracting ``step_dt`` from the</span>
+<span class="sd">     budget each time, until the budget is less than one step.</span>
+<span class="sd">  4. Carry the leftover to the next tick.</span>
+
+<span class="sd">Example at 1x speed, step_dt = 0.02s (50 Hz control), 60 fps::</span>
+
+<span class="sd">  tick 1:  +0.0167s  -&gt;  budget = 0.0167  -&gt;  no step (&lt; 0.02)</span>
+<span class="sd">  tick 2:  +0.0167s  -&gt;  budget = 0.0334  -&gt;  1 step, 0.0134 left</span>
+<span class="sd">  tick 3:  +0.0167s  -&gt;  budget = 0.0301  -&gt;  1 step, 0.0101 left</span>
+<span class="sd">  ...</span>
+
+<span class="sd">This averages to 50 steps per second on any hardware. At 2x speed the</span>
+<span class="sd">elapsed time is doubled before adding to the budget, so steps happen</span>
+<span class="sd">twice as often. At 0.5x, half as often.</span>
+
+<span class="sd">Rendering is independent: the display refreshes at ``frame_rate``</span>
+<span class="sd">(e.g. 60 Hz) whether or not a new step happened. Some frames will</span>
+<span class="sd">re-display the same state.</span>
+
+<span class="sd">If physics is too slow to keep up, the budget grows without bound. A</span>
+<span class="sd">real time deadline (one frame period) caps each burst so the renderer</span>
+<span class="sd">always gets a turn. Leftover budget is dropped and ``_was_capped`` is</span>
+<span class="sd">set.</span>
+
+<span class="sd">Main Loop</span>
+<span class="sd">=========</span>
+
+<span class="sd">::</span>
+
+<span class="sd">  run()</span>
+<span class="sd">    setup()</span>
+<span class="sd">    while running:</span>
+<span class="sd">      tick()                    -&gt; True if a frame was produced</span>
+<span class="sd">        _process_actions()      drain UI action queue</span>
+<span class="sd">        _step_physics(dt)       accumulate budget, step until spent</span>
+<span class="sd">        sync_env_to_viewer()    push state to display (at frame_rate)</span>
+<span class="sd">      sleep(1ms)                yield CPU when no frame is due</span>
+
+<span class="sd">Subclasses implement setup(), sync_env_to_viewer(), sync_viewer_to_env(),</span>
+<span class="sd">close(), and is_running().</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">signal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">IntEnum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Protocol</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">ManagerBasedRlEnvCfg</span>
+
+
+<div class="viewcode-block" id="VerbosityLevel">
+<a class="viewcode-back" href="../../../source/api/viewer.html#mjlab.viewer.VerbosityLevel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VerbosityLevel</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+  <span class="n">SILENT</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">INFO</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="n">DEBUG</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="EnvProtocol">
+<a class="viewcode-back" href="../../../source/api/viewer.html#mjlab.viewer.EnvProtocol">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Interface we expect from RL environments, which can be either vanilla</span>
+<span class="sd">  `ManagerBasedRlEnv` objects or wrapped with `VideoRecorder`,</span>
+<span class="sd">  `RslRlVecEnvWrapper`, etc.&quot;&quot;&quot;</span>
+
+  <span class="n">num_envs</span><span class="p">:</span> <span class="nb">int</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span> <span class="o">...</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">cfg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ManagerBasedRlEnvCfg</span><span class="p">:</span> <span class="o">...</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_observations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span> <span class="o">...</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+
+<div class="viewcode-block" id="PolicyProtocol">
+<a class="viewcode-back" href="../../../source/api/viewer.html#mjlab.viewer.PolicyProtocol">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolicyProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ViewerStatus</span><span class="p">:</span>
+  <span class="n">paused</span><span class="p">:</span> <span class="nb">bool</span>
+  <span class="n">step_count</span><span class="p">:</span> <span class="nb">int</span>
+  <span class="n">speed_multiplier</span><span class="p">:</span> <span class="nb">float</span>
+  <span class="n">speed_label</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">target_realtime</span><span class="p">:</span> <span class="nb">float</span>
+  <span class="n">actual_realtime</span><span class="p">:</span> <span class="nb">float</span>
+  <span class="n">smoothed_fps</span><span class="p">:</span> <span class="nb">float</span>
+  <span class="n">capped</span><span class="p">:</span> <span class="nb">bool</span>
+  <span class="n">last_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ViewerAction</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+  <span class="n">RESET</span> <span class="o">=</span> <span class="s2">&quot;reset&quot;</span>
+  <span class="n">TOGGLE_PAUSE</span> <span class="o">=</span> <span class="s2">&quot;toggle_pause&quot;</span>
+  <span class="n">SINGLE_STEP</span> <span class="o">=</span> <span class="s2">&quot;single_step&quot;</span>
+  <span class="n">RESET_SPEED</span> <span class="o">=</span> <span class="s2">&quot;reset_speed&quot;</span>
+  <span class="n">SPEED_UP</span> <span class="o">=</span> <span class="s2">&quot;speed_up&quot;</span>
+  <span class="n">SPEED_DOWN</span> <span class="o">=</span> <span class="s2">&quot;speed_down&quot;</span>
+  <span class="n">PREV_ENV</span> <span class="o">=</span> <span class="s2">&quot;prev_env&quot;</span>
+  <span class="n">NEXT_ENV</span> <span class="o">=</span> <span class="s2">&quot;next_env&quot;</span>
+  <span class="n">TOGGLE_PLOTS</span> <span class="o">=</span> <span class="s2">&quot;toggle_plots&quot;</span>
+  <span class="n">TOGGLE_DEBUG_VIS</span> <span class="o">=</span> <span class="s2">&quot;toggle_debug_vis&quot;</span>
+  <span class="n">TOGGLE_SHOW_ALL_ENVS</span> <span class="o">=</span> <span class="s2">&quot;toggle_show_all_envs&quot;</span>
+  <span class="n">CUSTOM</span> <span class="o">=</span> <span class="s2">&quot;custom&quot;</span>
+
+
+<div class="viewcode-block" id="BaseViewer">
+<a class="viewcode-back" href="../../../source/api/viewer.html#mjlab.viewer.BaseViewer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseViewer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Abstract base class for environment viewers.&quot;&quot;&quot;</span>
+
+  <span class="n">SPEED_MULTIPLIERS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="BaseViewer.__init__">
+<a class="viewcode-back" href="../../../source/api/viewer.html#mjlab.viewer.BaseViewer.__init__">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">EnvProtocol</span><span class="p">,</span>
+    <span class="n">policy</span><span class="p">:</span> <span class="n">PolicyProtocol</span><span class="p">,</span>
+    <span class="n">frame_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span>
+    <span class="n">verbosity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">VerbosityLevel</span><span class="o">.</span><span class="n">SILENT</span><span class="p">,</span>
+  <span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">policy</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">frame_rate</span> <span class="o">=</span> <span class="n">frame_rate</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">frame_time</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">frame_rate</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">VerbosityLevel</span><span class="p">(</span><span class="n">verbosity</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">viewer</span>
+
+    <span class="c1"># State.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_step_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Speed.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_speed_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SPEED_MULTIPLIERS</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_time_multiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SPEED_MULTIPLIERS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_speed_index</span><span class="p">]</span>
+
+    <span class="c1"># Physics accumulator and render timer.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_time_until_next_render</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_tick_time</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_was_capped</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Windowed stats, updated every 0.5s.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_stats_frames</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_stats_steps</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_stats_last_time</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_fps</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sps</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Action queue, drained on main thread each tick.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">ViewerAction</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span></div>
+
+
+  <span class="c1"># Abstract hooks.</span>
+
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">sync_env_to_viewer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">sync_viewer_to_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_running</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_forward_paused</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: B027</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hook for subclasses to run forward kinematics while paused.&quot;&quot;&quot;</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_handle_custom_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ViewerAction</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">del</span> <span class="n">action</span><span class="p">,</span> <span class="n">payload</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+  <span class="c1"># Logging.</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="n">VerbosityLevel</span> <span class="o">=</span> <span class="n">VerbosityLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">level</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+  <span class="c1"># Thread-safe action requests.</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">request_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ViewerAction</span><span class="o">.</span><span class="n">RESET</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">request_toggle_pause</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ViewerAction</span><span class="o">.</span><span class="n">TOGGLE_PAUSE</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">request_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ViewerAction</span><span class="o">.</span><span class="n">SINGLE_STEP</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">request_speed_up</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ViewerAction</span><span class="o">.</span><span class="n">SPEED_UP</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">request_speed_down</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ViewerAction</span><span class="o">.</span><span class="n">SPEED_DOWN</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">request_reset_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ViewerAction</span><span class="o">.</span><span class="n">RESET_SPEED</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">request_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">action</span> <span class="o">=</span> <span class="n">ViewerAction</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+      <span class="n">action</span> <span class="o">=</span> <span class="n">ViewerAction</span><span class="o">.</span><span class="n">CUSTOM</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">action</span><span class="p">,</span> <span class="n">payload</span><span class="p">))</span>
+
+  <span class="c1"># Speed controls.</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">increase_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_speed_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SPEED_MULTIPLIERS</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_speed_index</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_time_multiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SPEED_MULTIPLIERS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_speed_index</span><span class="p">]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">decrease_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_speed_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_speed_index</span> <span class="o">-=</span> <span class="mi">1</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_time_multiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SPEED_MULTIPLIERS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_speed_index</span><span class="p">]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">reset_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_speed_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SPEED_MULTIPLIERS</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_time_multiplier</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+  <span class="c1"># Pause and resume.</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">pause</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;[INFO] Simulation paused&quot;</span><span class="p">,</span> <span class="n">VerbosityLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_error</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_tick_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;[INFO] Simulation resumed&quot;</span><span class="p">,</span> <span class="n">VerbosityLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">toggle_pause</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">resume</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span>
+
+  <span class="c1"># Core loop.</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_execute_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run one obs/policy/step cycle.</span>
+
+<span class="sd">    Returns True on success, False if step failed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">get_observations</span><span class="p">()</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats_steps</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_last_error</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;[ERROR] Exception during step:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">VerbosityLevel</span><span class="o">.</span><span class="n">SILENT</span><span class="p">,</span>
+      <span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_step_physics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run physics steps for this frame&#39;s sim-time budget.&quot;&quot;&quot;</span>
+    <span class="n">step_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">step_dt</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">+=</span> <span class="n">dt</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_multiplier</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_was_capped</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">&lt;</span> <span class="n">step_dt</span><span class="p">:</span>
+      <span class="k">return</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">sync_viewer_to_env</span><span class="p">()</span>
+    <span class="n">hit_deadline</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">deadline</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_time</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">&gt;=</span> <span class="n">step_dt</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_step</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">return</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">-=</span> <span class="n">step_dt</span>
+      <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">deadline</span><span class="p">:</span>
+        <span class="n">hit_deadline</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">hit_deadline</span><span class="p">:</span>
+      <span class="c1"># Only report capped if we actually had to drop remaining work. A transient stall</span>
+      <span class="c1"># (GC pause) during a single step triggers the deadline but leaves no remaining</span>
+      <span class="c1"># budget, so it&#39;s not a real cap.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_was_capped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">&gt;=</span> <span class="n">step_dt</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span><span class="p">,</span> <span class="n">step_dt</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Advance exactly one step while paused.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sync_viewer_to_env</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_execute_step</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">reset_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">reset_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reset_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">reset_fn</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_step_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sim_budget</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_error</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_tick_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_process_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Drain action queue. Runs on the main loop thread.&quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span>
+      <span class="n">action</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+      <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="n">ViewerAction</span><span class="o">.</span><span class="n">RESET</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_environment</span><span class="p">()</span>
+      <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">ViewerAction</span><span class="o">.</span><span class="n">TOGGLE_PAUSE</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_pause</span><span class="p">()</span>
+      <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">ViewerAction</span><span class="o">.</span><span class="n">SINGLE_STEP</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_single_step</span><span class="p">()</span>
+      <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">ViewerAction</span><span class="o">.</span><span class="n">RESET_SPEED</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_speed</span><span class="p">()</span>
+      <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">ViewerAction</span><span class="o">.</span><span class="n">SPEED_UP</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">increase_speed</span><span class="p">()</span>
+      <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">ViewerAction</span><span class="o">.</span><span class="n">SPEED_DOWN</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decrease_speed</span><span class="p">()</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_custom_action</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseViewer.tick">
+<a class="viewcode-back" href="../../../source/api/viewer.html#mjlab.viewer.BaseViewer.tick">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">tick</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Advance one tick: drain actions, step physics, maybe render.</span>
+
+<span class="sd">    Returns True when a render frame was produced, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_tick_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_tick_time</span> <span class="o">=</span> <span class="n">now</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_process_actions</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_forward_paused</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_step_physics</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+
+    <span class="c1"># Render at fixed frame rate.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_time_until_next_render</span> <span class="o">-=</span> <span class="n">dt</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_until_next_render</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_time_until_next_render</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_time</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_until_next_render</span> <span class="o">&lt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_time</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_time_until_next_render</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">sync_env_to_viewer</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_stats_frames</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catch_sigint</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_interrupted</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_stats_last_time</span> <span class="o">=</span> <span class="n">now</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_tick_time</span> <span class="o">=</span> <span class="n">now</span>
+
+    <span class="n">prev_handler</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">catch_sigint</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="n">prev_handler</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigint_handler</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+          <span class="k">pass</span>  <span class="c1"># Non-main thread; skip gracefully.</span>
+
+      <span class="k">while</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_running</span><span class="p">()</span>
+        <span class="ow">and</span> <span class="p">(</span><span class="n">num_steps</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_count</span> <span class="o">&lt;</span> <span class="n">num_steps</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupted</span>
+      <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick</span><span class="p">():</span>
+          <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_stats</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="k">if</span> <span class="n">prev_handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">prev_handler</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_sigint_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signum</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_interrupted</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Ctrl+C received. Shutting down viewer...&quot;</span><span class="p">)</span>
+    <span class="c1"># Restore default so a second Ctrl+C kills immediately.</span>
+    <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_DFL</span><span class="p">)</span>
+
+  <span class="c1"># Stats.</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_update_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats_last_time</span>
+    <span class="k">if</span> <span class="n">dt</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_fps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats_frames</span> <span class="o">/</span> <span class="n">dt</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_sps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats_steps</span> <span class="o">/</span> <span class="n">dt</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_stats_frames</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_stats_steps</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_stats_last_time</span> <span class="o">=</span> <span class="n">now</span>
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">VerbosityLevel</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_status</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="s1">&#39;PAUSED&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">status</span><span class="o">.</span><span class="n">paused</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;RUNNING&#39;</span><span class="si">}</span><span class="s2">] &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">status</span><span class="o">.</span><span class="n">step_count</span><span class="si">}</span><span class="s2"> | &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;FPS: </span><span class="si">{</span><span class="n">status</span><span class="o">.</span><span class="n">smoothed_fps</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> | &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;Speed: </span><span class="si">{</span><span class="n">status</span><span class="o">.</span><span class="n">speed_label</span><span class="si">}</span><span class="s2"> | &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;RTF: </span><span class="si">{</span><span class="n">status</span><span class="o">.</span><span class="n">actual_realtime</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x / &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">status</span><span class="o">.</span><span class="n">target_realtime</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x&quot;</span>
+        <span class="p">)</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">target_realtime</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_multiplier</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">actual_realtime</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sps</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">step_dt</span>
+
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_format_speed</span><span class="p">(</span><span class="n">multiplier</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">multiplier</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="s2">&quot;1x&quot;</span>
+    <span class="n">inv</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">multiplier</span>
+    <span class="n">inv_rounded</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">inv</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">inv</span> <span class="o">-</span> <span class="n">inv_rounded</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-9</span> <span class="ow">and</span> <span class="n">inv_rounded</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;1/</span><span class="si">{</span><span class="n">inv_rounded</span><span class="si">}</span><span class="s2">x&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">multiplier</span><span class="si">:</span><span class="s2">.3g</span><span class="si">}</span><span class="s2">x&quot;</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ViewerStatus</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">ViewerStatus</span><span class="p">(</span>
+      <span class="n">paused</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">,</span>
+      <span class="n">step_count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_step_count</span><span class="p">,</span>
+      <span class="n">speed_multiplier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_multiplier</span><span class="p">,</span>
+      <span class="n">speed_label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_speed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_multiplier</span><span class="p">),</span>
+      <span class="n">target_realtime</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_realtime</span><span class="p">,</span>
+      <span class="n">actual_realtime</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">actual_realtime</span><span class="p">,</span>
+      <span class="n">smoothed_fps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fps</span><span class="p">,</span>
+      <span class="n">capped</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_was_capped</span><span class="p">,</span>
+      <span class="n">last_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_error</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The mjlab Developers
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, The mjlab Developers.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Mar 10, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

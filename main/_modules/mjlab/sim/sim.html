@@ -1,0 +1,894 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mjlab.sim.sim &#8212; mjlab Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/twemoji.css" />
+    <link rel="stylesheet" type="text/css" href="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/css/all.min.css?v=53359634" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ea80bc3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js"></script>
+    <script src="../../../_static/twemoji.js"></script>
+    <script src="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/js/all.min.js?v=ec35c6c9"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mjlab/sim/sim';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Mar 10, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mjlab Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+<div class="sidebar-version-switcher">
+  <label class="sidebar-version-label" for="version-select">Version</label>
+  <select id="version-select" class="sidebar-version-select" onchange="location = this.value;">
+    <option value="sim.html" selected>main</option>
+  </select>
+</div>
+</div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/architecture_overview.html">Architecture Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/entity/index.html">Entity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/entity/entity_data.html">Entity Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actuators.html">Actuators</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/sensors/index.html">Sensors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/raycast_sensor.html">RayCast Sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/rgbd_camera.html">RGB-D Camera</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/scene.html">Scene</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terrain.html">Terrain</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Manager Layer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/environment_config.html">Environment Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/observations.html">Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/rewards.html">Rewards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terminations.html">Terminations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/events.html">Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/randomization.html">Domain Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/curriculum.html">Curriculum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/metrics.html">Metrics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Training &amp; Debugging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/rsl_rl.html">Training with RSL-RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/viewers.html">Viewers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/distributed_training.html">Distributed Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/cloud.html">Cloud Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/nan_guard.html">NaN Guard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/export_scene.html">Export Scene</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/envs.html">mjlab.envs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/scene.html">mjlab.scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sim.html">mjlab.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/entity.html">mjlab.entity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/actuator.html">mjlab.actuator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sensor.html">mjlab.sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/managers.html">mjlab.managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/terrains.html">mjlab.terrains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/rl.html">mjlab.rl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/viewer.html">mjlab.viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/tasks.html">mjlab.tasks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Further Reading</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/motivation.html">Why mjlab?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/faq.html">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab/issues/new?title=Issue%20on%20page%20%2F_modules/mjlab/sim/sim.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mjlab.sim.sim</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">mujoco</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">mujoco_warp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mjwarp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">wp</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.managers.event_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecomputeLevel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.sim.randomization</span><span class="w"> </span><span class="kn">import</span> <span class="n">expand_model_fields</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.sim.sim_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">TorchArray</span><span class="p">,</span> <span class="n">WarpBridge</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.utils.nan_guard</span><span class="w"> </span><span class="kn">import</span> <span class="n">NanGuard</span><span class="p">,</span> <span class="n">NanGuardCfg</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.sensor.sensor_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">SensorContext</span>
+
+<span class="c1"># Type aliases for better IDE support while maintaining runtime compatibility</span>
+<span class="c1"># At runtime, WarpBridge wraps the actual MJWarp objects.</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+  <span class="n">ModelBridge</span> <span class="o">=</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">Model</span>
+  <span class="n">DataBridge</span> <span class="o">=</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">Data</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="n">ModelBridge</span> <span class="o">=</span> <span class="n">WarpBridge</span>
+  <span class="n">DataBridge</span> <span class="o">=</span> <span class="n">WarpBridge</span>
+
+<span class="c1"># Minimum CUDA driver version supported for conditional CUDA graphs.</span>
+<span class="n">_GRAPH_CAPTURE_MIN_DRIVER</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="n">_JACOBIAN_MAP</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;auto&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtJacobian</span><span class="o">.</span><span class="n">mjJAC_AUTO</span><span class="p">,</span>
+  <span class="s2">&quot;dense&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtJacobian</span><span class="o">.</span><span class="n">mjJAC_DENSE</span><span class="p">,</span>
+  <span class="s2">&quot;sparse&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtJacobian</span><span class="o">.</span><span class="n">mjJAC_SPARSE</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">_CONE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;elliptic&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtCone</span><span class="o">.</span><span class="n">mjCONE_ELLIPTIC</span><span class="p">,</span>
+  <span class="s2">&quot;pyramidal&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtCone</span><span class="o">.</span><span class="n">mjCONE_PYRAMIDAL</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">_INTEGRATOR_MAP</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;euler&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtIntegrator</span><span class="o">.</span><span class="n">mjINT_EULER</span><span class="p">,</span>
+  <span class="s2">&quot;implicitfast&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtIntegrator</span><span class="o">.</span><span class="n">mjINT_IMPLICITFAST</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">_SOLVER_MAP</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;newton&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtSolver</span><span class="o">.</span><span class="n">mjSOL_NEWTON</span><span class="p">,</span>
+  <span class="s2">&quot;cg&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtSolver</span><span class="o">.</span><span class="n">mjSOL_CG</span><span class="p">,</span>
+  <span class="s2">&quot;pgs&quot;</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtSolver</span><span class="o">.</span><span class="n">mjSOL_PGS</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="MujocoCfg">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.MujocoCfg">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MujocoCfg</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for MuJoCo simulation parameters.&quot;&quot;&quot;</span>
+
+  <span class="c1"># Integrator settings.</span>
+  <span class="n">timestep</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.002</span>
+  <span class="n">integrator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;euler&quot;</span><span class="p">,</span> <span class="s2">&quot;implicitfast&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;implicitfast&quot;</span>
+
+  <span class="c1"># Friction settings.</span>
+  <span class="n">impratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+  <span class="n">cone</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pyramidal&quot;</span><span class="p">,</span> <span class="s2">&quot;elliptic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pyramidal&quot;</span>
+
+  <span class="c1"># Solver settings.</span>
+  <span class="n">jacobian</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;dense&quot;</span><span class="p">,</span> <span class="s2">&quot;sparse&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
+  <span class="n">solver</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;newton&quot;</span><span class="p">,</span> <span class="s2">&quot;cg&quot;</span><span class="p">,</span> <span class="s2">&quot;pgs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;newton&quot;</span>
+  <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+  <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span>
+  <span class="n">ls_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+  <span class="n">ls_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
+  <span class="n">ccd_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+
+  <span class="c1"># Other.</span>
+  <span class="n">gravity</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.81</span><span class="p">)</span>
+  <span class="n">multiccd</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="MujocoCfg.apply">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.MujocoCfg.apply">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply configuration settings to a compiled MjModel.&quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">jacobian</span> <span class="o">=</span> <span class="n">_JACOBIAN_MAP</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">jacobian</span><span class="p">]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">cone</span> <span class="o">=</span> <span class="n">_CONE_MAP</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cone</span><span class="p">]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">integrator</span> <span class="o">=</span> <span class="n">_INTEGRATOR_MAP</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">integrator</span><span class="p">]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">_SOLVER_MAP</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">timestep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">impratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">impratio</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">gravity</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">iterations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">ls_iterations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ls_iterations</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">ls_tolerance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ls_tolerance</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">ccd_iterations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccd_iterations</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiccd</span><span class="p">:</span>
+      <span class="n">model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">enableflags</span> <span class="o">|=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">mjtEnableBit</span><span class="o">.</span><span class="n">mjENBL_MULTICCD</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SimulationCfg">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.SimulationCfg">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimulationCfg</span><span class="p">:</span>
+  <span class="n">nconmax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Number of contacts to allocate per world.</span>
+
+<span class="sd">  Contacts exist in large heterogenous arrays: one world may have more than nconmax</span>
+<span class="sd">  contacts. If None, a heuristic value is used.&quot;&quot;&quot;</span>
+  <span class="n">njmax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Number of constraints to allocate per world.</span>
+
+<span class="sd">  Constraint arrays are batched by world: no world may have more than njmax</span>
+<span class="sd">  constraints. If None, a heuristic value is used.&quot;&quot;&quot;</span>
+  <span class="n">ls_parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Boosts perf quite noticeably.</span>
+  <span class="n">contact_sensor_maxmatch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span>
+  <span class="n">mujoco</span><span class="p">:</span> <span class="n">MujocoCfg</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">MujocoCfg</span><span class="p">)</span>
+  <span class="n">nan_guard</span><span class="p">:</span> <span class="n">NanGuardCfg</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">NanGuardCfg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Simulation">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.Simulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Simulation</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;GPU-accelerated MuJoCo simulation powered by MJWarp.</span>
+
+<span class="sd">  CUDA Graph Capture</span>
+<span class="sd">  ------------------</span>
+<span class="sd">  On CUDA devices with memory pools enabled, the simulation captures CUDA graphs</span>
+<span class="sd">  for ``step()``, ``forward()``, and ``reset()`` operations. Graph capture records</span>
+<span class="sd">  a sequence of GPU kernels and their memory addresses, then replays the entire</span>
+<span class="sd">  sequence with a single kernel launch, eliminating CPU overhead from repeated</span>
+<span class="sd">  kernel dispatches.</span>
+
+<span class="sd">  **Important:** A captured graph holds pointers to the GPU arrays that existed</span>
+<span class="sd">  at capture time. If those arrays are later replaced (e.g., via</span>
+<span class="sd">  ``expand_model_fields()``), the graph will still read from the old arrays,</span>
+<span class="sd">  silently ignoring any new values. The ``expand_model_fields()`` method handles</span>
+<span class="sd">  this automatically by calling ``create_graph()`` after replacing arrays.</span>
+
+<span class="sd">  If you write code that replaces model or data arrays after simulation</span>
+<span class="sd">  initialization, you **must** call ``create_graph()`` afterward to re-capture</span>
+<span class="sd">  the graphs with the new memory addresses.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Simulation.__init__">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.Simulation.__init__">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">num_envs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">SimulationCfg</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjModel</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">=</span> <span class="n">num_envs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_default_model_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_fields</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="c1"># MuJoCo model and data.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">mujoco</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mj_data</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjData</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">mujoco</span><span class="o">.</span><span class="n">mj_forward</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mj_data</span><span class="p">)</span>
+
+    <span class="c1"># MJWarp model and data.</span>
+    <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedDevice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_wp_model</span> <span class="o">=</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">put_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_wp_model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">ls_parallel</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ls_parallel</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_wp_model</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">contact_sensor_maxmatch</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">contact_sensor_maxmatch</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">_wp_data</span> <span class="o">=</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">put_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mj_data</span><span class="p">,</span>
+        <span class="n">nworld</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span>
+        <span class="n">nconmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">nconmax</span><span class="p">,</span>
+        <span class="n">njmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">njmax</span><span class="p">,</span>
+      <span class="p">)</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">_reset_mask_wp</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_reset_mask</span> <span class="o">=</span> <span class="n">TorchArray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset_mask_wp</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model_bridge</span> <span class="o">=</span> <span class="n">WarpBridge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wp_model</span><span class="p">,</span> <span class="n">nworld</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data_bridge</span> <span class="o">=</span> <span class="n">WarpBridge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wp_data</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_context</span><span class="p">:</span> <span class="n">SensorContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_use_cuda_graph</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">create_graph</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">nan_guard</span> <span class="o">=</span> <span class="n">NanGuard</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">nan_guard</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Simulation.create_graph">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.Simulation.create_graph">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Capture CUDA graphs for step, forward, and reset operations.</span>
+
+<span class="sd">    This method must be called whenever GPU arrays in the model or data are</span>
+<span class="sd">    replaced after initialization. The captured graphs hold pointers to the</span>
+<span class="sd">    arrays that existed at capture time. If those arrays are replaced, the</span>
+<span class="sd">    graphs will silently read from the old arrays, ignoring any new values.</span>
+
+<span class="sd">    Called automatically by:</span>
+<span class="sd">    - ``__init__()`` during simulation initialization</span>
+<span class="sd">    - ``expand_model_fields()`` after replacing model arrays</span>
+
+<span class="sd">    On CPU devices or when memory pools are disabled, this is a no-op.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">step_graph</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">forward_graph</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">reset_graph</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sense_graph</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda_graph</span><span class="p">:</span>
+      <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedDevice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedCapture</span><span class="p">()</span> <span class="k">as</span> <span class="n">capture</span><span class="p">:</span>
+          <span class="n">mjwarp</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wp_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_graph</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">graph</span>
+        <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedCapture</span><span class="p">()</span> <span class="k">as</span> <span class="n">capture</span><span class="p">:</span>
+          <span class="n">mjwarp</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wp_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forward_graph</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">graph</span>
+        <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedCapture</span><span class="p">()</span> <span class="k">as</span> <span class="n">capture</span><span class="p">:</span>
+          <span class="n">mjwarp</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wp_data</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset_mask_wp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_graph</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">graph</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedCapture</span><span class="p">()</span> <span class="k">as</span> <span class="n">capture</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sense_kernel</span><span class="p">()</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">sense_graph</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">graph</span></div>
+
+
+  <span class="c1"># Properties.</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">mj_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjModel</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">mj_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MjData</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mj_data</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">wp_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">Model</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wp_model</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">wp_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mjwarp</span><span class="o">.</span><span class="n">Data</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wp_data</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DataBridge&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;DataBridge&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_bridge</span><span class="p">)</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ModelBridge&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ModelBridge&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_bridge</span><span class="p">)</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">default_model_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Default values for expanded model fields, used in domain randomization.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_model_fields</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expanded_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Names of model fields that have been expanded for per-env DR.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_fields</span>
+
+  <span class="c1"># Methods.</span>
+
+<div class="viewcode-block" id="Simulation.expand_model_fields">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.Simulation.expand_model_fields">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand_model_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand model fields to support per-environment parameters.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fields</span><span class="p">:</span>
+      <span class="k">return</span>
+
+    <span class="n">invalid_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">,</span> <span class="n">f</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">invalid_fields</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fields not found in model: </span><span class="si">{</span><span class="n">invalid_fields</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">expand_model_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">fields</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_fields</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model_bridge</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_context</span><span class="o">.</span><span class="n">recreate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_fields</span><span class="p">)</span>
+
+    <span class="c1"># Field expansion allocates new arrays and replaces them via setattr. The</span>
+    <span class="c1"># CUDA graph captured the old memory addresses, so we must recreate it.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">create_graph</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Simulation.get_default_field">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.Simulation.get_default_field">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_default_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the default value for a model field, caching for reuse.</span>
+
+<span class="sd">    Returns the original values from the C MuJoCo model (mj_model), obtained</span>
+<span class="sd">    from the final compiled scene spec before any randomization is applied.</span>
+<span class="sd">    Not to be confused with the GPU Warp model (wp_model) which may have</span>
+<span class="sd">    randomized values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_model_fields</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39; not found in model&quot;</span><span class="p">)</span>
+      <span class="n">model_field</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+      <span class="n">default_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mj_model</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_default_model_fields</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span>
+        <span class="n">default_value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">model_field</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span>
+      <span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_model_fields</span><span class="p">[</span><span class="n">field</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Simulation.recompute_constants">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.Simulation.recompute_constants">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">recompute_constants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="n">RecomputeLevel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recompute derived model constants after domain randomization.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      level: Which constants to recompute. ``set_const`` is the most</span>
+<span class="sd">        expensive (covers body_mass changes), ``set_const_0`` covers</span>
+<span class="sd">        qpos0/body_inertia/dof_armature changes, and ``set_const_fixed``</span>
+<span class="sd">        is the cheapest (covers body_gravcomp changes).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mjwarp</span><span class="p">,</span> <span class="n">level</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedDevice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span><span class="p">):</span>
+      <span class="n">fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wp_data</span><span class="p">)</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedDevice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span><span class="p">):</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda_graph</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_graph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">wp</span><span class="o">.</span><span class="n">capture_launch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_graph</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">mjwarp</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wp_data</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedDevice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span><span class="p">):</span>
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">nan_guard</span><span class="o">.</span><span class="n">watch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda_graph</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_graph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="n">wp</span><span class="o">.</span><span class="n">capture_launch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_graph</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">mjwarp</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wp_data</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_ids</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedDevice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">env_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_mask</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_mask</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_mask</span><span class="p">[</span><span class="n">env_ids</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda_graph</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_graph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">wp</span><span class="o">.</span><span class="n">capture_launch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_graph</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">mjwarp</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wp_data</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset_mask_wp</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Simulation.set_sensor_context">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.Simulation.set_sensor_context">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_sensor_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">SensorContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wire a SensorContext for camera/raycast sensing.</span>
+
+<span class="sd">    Automatically re-captures CUDA graphs so the sense_graph includes</span>
+<span class="sd">    the new sensor kernels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_context</span> <span class="o">=</span> <span class="n">ctx</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">create_graph</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Simulation.sense">
+<a class="viewcode-back" href="../../../source/api/sim.html#mjlab.sim.Simulation.sense">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">sense</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute the sense pipeline: prepare -&gt; graph -&gt; finalize.</span>
+
+<span class="sd">    Runs BVH refit, camera rendering, and raycasting in a single</span>
+<span class="sd">    CUDA graph launch. Should be called once per env step, right</span>
+<span class="sd">    before observation computation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span>
+
+    <span class="n">ctx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_context</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">prepare</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">wp</span><span class="o">.</span><span class="n">ScopedDevice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span><span class="p">):</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda_graph</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sense_graph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">wp</span><span class="o">.</span><span class="n">capture_launch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sense_graph</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sense_kernel</span><span class="p">()</span>
+
+    <span class="n">ctx</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span></div>
+
+
+  <span class="c1"># Private methods.</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_sense_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;GPU kernel sequence for sensing (captured in sense_graph).&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">ctx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_context</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">render_context</span>
+
+    <span class="n">mjwarp</span><span class="o">.</span><span class="n">refit_bvh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wp_data</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">has_cameras</span><span class="p">:</span>
+      <span class="n">mjwarp</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wp_data</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
+      <span class="n">ctx</span><span class="o">.</span><span class="n">unpack_rgb</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">sensor</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">raycast_sensors</span><span class="p">:</span>
+      <span class="n">sensor</span><span class="o">.</span><span class="n">raycast_kernel</span><span class="p">(</span><span class="n">rc</span><span class="o">=</span><span class="n">rc</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_should_use_cuda_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine if CUDA graphs can be used based on device and driver version.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span><span class="o">.</span><span class="n">is_cuda</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">driver_ver</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">driver_version</span>
+    <span class="n">has_mempool</span> <span class="o">=</span> <span class="n">wp</span><span class="o">.</span><span class="n">is_mempool_enabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wp_device</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">driver_ver</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[WARNING] CUDA Graphs disabled: driver version unavailable&quot;</span><span class="p">)</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">has_mempool</span> <span class="ow">and</span> <span class="n">driver_ver</span> <span class="o">&gt;=</span> <span class="n">_GRAPH_CAPTURE_MIN_DRIVER</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="n">reasons</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_mempool</span><span class="p">:</span>
+      <span class="n">reasons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;mempool disabled&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">driver_ver</span> <span class="o">&lt;</span> <span class="n">_GRAPH_CAPTURE_MIN_DRIVER</span><span class="p">:</span>
+      <span class="n">reasons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;driver </span><span class="si">{</span><span class="n">driver_ver</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">driver_ver</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt; 12.4&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WARNING] CUDA Graphs disabled: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">reasons</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The mjlab Developers
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, The mjlab Developers.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Mar 10, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

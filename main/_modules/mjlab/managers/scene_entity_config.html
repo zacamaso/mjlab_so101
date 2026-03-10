@@ -1,0 +1,708 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mjlab.managers.scene_entity_config &#8212; mjlab Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/twemoji.css" />
+    <link rel="stylesheet" type="text/css" href="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/css/all.min.css?v=53359634" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ea80bc3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js"></script>
+    <script src="../../../_static/twemoji.js"></script>
+    <script src="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/js/all.min.js?v=ec35c6c9"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mjlab/managers/scene_entity_config';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Mar 10, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mjlab Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+<div class="sidebar-version-switcher">
+  <label class="sidebar-version-label" for="version-select">Version</label>
+  <select id="version-select" class="sidebar-version-select" onchange="location = this.value;">
+    <option value="scene_entity_config.html" selected>main</option>
+  </select>
+</div>
+</div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/architecture_overview.html">Architecture Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/entity/index.html">Entity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/entity/entity_data.html">Entity Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actuators.html">Actuators</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/sensors/index.html">Sensors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/raycast_sensor.html">RayCast Sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/rgbd_camera.html">RGB-D Camera</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/scene.html">Scene</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terrain.html">Terrain</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Manager Layer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/environment_config.html">Environment Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/observations.html">Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/rewards.html">Rewards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terminations.html">Terminations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/events.html">Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/randomization.html">Domain Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/curriculum.html">Curriculum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/metrics.html">Metrics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Training &amp; Debugging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/rsl_rl.html">Training with RSL-RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/viewers.html">Viewers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/distributed_training.html">Distributed Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/cloud.html">Cloud Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/nan_guard.html">NaN Guard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/export_scene.html">Export Scene</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/envs.html">mjlab.envs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/scene.html">mjlab.scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sim.html">mjlab.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/entity.html">mjlab.entity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/actuator.html">mjlab.actuator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sensor.html">mjlab.sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/managers.html">mjlab.managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/terrains.html">mjlab.terrains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/rl.html">mjlab.rl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/viewer.html">mjlab.viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/tasks.html">mjlab.tasks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Further Reading</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/motivation.html">Why mjlab?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/faq.html">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab/issues/new?title=Issue%20on%20page%20%2F_modules/mjlab/managers/scene_entity_config.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mjlab.managers.scene_entity_config</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Configuration for scene entities used by manager terms.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.entity</span><span class="w"> </span><span class="kn">import</span> <span class="n">Entity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.scene</span><span class="w"> </span><span class="kn">import</span> <span class="n">Scene</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_FieldConfig</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for a resolvable entity field.&quot;&quot;&quot;</span>
+
+  <span class="n">names_attr</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">ids_attr</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">find_method</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">num_attr</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">kind_label</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="n">_FIELD_CONFIGS</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="n">_FieldConfig</span><span class="p">(</span><span class="s2">&quot;joint_names&quot;</span><span class="p">,</span> <span class="s2">&quot;joint_ids&quot;</span><span class="p">,</span> <span class="s2">&quot;find_joints&quot;</span><span class="p">,</span> <span class="s2">&quot;num_joints&quot;</span><span class="p">,</span> <span class="s2">&quot;joint&quot;</span><span class="p">),</span>
+  <span class="n">_FieldConfig</span><span class="p">(</span><span class="s2">&quot;body_names&quot;</span><span class="p">,</span> <span class="s2">&quot;body_ids&quot;</span><span class="p">,</span> <span class="s2">&quot;find_bodies&quot;</span><span class="p">,</span> <span class="s2">&quot;num_bodies&quot;</span><span class="p">,</span> <span class="s2">&quot;body&quot;</span><span class="p">),</span>
+  <span class="n">_FieldConfig</span><span class="p">(</span><span class="s2">&quot;geom_names&quot;</span><span class="p">,</span> <span class="s2">&quot;geom_ids&quot;</span><span class="p">,</span> <span class="s2">&quot;find_geoms&quot;</span><span class="p">,</span> <span class="s2">&quot;num_geoms&quot;</span><span class="p">,</span> <span class="s2">&quot;geom&quot;</span><span class="p">),</span>
+  <span class="n">_FieldConfig</span><span class="p">(</span><span class="s2">&quot;site_names&quot;</span><span class="p">,</span> <span class="s2">&quot;site_ids&quot;</span><span class="p">,</span> <span class="s2">&quot;find_sites&quot;</span><span class="p">,</span> <span class="s2">&quot;num_sites&quot;</span><span class="p">,</span> <span class="s2">&quot;site&quot;</span><span class="p">),</span>
+  <span class="n">_FieldConfig</span><span class="p">(</span>
+    <span class="s2">&quot;actuator_names&quot;</span><span class="p">,</span> <span class="s2">&quot;actuator_ids&quot;</span><span class="p">,</span> <span class="s2">&quot;find_actuators&quot;</span><span class="p">,</span> <span class="s2">&quot;num_actuators&quot;</span><span class="p">,</span> <span class="s2">&quot;actuator&quot;</span>
+  <span class="p">),</span>
+  <span class="n">_FieldConfig</span><span class="p">(</span><span class="s2">&quot;tendon_names&quot;</span><span class="p">,</span> <span class="s2">&quot;tendon_ids&quot;</span><span class="p">,</span> <span class="s2">&quot;find_tendons&quot;</span><span class="p">,</span> <span class="s2">&quot;num_tendons&quot;</span><span class="p">,</span> <span class="s2">&quot;tendon&quot;</span><span class="p">),</span>
+  <span class="n">_FieldConfig</span><span class="p">(</span>
+    <span class="s2">&quot;camera_names&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;camera_ids&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;find_cameras&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;num_cameras&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;camera&quot;</span><span class="p">,</span>
+  <span class="p">),</span>
+  <span class="n">_FieldConfig</span><span class="p">(</span>
+    <span class="s2">&quot;light_names&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;light_ids&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;find_lights&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;num_lights&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;light&quot;</span><span class="p">,</span>
+  <span class="p">),</span>
+  <span class="n">_FieldConfig</span><span class="p">(</span>
+    <span class="s2">&quot;material_names&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;material_ids&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;find_materials&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;num_materials&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;material&quot;</span><span class="p">,</span>
+  <span class="p">),</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="SceneEntityCfg">
+<a class="viewcode-back" href="../../../source/api/managers.html#mjlab.managers.SceneEntityCfg">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SceneEntityCfg</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for a scene entity that is used by the manager&#39;s term.</span>
+
+<span class="sd">  This configuration allows flexible specification of entity components either by name</span>
+<span class="sd">  or by ID. During resolution, it ensures consistency between names and IDs, and can</span>
+<span class="sd">  optimize to slice(None) when all components are selected.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;The name of the entity in the scene.&quot;&quot;&quot;</span>
+
+  <span class="n">joint_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Names of joints to include. Can be a single string or tuple.&quot;&quot;&quot;</span>
+
+  <span class="n">joint_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;IDs of joints to include. Can be a list or slice.&quot;&quot;&quot;</span>
+
+  <span class="n">body_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Names of bodies to include. Can be a single string or tuple.&quot;&quot;&quot;</span>
+
+  <span class="n">body_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;IDs of bodies to include. Can be a list or slice.&quot;&quot;&quot;</span>
+
+  <span class="n">geom_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Names of geometries to include. Can be a single string or tuple.&quot;&quot;&quot;</span>
+
+  <span class="n">geom_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;IDs of geometries to include. Can be a list or slice.&quot;&quot;&quot;</span>
+
+  <span class="n">site_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Names of sites to include. Can be a single string or tuple.&quot;&quot;&quot;</span>
+
+  <span class="n">site_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;IDs of sites to include. Can be a list or slice.&quot;&quot;&quot;</span>
+
+  <span class="n">actuator_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Names of actuators to include. Can be a single string or list.&quot;&quot;&quot;</span>
+
+  <span class="n">actuator_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;IDs of actuators to include. Can be a list or slice.&quot;&quot;&quot;</span>
+
+  <span class="n">tendon_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Names of tendons to include. Can be a single string or tuple.&quot;&quot;&quot;</span>
+
+  <span class="n">tendon_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;IDs of tendons to include. Can be a list or slice.&quot;&quot;&quot;</span>
+
+  <span class="n">camera_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Names of cameras to include. Can be a single string or tuple.&quot;&quot;&quot;</span>
+
+  <span class="n">camera_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;IDs of cameras to include. Can be a list or slice.&quot;&quot;&quot;</span>
+
+  <span class="n">light_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Names of lights to include. Can be a single string or tuple.&quot;&quot;&quot;</span>
+
+  <span class="n">light_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;IDs of lights to include. Can be a list or slice.&quot;&quot;&quot;</span>
+
+  <span class="n">material_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Names of materials to include. Can be a single string or tuple.&quot;&quot;&quot;</span>
+
+  <span class="n">material_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;IDs of materials to include. Can be a list or slice.&quot;&quot;&quot;</span>
+
+  <span class="n">preserve_order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;If True, maintains the order of components as specified.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SceneEntityCfg.resolve">
+<a class="viewcode-back" href="../../../source/api/managers.html#mjlab.managers.SceneEntityCfg.resolve">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve names and IDs for all configured fields.</span>
+
+<span class="sd">    This method ensures consistency between names and IDs for each field type.</span>
+<span class="sd">    It handles three cases:</span>
+<span class="sd">    1. Both names and IDs provided: Validates they match</span>
+<span class="sd">    2. Only names provided: Computes IDs (optimizes to slice(None) if all selected)</span>
+<span class="sd">    3. Only IDs provided: Computes names</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      scene: The scene containing the entity to resolve against.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ValueError: If provided names and IDs are inconsistent.</span>
+<span class="sd">      KeyError: If the entity name is not found in the scene.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">entity</span> <span class="o">=</span> <span class="n">scene</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">_FIELD_CONFIGS</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_field</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">Entity</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">_FieldConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve a single field&#39;s names and IDs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      entity: The entity to resolve against.</span>
+<span class="sd">      config: Field configuration specifying attribute names and methods.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">names_attr</span><span class="p">)</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">ids_attr</span><span class="p">)</span>
+
+    <span class="c1"># Early return if nothing to resolve.</span>
+    <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+      <span class="k">return</span>
+
+    <span class="c1"># Get entity metadata.</span>
+    <span class="n">entity_all_names</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">names_attr</span><span class="p">)</span>
+    <span class="n">entity_count</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">num_attr</span><span class="p">)</span>
+    <span class="n">find_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">find_method</span><span class="p">)</span>
+
+    <span class="c1"># Normalize single values to lists for uniform processing.</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_to_list</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">names_attr</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+      <span class="n">ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_to_list</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+      <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">ids_attr</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
+
+    <span class="c1"># Handle three resolution cases.</span>
+    <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_validate_consistency</span><span class="p">(</span>
+        <span class="n">names</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">entity_all_names</span><span class="p">,</span> <span class="n">find_method</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">kind_label</span>
+      <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_names_to_ids</span><span class="p">(</span>
+        <span class="n">names</span><span class="p">,</span> <span class="n">entity_all_names</span><span class="p">,</span> <span class="n">entity_count</span><span class="p">,</span> <span class="n">find_method</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">ids_attr</span>
+      <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_ids_to_names</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">entity_all_names</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">names_attr</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert single values to lists for uniform processing.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+      <span class="k">return</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_validate_consistency</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">entity_all_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">find_method</span><span class="p">,</span>
+    <span class="n">kind_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that provided names and IDs are consistent.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ValueError: If names and IDs don&#39;t match.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">found_ids</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">find_method</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">preserve_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">preserve_order</span><span class="p">)</span>
+    <span class="n">computed_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity_all_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">found_ids</span> <span class="o">!=</span> <span class="n">ids</span> <span class="ow">or</span> <span class="n">computed_names</span> <span class="o">!=</span> <span class="n">names</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Inconsistent </span><span class="si">{</span><span class="n">kind_label</span><span class="si">}</span><span class="s2"> names and indices. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Names </span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s2"> resolved to indices </span><span class="si">{</span><span class="n">found_ids</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;but indices </span><span class="si">{</span><span class="n">ids</span><span class="si">}</span><span class="s2"> (mapping to names </span><span class="si">{</span><span class="n">computed_names</span><span class="si">}</span><span class="s2">) were provided.&quot;</span>
+      <span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_names_to_ids</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">entity_all_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">entity_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">find_method</span><span class="p">,</span>
+    <span class="n">ids_attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve names to IDs, optimizing to slice(None) when all are selected.&quot;&quot;&quot;</span>
+    <span class="n">found_ids</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">find_method</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">preserve_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">preserve_order</span><span class="p">)</span>
+
+    <span class="c1"># Optimize to slice(None) if all components are selected in order.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_ids</span><span class="p">)</span> <span class="o">==</span> <span class="n">entity_count</span> <span class="ow">and</span> <span class="n">names</span> <span class="o">==</span> <span class="n">entity_all_names</span><span class="p">:</span>
+      <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids_attr</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids_attr</span><span class="p">,</span> <span class="n">found_ids</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_ids_to_names</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">entity_all_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">names_attr</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve IDs to their corresponding names.&quot;&quot;&quot;</span>
+    <span class="n">resolved_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity_all_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">]</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names_attr</span><span class="p">,</span> <span class="n">resolved_names</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The mjlab Developers
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, The mjlab Developers.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Mar 10, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

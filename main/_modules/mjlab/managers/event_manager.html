@@ -1,0 +1,866 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mjlab.managers.event_manager &#8212; mjlab Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/twemoji.css" />
+    <link rel="stylesheet" type="text/css" href="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/css/all.min.css?v=53359634" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=3ea80bc3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js"></script>
+    <script src="../../../_static/twemoji.js"></script>
+    <script src="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/js/all.min.js?v=ec35c6c9"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mjlab/managers/event_manager';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Mar 10, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mjlab Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+<div class="sidebar-version-switcher">
+  <label class="sidebar-version-label" for="version-select">Version</label>
+  <select id="version-select" class="sidebar-version-select" onchange="location = this.value;">
+    <option value="event_manager.html" selected>main</option>
+  </select>
+</div>
+</div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/architecture_overview.html">Architecture Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/entity/index.html">Entity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/entity/entity_data.html">Entity Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actuators.html">Actuators</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/sensors/index.html">Sensors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/raycast_sensor.html">RayCast Sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/sensors/rgbd_camera.html">RGB-D Camera</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/scene.html">Scene</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terrain.html">Terrain</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Manager Layer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/environment_config.html">Environment Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/observations.html">Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/rewards.html">Rewards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/terminations.html">Terminations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/events.html">Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/randomization.html">Domain Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/curriculum.html">Curriculum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/metrics.html">Metrics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Training &amp; Debugging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/rsl_rl.html">Training with RSL-RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/viewers.html">Viewers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/distributed_training.html">Distributed Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/training/cloud.html">Cloud Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/nan_guard.html">NaN Guard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/debugging/export_scene.html">Export Scene</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/envs.html">mjlab.envs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/scene.html">mjlab.scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sim.html">mjlab.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/entity.html">mjlab.entity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/actuator.html">mjlab.actuator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/sensor.html">mjlab.sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/managers.html">mjlab.managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/terrains.html">mjlab.terrains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/rl.html">mjlab.rl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/viewer.html">mjlab.viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../source/api/tasks.html">mjlab.tasks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Further Reading</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/motivation.html">Why mjlab?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/faq.html">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab/issues/new?title=Issue%20on%20page%20%2F_modules/mjlab/managers/event_manager.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mjlab.managers.event_manager</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Event manager for orchestrating operations based on different simulation events.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">prettytable</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrettyTable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.managers.manager_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ManagerBase</span><span class="p">,</span> <span class="n">ManagerTermBaseCfg</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">ManagerBasedRlEnv</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.viewer.debug_visualizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">DebugVisualizer</span>
+
+<span class="n">F</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">EventMode</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;startup&quot;</span><span class="p">,</span> <span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="s2">&quot;interval&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RecomputeLevel</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Recomputation level for derived model constants after domain randomization.</span>
+
+<span class="sd">  Higher values are more expensive and recompute a superset of the lower levels.</span>
+
+<span class="sd">  .. note::</span>
+
+<span class="sd">    All levels above ``none`` are expensive (forward kinematics, mass matrix</span>
+<span class="sd">    factorization, etc.). Prefer ``startup`` or ``reset`` event modes for</span>
+<span class="sd">    DR terms that require recomputation.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">none</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;No recomputation needed (e.g. geom_friction, dof_damping).&quot;&quot;&quot;</span>
+
+  <span class="n">set_const_fixed</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Recompute ``body_subtreemass``. Use after modifying ``body_gravcomp``.&quot;&quot;&quot;</span>
+
+  <span class="n">set_const_0</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Recompute ``dof_invweight0``, ``body_invweight0``, ``tendon_length0``,</span>
+<span class="sd">  ``tendon_invweight0``. Use after modifying ``dof_armature``, ``body_inertia``,</span>
+<span class="sd">  ``body_pos``, ``body_quat``, or ``qpos0``.&quot;&quot;&quot;</span>
+
+  <span class="n">set_const</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Full recomputation (superset of all lower levels). Use after modifying</span>
+<span class="sd">  ``body_mass`` or ``body_ipos``.&quot;&quot;&quot;</span>
+
+
+<span class="n">_DERIVED_FIELDS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">RecomputeLevel</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">none</span><span class="p">:</span> <span class="p">(),</span>
+  <span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">set_const_fixed</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;body_subtreemass&quot;</span><span class="p">,),</span>
+  <span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">set_const_0</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s2">&quot;dof_invweight0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;body_invweight0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tendon_length0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tendon_invweight0&quot;</span><span class="p">,</span>
+  <span class="p">),</span>
+<span class="p">}</span>
+<span class="n">_DERIVED_FIELDS</span><span class="p">[</span><span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">set_const</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+  <span class="n">_DERIVED_FIELDS</span><span class="p">[</span><span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">set_const_fixed</span><span class="p">]</span>
+  <span class="o">+</span> <span class="n">_DERIVED_FIELDS</span><span class="p">[</span><span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">set_const_0</span><span class="p">]</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">requires_model_fields</span><span class="p">(</span>
+  <span class="o">*</span><span class="n">fields</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">recompute</span><span class="p">:</span> <span class="n">RecomputeLevel</span> <span class="o">=</span> <span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">none</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">F</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Mark an event function as requiring specific model fields expanded per-world.</span>
+
+<span class="sd">  Fields listed here are registered in ``EventManager.domain_randomization_fields``</span>
+<span class="sd">  so that ``sim.expand_model_fields()`` allocates real per-world memory for them.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    *fields: Model field names to expand per-world.</span>
+<span class="sd">    recompute: Recomputation level after modifying these fields.</span>
+<span class="sd">      Derived fields are automatically appended to the model_fields list.</span>
+
+<span class="sd">  Example::</span>
+
+<span class="sd">    @requires_model_fields(&quot;body_mass&quot;, recompute=RecomputeLevel.set_const)</span>
+<span class="sd">    def body_mass(env, env_ids, ...):</span>
+<span class="sd">      ...</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">derived</span> <span class="o">=</span> <span class="n">_DERIVED_FIELDS</span><span class="p">[</span><span class="n">recompute</span><span class="p">]</span>
+  <span class="n">all_fields</span> <span class="o">=</span> <span class="n">fields</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">derived</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+    <span class="n">func</span><span class="o">.</span><span class="n">model_fields</span> <span class="o">=</span> <span class="n">all_fields</span>  <span class="c1"># type: ignore[attr-defined]</span>
+    <span class="n">func</span><span class="o">.</span><span class="n">recompute</span> <span class="o">=</span> <span class="n">recompute</span>  <span class="c1"># type: ignore[attr-defined]</span>
+    <span class="k">return</span> <span class="n">func</span>
+
+  <span class="k">return</span> <span class="n">decorator</span>
+
+
+<div class="viewcode-block" id="EventTermCfg">
+<a class="viewcode-back" href="../../../source/api/managers.html#mjlab.managers.EventTermCfg">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EventTermCfg</span><span class="p">(</span><span class="n">ManagerTermBaseCfg</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for an event term.</span>
+
+<span class="sd">  Event terms trigger operations at specific simulation events. They&#39;re commonly</span>
+<span class="sd">  used for domain randomization, state resets, and periodic perturbations.</span>
+
+<span class="sd">  The four modes determine when the event fires:</span>
+
+<span class="sd">  - ``&quot;startup&quot;``: Once when the environment initializes. Use for parameters that</span>
+<span class="sd">    should be randomized per-environment but stay constant within an episode (e.g.,</span>
+<span class="sd">    domain randomization).</span>
+
+<span class="sd">  - ``&quot;reset&quot;``: On every episode reset. Use for parameters that should vary between</span>
+<span class="sd">    episodes (e.g., initial robot pose, domain randomization).</span>
+
+<span class="sd">  - ``&quot;interval&quot;``: Periodically during simulation, controlled by ``interval_range_s``.</span>
+<span class="sd">    Use for perturbations that should happen during episodes (e.g., pushing the robot,</span>
+<span class="sd">    external disturbances).</span>
+
+<span class="sd">  - ``&quot;step&quot;``: Every environment step, unconditionally on all envs. Use for terms that</span>
+<span class="sd">    manage per-step state such as force lifetimes (e.g., ``apply_body_impulse``).</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">mode</span><span class="p">:</span> <span class="n">EventMode</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;When the event triggers: ``&quot;startup&quot;`` (once at init), ``&quot;reset&quot;`` (every</span>
+<span class="sd">  episode), ``&quot;interval&quot;`` (periodically during simulation), or ``&quot;step&quot;`` (every</span>
+<span class="sd">  environment step).&quot;&quot;&quot;</span>
+
+  <span class="n">interval_range_s</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Time range in seconds for interval mode. The next trigger time is uniformly</span>
+<span class="sd">  sampled from ``[min, max]``. Required when ``mode=&quot;interval&quot;``.&quot;&quot;&quot;</span>
+
+  <span class="n">is_global_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Whether all environments share the same timer. If True, all envs trigger</span>
+<span class="sd">  simultaneously. If False (default), each env has an independent timer that</span>
+<span class="sd">  resets on episode reset. Only applies to ``mode=&quot;interval&quot;``.&quot;&quot;&quot;</span>
+
+  <span class="n">min_step_count_between_reset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Minimum environment steps between triggers. Prevents the event from firing</span>
+<span class="sd">  too frequently when episodes reset rapidly. Only applies to ``mode=&quot;reset&quot;``.</span>
+<span class="sd">  Set to 0 (default) to trigger on every reset.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="EventManager">
+<a class="viewcode-back" href="../../../source/api/managers.html#mjlab.managers.EventManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EventManager</span><span class="p">(</span><span class="n">ManagerBase</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Manages event-based operations for the environment.</span>
+
+<span class="sd">  The event manager triggers operations at different simulation events: startup</span>
+<span class="sd">  (once at initialization), reset (on episode reset), or interval (periodically</span>
+<span class="sd">  during simulation). Common uses include domain randomization and state resets.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">_env</span><span class="p">:</span> <span class="n">ManagerBasedRlEnv</span>
+
+<div class="viewcode-block" id="EventManager.__init__">
+<a class="viewcode-back" href="../../../source/api/managers.html#mjlab.managers.EventManager.__init__">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">EventTermCfg</span><span class="p">],</span> <span class="n">env</span><span class="p">:</span> <span class="n">ManagerBasedRlEnv</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">EventMode</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_cfgs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">EventMode</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">EventTermCfg</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mode_class_term_cfgs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">EventMode</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">EventTermCfg</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_domain_randomization_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">)</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&lt;EventManager&gt; contains </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> active terms.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">:</span>
+      <span class="n">table</span> <span class="o">=</span> <span class="n">PrettyTable</span><span class="p">()</span>
+      <span class="n">table</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Active Event Terms in Mode: &#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+      <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;interval&quot;</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">field_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Index&quot;</span><span class="p">,</span> <span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Interval time range (s)&quot;</span><span class="p">]</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">align</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;l&quot;</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+          <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">[</span><span class="n">mode</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_cfgs</span><span class="p">[</span><span class="n">mode</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">):</span>
+          <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">([</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">interval_range_s</span><span class="p">])</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">field_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Index&quot;</span><span class="p">,</span> <span class="s2">&quot;Name&quot;</span><span class="p">]</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">align</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;l&quot;</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">[</span><span class="n">mode</span><span class="p">]):</span>
+          <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">([</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="p">])</span>
+      <span class="n">msg</span> <span class="o">+=</span> <span class="n">table</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+      <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain_randomization_fields</span><span class="p">:</span>
+      <span class="n">table</span> <span class="o">=</span> <span class="n">PrettyTable</span><span class="p">()</span>
+      <span class="n">table</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Domain Randomization Fields&quot;</span>
+      <span class="n">table</span><span class="o">.</span><span class="n">field_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Index&quot;</span><span class="p">,</span> <span class="s2">&quot;Field Name&quot;</span><span class="p">]</span>
+      <span class="n">table</span><span class="o">.</span><span class="n">align</span><span class="p">[</span><span class="s2">&quot;Field Name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;l&quot;</span>
+      <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_domain_randomization_fields</span><span class="p">):</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">([</span><span class="n">index</span><span class="p">,</span> <span class="n">field</span><span class="p">])</span>
+      <span class="n">msg</span> <span class="o">+=</span> <span class="n">table</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+      <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">msg</span>
+
+  <span class="c1"># Properties.</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">active_terms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">EventMode</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">available_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">EventMode</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">domain_randomization_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_domain_randomization_fields</span><span class="p">)</span>
+
+  <span class="c1"># Methods.</span>
+
+<div class="viewcode-block" id="EventManager.get_term_cfg">
+<a class="viewcode-back" href="../../../source/api/managers.html#mjlab.managers.EventManager.get_term_cfg">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_term_cfg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">term_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EventTermCfg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the configuration of a specific event term by name.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">term_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">[</span><span class="n">mode</span><span class="p">]:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">term_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_cfgs</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event term &#39;</span><span class="si">{</span><span class="n">term_name</span><span class="si">}</span><span class="s2">&#39; not found in active terms.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EventManager.reset">
+<a class="viewcode-back" href="../../../source/api/managers.html#mjlab.managers.EventManager.reset">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_ids</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">mode_cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_class_term_cfgs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+      <span class="k">for</span> <span class="n">term_cfg</span> <span class="ow">in</span> <span class="n">mode_cfg</span><span class="p">:</span>
+        <span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">env_ids</span><span class="o">=</span><span class="n">env_ids</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">env_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">num_envs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">num_envs</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">num_envs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_ids</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;interval&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_cfgs</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">term_cfg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_class_term_cfgs</span><span class="p">[</span><span class="s2">&quot;interval&quot;</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">is_global_time</span><span class="p">:</span>
+          <span class="k">assert</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">interval_range_s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+          <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">interval_range_s</span>
+          <span class="n">sampled_interval</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span> <span class="o">+</span> <span class="n">lower</span>
+          <span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_interval_term_time_left</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">env_ids</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampled_interval</span>
+    <span class="k">return</span> <span class="p">{}</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="n">EventMode</span><span class="p">,</span>
+    <span class="n">env_ids</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">global_env_step_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+  <span class="p">):</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;interval&quot;</span> <span class="ow">and</span> <span class="n">dt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Event mode &#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39; requires the time-step of the environment.&quot;</span>
+      <span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;interval&quot;</span> <span class="ow">and</span> <span class="n">env_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Event mode &#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39; does not require environment indices. This is an undefined behavior&quot;</span>
+        <span class="s2">&quot; as the environment indices are computed based on the time left for each environment.&quot;</span>
+      <span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span> <span class="ow">and</span> <span class="n">global_env_step_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Event mode &#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39; requires the total number of environment steps to be provided.&quot;</span>
+      <span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;step&quot;</span> <span class="ow">and</span> <span class="n">dt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Event mode &#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39; requires the time-step of the environment.&quot;</span>
+      <span class="p">)</span>
+
+    <span class="n">strongest_fired</span> <span class="o">=</span> <span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">none</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">term_cfg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_cfgs</span><span class="p">[</span><span class="n">mode</span><span class="p">]):</span>
+      <span class="n">fired</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;interval&quot;</span><span class="p">:</span>
+        <span class="n">time_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_term_time_left</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">time_left</span> <span class="o">-=</span> <span class="n">dt</span>
+        <span class="k">if</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">is_global_time</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">time_left</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">interval_range_s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">interval_range_s</span>
+            <span class="n">sampled_interval</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span> <span class="o">+</span> <span class="n">lower</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_interval_term_time_left</span><span class="p">[</span><span class="n">index</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">sampled_interval</span>
+            <span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">fired</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">valid_env_ids</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_left</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+          <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_env_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">interval_range_s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">interval_range_s</span>
+            <span class="n">sampled_time</span> <span class="o">=</span> <span class="p">(</span>
+              <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_env_ids</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span>
+              <span class="o">+</span> <span class="n">lower</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_interval_term_time_left</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">valid_env_ids</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampled_time</span>
+            <span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="n">valid_env_ids</span><span class="p">,</span> <span class="o">**</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">fired</span> <span class="o">=</span> <span class="kc">True</span>
+      <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span>
+        <span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">fired</span> <span class="o">=</span> <span class="kc">True</span>
+      <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">global_env_step_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">min_step_count</span> <span class="o">=</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">min_step_count_between_reset</span>
+        <span class="k">if</span> <span class="n">env_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="n">env_ids</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">min_step_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_step_id</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">env_ids</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">global_env_step_count</span>
+          <span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_once</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">env_ids</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+          <span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="n">env_ids</span><span class="p">,</span> <span class="o">**</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+          <span class="n">fired</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">last_triggered_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_step_id</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">env_ids</span><span class="p">]</span>
+          <span class="n">triggered_at_least_once</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_once</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">env_ids</span><span class="p">]</span>
+          <span class="n">steps_since_triggered</span> <span class="o">=</span> <span class="n">global_env_step_count</span> <span class="o">-</span> <span class="n">last_triggered_step</span>
+          <span class="n">valid_trigger</span> <span class="o">=</span> <span class="n">steps_since_triggered</span> <span class="o">&gt;=</span> <span class="n">min_step_count</span>
+          <span class="n">valid_trigger</span> <span class="o">|=</span> <span class="p">(</span><span class="n">last_triggered_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">triggered_at_least_once</span>
+          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_ids</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">valid_env_ids</span> <span class="o">=</span> <span class="n">env_ids</span><span class="p">[</span><span class="n">valid_trigger</span><span class="p">]</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="n">valid_env_ids</span> <span class="o">=</span> <span class="n">valid_trigger</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+          <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_env_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_once</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">valid_env_ids</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_step_id</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">valid_env_ids</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+              <span class="n">global_env_step_count</span>
+            <span class="p">)</span>
+            <span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="n">valid_env_ids</span><span class="p">,</span> <span class="o">**</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">fired</span> <span class="o">=</span> <span class="kc">True</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="n">env_ids</span><span class="p">,</span> <span class="o">**</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">fired</span> <span class="o">=</span> <span class="kc">True</span>
+
+      <span class="k">if</span> <span class="n">fired</span><span class="p">:</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;recompute&quot;</span><span class="p">,</span> <span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">none</span><span class="p">)</span>
+        <span class="n">strongest_fired</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">strongest_fired</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">strongest_fired</span> <span class="o">!=</span> <span class="n">RecomputeLevel</span><span class="o">.</span><span class="n">none</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">recompute_constants</span><span class="p">(</span><span class="n">strongest_fired</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EventManager.debug_vis">
+<a class="viewcode-back" href="../../../source/api/managers.html#mjlab.managers.EventManager.debug_vis">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">debug_vis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visualizer</span><span class="p">:</span> <span class="s2">&quot;DebugVisualizer&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delegate debug visualization to class-based event terms.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">mode_cfgs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_class_term_cfgs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+      <span class="k">for</span> <span class="n">term_cfg</span> <span class="ow">in</span> <span class="n">mode_cfgs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;debug_vis&quot;</span><span class="p">):</span>
+          <span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">debug_vis</span><span class="p">(</span><span class="n">visualizer</span><span class="p">)</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_terms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_interval_term_time_left</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_step_id</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_once</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">term_name</span><span class="p">,</span> <span class="n">term_cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">term_cfg</span><span class="p">:</span> <span class="n">EventTermCfg</span> <span class="o">|</span> <span class="kc">None</span>
+      <span class="k">if</span> <span class="n">term_cfg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;term: </span><span class="si">{</span><span class="n">term_name</span><span class="si">}</span><span class="s2"> set to None, skipping...&quot;</span><span class="p">)</span>
+        <span class="k">continue</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_common_term_cfg</span><span class="p">(</span><span class="n">term_name</span><span class="p">,</span> <span class="n">term_cfg</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">[</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">mode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_cfgs</span><span class="p">[</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">mode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_class_term_cfgs</span><span class="p">[</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">mode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_names</span><span class="p">[</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term_name</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_mode_term_cfgs</span><span class="p">[</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term_cfg</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;reset&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">reset</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode_class_term_cfgs</span><span class="p">[</span><span class="n">term_cfg</span><span class="o">.</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term_cfg</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;interval&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">interval_range_s</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Event term &#39;</span><span class="si">{</span><span class="n">term_name</span><span class="si">}</span><span class="s2">&#39; has mode &#39;interval&#39; but &#39;interval_range_s&#39; is not specified.&quot;</span>
+          <span class="p">)</span>
+        <span class="k">if</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">is_global_time</span><span class="p">:</span>
+          <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">interval_range_s</span>
+          <span class="n">time_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span> <span class="o">+</span> <span class="n">lower</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_interval_term_time_left</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_left</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">interval_range_s</span>
+          <span class="n">time_left</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span> <span class="o">+</span> <span class="n">lower</span>
+          <span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_interval_term_time_left</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_left</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span><span class="p">:</span>
+        <span class="n">step_count</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_step_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_count</span><span class="p">)</span>
+        <span class="n">no_trigger</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_term_last_triggered_once</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">no_trigger</span><span class="p">)</span>
+
+      <span class="n">func</span> <span class="o">=</span> <span class="n">term_cfg</span><span class="o">.</span><span class="n">func</span>
+      <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;model_fields&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain_randomization_fields</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_domain_randomization_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The mjlab Developers
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, The mjlab Developers.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Mar 10, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

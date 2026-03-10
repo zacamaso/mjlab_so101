@@ -1,0 +1,853 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mjlab.viewer.viser.viewer &#8212; mjlab Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/twemoji.css" />
+    <link rel="stylesheet" type="text/css" href="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/css/all.min.css?v=53359634" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=3ea80bc3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js"></script>
+    <script src="../../../../_static/twemoji.js"></script>
+    <script src="/home/runner/work/mjlab_so101/mjlab_so101/.venv/lib/python3.13/site-packages/sphinxcontrib/icon/node_modules/@fortawesome/fontawesome-free/js/all.min.js?v=ec35c6c9"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mjlab/viewer/viser/viewer';</script>
+    <link rel="icon" href="../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Mar 10, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">mjlab Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+        <div class="sidebar-primary-item">
+<div class="sidebar-version-switcher">
+  <label class="sidebar-version-label" for="version-select">Version</label>
+  <select id="version-select" class="sidebar-version-select" onchange="location = this.value;">
+    <option value="viewer.html" selected>main</option>
+  </select>
+</div>
+</div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/architecture_overview.html">Architecture Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../source/entity/index.html">Entity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/entity/entity_data.html">Entity Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/actuators.html">Actuators</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../source/sensors/index.html">Sensors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/sensors/raycast_sensor.html">RayCast Sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/sensors/rgbd_camera.html">RGB-D Camera</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/scene.html">Scene</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/terrain.html">Terrain</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The Manager Layer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/environment_config.html">Environment Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/observations.html">Observations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/actions.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/rewards.html">Rewards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/terminations.html">Terminations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/events.html">Events</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/randomization.html">Domain Randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/curriculum.html">Curriculum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/metrics.html">Metrics</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Training &amp; Debugging</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/training/rsl_rl.html">Training with RSL-RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/viewers.html">Viewers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/training/distributed_training.html">Distributed Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/training/cloud.html">Cloud Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/debugging/nan_guard.html">NaN Guard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/debugging/export_scene.html">Export Scene</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../source/api/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/envs.html">mjlab.envs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/scene.html">mjlab.scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/sim.html">mjlab.sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/entity.html">mjlab.entity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/actuator.html">mjlab.actuator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/sensor.html">mjlab.sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/managers.html">mjlab.managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/terrains.html">mjlab.terrains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/rl.html">mjlab.rl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/viewer.html">mjlab.viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../source/api/tasks.html">mjlab.tasks</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Further Reading</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/motivation.html">Why mjlab?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/faq.html">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/mujocolab/mjlab/issues/new?title=Issue%20on%20page%20%2F_modules/mjlab/viewer/viser/viewer.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for mjlab.viewer.viser.viewer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;mjlab play viewer based on Viser with simulation controls.</span>
+
+<span class="sd">Adapted from an MJX visualizer by Chung Min Kim: https://github.com/chungmin99/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lock</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">viser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">override</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.sim.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.viewer.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+  <span class="n">BaseViewer</span><span class="p">,</span>
+  <span class="n">EnvProtocol</span><span class="p">,</span>
+  <span class="n">PolicyProtocol</span><span class="p">,</span>
+  <span class="n">VerbosityLevel</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.viewer.viser.overlays</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+  <span class="n">ViserCameraOverlays</span><span class="p">,</span>
+  <span class="n">ViserContactOverlays</span><span class="p">,</span>
+  <span class="n">ViserDebugOverlays</span><span class="p">,</span>
+  <span class="n">ViserTermOverlays</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mjlab.viewer.viser.scene</span><span class="w"> </span><span class="kn">import</span> <span class="n">ViserMujocoScene</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UpdateReason</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+  <span class="n">ACTION</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+  <span class="n">ENV_SWITCH</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+  <span class="n">SCENE_REQUEST</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="ViserPlayViewer">
+<a class="viewcode-back" href="../../../../source/api/viewer.html#mjlab.viewer.ViserPlayViewer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ViserPlayViewer</span><span class="p">(</span><span class="n">BaseViewer</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Interactive Viser-based viewer with playback controls.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ViserPlayViewer.__init__">
+<a class="viewcode-back" href="../../../../source/api/viewer.html#mjlab.viewer.ViserPlayViewer.__init__">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">EnvProtocol</span><span class="p">,</span>
+    <span class="n">policy</span><span class="p">:</span> <span class="n">PolicyProtocol</span><span class="p">,</span>
+    <span class="n">frame_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.0</span><span class="p">,</span>
+    <span class="n">verbosity</span><span class="p">:</span> <span class="n">VerbosityLevel</span> <span class="o">=</span> <span class="n">VerbosityLevel</span><span class="o">.</span><span class="n">SILENT</span><span class="p">,</span>
+    <span class="n">viser_server</span><span class="p">:</span> <span class="n">viser</span><span class="o">.</span><span class="n">ViserServer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">frame_rate</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="p">:</span> <span class="n">ViserTermOverlays</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_camera_overlays</span><span class="p">:</span> <span class="n">ViserCameraOverlays</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_debug_overlays</span><span class="p">:</span> <span class="n">ViserDebugOverlays</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_contact_overlays</span><span class="p">:</span> <span class="n">ViserContactOverlays</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sim_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_camera_update_last_ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_debug_queue_last_ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_scene_submit_enqueue_last_ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_scene_update_last_ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_timing_last_log_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_external_server</span> <span class="o">=</span> <span class="n">viser_server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_server</span> <span class="o">=</span> <span class="n">viser_server</span> <span class="ow">or</span> <span class="n">viser</span><span class="o">.</span><span class="n">ViserServer</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;mjlab&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ViserPlayViewer.setup">
+<a class="viewcode-back" href="../../../../source/api/viewer.html#mjlab.viewer.ViserPlayViewer.setup">[docs]</a>
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup the viewer resources.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">sim</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">Simulation</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_threadpool</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pending_update_reasons</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">UpdateReason</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="c1"># Create ViserMujocoScene for all 3D visualization (with debug visualization enabled).</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span> <span class="o">=</span> <span class="n">ViserMujocoScene</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+      <span class="n">server</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">,</span>
+      <span class="n">mj_model</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">mj_model</span><span class="p">,</span>
+      <span class="n">num_envs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">env_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">env_idx</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">debug_visualization_enabled</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="kc">True</span>  <span class="c1"># Enable debug visualization by default</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create tab group.</span>
+    <span class="n">tabs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_tab_group</span><span class="p">()</span>
+
+    <span class="c1"># Main tab with simulation controls and display settings.</span>
+    <span class="k">with</span> <span class="n">tabs</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="s2">&quot;Controls&quot;</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="n">viser</span><span class="o">.</span><span class="n">Icon</span><span class="o">.</span><span class="n">SETTINGS</span><span class="p">):</span>
+      <span class="c1"># Status display.</span>
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_folder</span><span class="p">(</span><span class="s2">&quot;Info&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status_html</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_html</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+      <span class="c1"># Simulation controls.</span>
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_folder</span><span class="p">(</span><span class="s2">&quot;Simulation&quot;</span><span class="p">):</span>
+        <span class="c1"># Play/Pause button.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pause_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span>
+          <span class="s2">&quot;Play&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="k">else</span> <span class="s2">&quot;Pause&quot;</span><span class="p">,</span>
+          <span class="n">icon</span><span class="o">=</span><span class="n">viser</span><span class="o">.</span><span class="n">Icon</span><span class="o">.</span><span class="n">PLAYER_PLAY</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="k">else</span> <span class="n">viser</span><span class="o">.</span><span class="n">Icon</span><span class="o">.</span><span class="n">PLAYER_PAUSE</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="nd">@self</span><span class="o">.</span><span class="n">_pause_button</span><span class="o">.</span><span class="n">on_click</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">request_toggle_pause</span><span class="p">()</span>
+
+        <span class="c1"># Single-step button.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span>
+          <span class="s2">&quot;Step&quot;</span><span class="p">,</span>
+          <span class="n">icon</span><span class="o">=</span><span class="n">viser</span><span class="o">.</span><span class="n">Icon</span><span class="o">.</span><span class="n">PLAYER_TRACK_NEXT</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="nd">@self</span><span class="o">.</span><span class="n">_step_button</span><span class="o">.</span><span class="n">on_click</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">request_single_step</span><span class="p">()</span>
+
+        <span class="c1"># Reset button.</span>
+        <span class="n">reset_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_button</span><span class="p">(</span><span class="s2">&quot;Reset Environment&quot;</span><span class="p">)</span>
+
+        <span class="nd">@reset_button</span><span class="o">.</span><span class="n">on_click</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">request_reset</span><span class="p">()</span>
+
+        <span class="c1"># Speed controls.</span>
+        <span class="n">speed_buttons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_button_group</span><span class="p">(</span>
+          <span class="s2">&quot;Speed&quot;</span><span class="p">,</span>
+          <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Slower&quot;</span><span class="p">,</span> <span class="s2">&quot;1x&quot;</span><span class="p">,</span> <span class="s2">&quot;Faster&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="nd">@speed_buttons</span><span class="o">.</span><span class="n">on_click</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;Slower&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request_speed_down</span><span class="p">()</span>
+          <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;1x&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request_reset_speed</span><span class="p">()</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request_speed_up</span><span class="p">()</span>
+
+      <span class="c1"># Let command terms create their own GUI controls.</span>
+      <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span>
+      <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">command_manager</span><span class="o">.</span><span class="n">active_terms</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_folder</span><span class="p">(</span><span class="s2">&quot;Commands&quot;</span><span class="p">):</span>
+          <span class="n">env</span><span class="o">.</span><span class="n">command_manager</span><span class="o">.</span><span class="n">create_gui</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">env_idx</span><span class="p">)</span>
+
+      <span class="c1"># Add standard visualization options from ViserMujocoScene.</span>
+      <span class="k">def</span><span class="w"> </span><span class="nf">_debug_viz_extra</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">command_manager</span><span class="o">.</span><span class="n">create_debug_vis_gui</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">)</span>
+
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_folder</span><span class="p">(</span><span class="s2">&quot;Scene&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">create_visualization_gui</span><span class="p">(</span>
+          <span class="n">camera_distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">distance</span><span class="p">,</span>
+          <span class="n">camera_azimuth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">azimuth</span><span class="p">,</span>
+          <span class="n">camera_elevation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">elevation</span><span class="p">,</span>
+          <span class="n">debug_viz_extra_gui</span><span class="o">=</span><span class="n">_debug_viz_extra</span><span class="p">,</span>
+        <span class="p">)</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">_camera_overlays</span> <span class="o">=</span> <span class="n">ViserCameraOverlays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">mj_model</span><span class="p">)</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera_overlays</span><span class="o">.</span><span class="n">has_cameras</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">add_folder</span><span class="p">(</span><span class="s2">&quot;Camera Feeds&quot;</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_camera_overlays</span><span class="o">.</span><span class="n">setup_controls</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_prev_env_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">env_idx</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span> <span class="o">=</span> <span class="n">ViserTermOverlays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="o">.</span><span class="n">setup_tabs</span><span class="p">(</span><span class="n">tabs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_debug_overlays</span> <span class="o">=</span> <span class="n">ViserDebugOverlays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_contact_overlays</span> <span class="o">=</span> <span class="n">ViserContactOverlays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="p">)</span>
+
+    <span class="c1"># Groups tab (geoms and sites).</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">create_groups_gui</span><span class="p">(</span><span class="n">tabs</span><span class="p">)</span></div>
+
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_process_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process queued actions and sync UI state.&quot;&quot;&quot;</span>
+    <span class="n">had_actions</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_process_actions</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">had_actions</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_pending_update_reasons</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">UpdateReason</span><span class="o">.</span><span class="n">ACTION</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_sync_ui_state</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_sync_ui_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sync UI elements to current state after action processing.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pause_button</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Play&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="k">else</span> <span class="s2">&quot;Pause&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pause_button</span><span class="o">.</span><span class="n">icon</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="n">viser</span><span class="o">.</span><span class="n">Icon</span><span class="o">.</span><span class="n">PLAYER_PLAY</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span> <span class="k">else</span> <span class="n">viser</span><span class="o">.</span><span class="n">Icon</span><span class="o">.</span><span class="n">PLAYER_PAUSE</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_update_status_display</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_update_env_dependent_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Refresh reward/metric plots and histories for the selected environment.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">env_idx</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev_env_idx</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_prev_env_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">env_idx</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_pending_update_reasons</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">UpdateReason</span><span class="o">.</span><span class="n">ENV_SWITCH</span><span class="p">)</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="o">.</span><span class="n">on_env_switch</span><span class="p">()</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_overlays</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug_overlays</span><span class="o">.</span><span class="n">on_env_switch</span><span class="p">()</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contact_overlays</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contact_overlays</span><span class="o">.</span><span class="n">on_env_switch</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_update_camera_feeds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">has_pending_updates</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Push camera sensor frames to GUI when needed.&quot;&quot;&quot;</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera_overlays</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_update_cameras</span><span class="p">(</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">,</span> <span class="n">has_pending_updates</span>
+    <span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_camera_overlays</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">env_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">_scene_offset</span>
+      <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_camera_update_last_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_queue_debug_visualizers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Queue environment-specific debug draw calls into the scene.</span>
+
+<span class="sd">    Acquires ``_sim_lock`` so the clear+requeue is atomic with respect</span>
+<span class="sd">    to the background thread that reads the queues in ``scene.update``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug_overlays</span><span class="p">:</span>
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim_lock</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug_overlays</span><span class="o">.</span><span class="n">queue</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_debug_queue_last_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_submit_scene_update_if_needed</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">:</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">has_pending_updates</span><span class="p">:</span> <span class="nb">bool</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Submit a scene sync job when the update policy allows it.&quot;&quot;&quot;</span>
+    <span class="n">t_enqueue_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">needs_update</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_pending_update_reasons</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">UpdateReason</span><span class="o">.</span><span class="n">SCENE_REQUEST</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_submit_scene_update</span><span class="p">(</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">,</span> <span class="n">has_pending_updates</span>
+    <span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_scene_submit_enqueue_last_ms</span> <span class="o">=</span> <span class="mf">0.0</span>
+      <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_scene</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim_lock</span><span class="p">:</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">atomic</span><span class="p">():</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scene_update_last_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_threadpool</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">update_scene</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_scene_submit_enqueue_last_ms</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t_enqueue_start</span>
+    <span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pending_update_reasons</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">needs_update</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_maybe_log_debug_timings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Log lightweight Viser pipeline timing in debug mode.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&lt;</span> <span class="n">VerbosityLevel</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timing_last_log_time</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_timing_last_log_time</span> <span class="o">=</span> <span class="n">now</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+      <span class="p">(</span>
+        <span class="s2">&quot;[DEBUG] Viser timings: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;camera=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_camera_update_last_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;debug=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_debug_queue_last_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;submit_enqueue=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_scene_submit_enqueue_last_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;scene_update=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_scene_update_last_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms&quot;</span>
+      <span class="p">),</span>
+      <span class="n">VerbosityLevel</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+    <span class="p">)</span>
+
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_should_update_cameras</span><span class="p">(</span><span class="n">paused</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">has_pending_updates</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Camera feeds update continuously while running and on-demand while paused.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="ow">not</span> <span class="n">paused</span><span class="p">)</span> <span class="ow">or</span> <span class="n">has_pending_updates</span>
+
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_should_submit_scene_update</span><span class="p">(</span>
+    <span class="n">counter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">paused</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">has_pending_updates</span><span class="p">:</span> <span class="nb">bool</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scene submits at 30Hz (every other 60Hz tick) with pause-aware gating.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">counter</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">paused</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_pending_updates</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="ViserPlayViewer.sync_env_to_viewer">
+<a class="viewcode-back" href="../../../../source/api/viewer.html#mjlab.viewer.ViserPlayViewer.sync_env_to_viewer">[docs]</a>
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">sync_env_to_viewer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize environment state to viewer.&quot;&quot;&quot;</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">sim</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">Simulation</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">paused</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_update_status_display</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_update_env_dependent_plots</span><span class="p">()</span>
+    <span class="n">has_pending_updates</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pending_update_reasons</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene</span><span class="o">.</span><span class="n">needs_update</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_update_camera_feeds</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">has_pending_updates</span><span class="p">)</span>
+    <span class="c1"># Queue debug visualizers only when a scene update will actually be</span>
+    <span class="c1"># submitted.  Clearing the queues on skipped ticks creates a race</span>
+    <span class="c1"># with the background thread that causes debug overlays to blink.</span>
+    <span class="n">will_submit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_submit_scene_update</span><span class="p">(</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_paused</span><span class="p">,</span> <span class="n">has_pending_updates</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">will_submit</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_queue_debug_visualizers</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_submit_scene_update_if_needed</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">has_pending_updates</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_log_debug_timings</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ViserPlayViewer.sync_viewer_to_env">
+<a class="viewcode-back" href="../../../../source/api/viewer.html#mjlab.viewer.ViserPlayViewer.sync_viewer_to_env">[docs]</a>
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">sync_viewer_to_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize viewer state to environment (e.g., perturbations).&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ViserPlayViewer.reset_environment">
+<a class="viewcode-back" href="../../../../source/api/viewer.html#mjlab.viewer.ViserPlayViewer.reset_environment">[docs]</a>
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">reset_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extend BaseViewer.reset_environment to clear reward and metrics histories.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim_lock</span><span class="p">:</span>
+      <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_environment</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="o">.</span><span class="n">clear_histories</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ViserPlayViewer.close">
+<a class="viewcode-back" href="../../../../source/api/viewer.html#mjlab.viewer.ViserPlayViewer.close">[docs]</a>
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the viewer and cleanup resources.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_term_overlays</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camera_overlays</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_camera_overlays</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_threadpool</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_external_server</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ViserPlayViewer.is_running">
+<a class="viewcode-back" href="../../../../source/api/viewer.html#mjlab.viewer.ViserPlayViewer.is_running">[docs]</a>
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_running</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if viewer is running.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># Viser runs until process is killed.</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_update_status_display</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update the HTML status display.&quot;&quot;&quot;</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_status</span><span class="p">()</span>
+    <span class="n">actual_rt</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">actual_realtime</span>
+    <span class="n">rt_display</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">actual_rt</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x&quot;</span> <span class="k">if</span> <span class="n">actual_rt</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;—&quot;</span>
+    <span class="n">capped</span> <span class="o">=</span> <span class="s1">&#39; &lt;span style=&quot;color:#e74c3c;&quot;&gt;[CAPPED]&lt;/span&gt;&#39;</span> <span class="k">if</span> <span class="n">status</span><span class="o">.</span><span class="n">capped</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">error_line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">status</span><span class="o">.</span><span class="n">last_error</span><span class="p">:</span>
+      <span class="c1"># Show last line of traceback to avoid flooding the panel.</span>
+      <span class="n">first_line</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">last_error</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">error_line</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;&lt;br/&gt;&lt;span style=&quot;color:#e74c3c;&quot;&gt;&lt;strong&gt;Error:&lt;/strong&gt; </span><span class="si">{</span><span class="n">first_line</span><span class="si">}</span><span class="s1">&lt;/span&gt;&#39;</span>
+      <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_status_html</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">      &lt;div style=&quot;font-size: 0.85em; line-height: 1.25; padding: 0 1em 0.5em 1em;&quot;&gt;</span>
+<span class="s2">        &lt;strong&gt;Status:&lt;/strong&gt; </span><span class="si">{</span><span class="s2">&quot;Paused&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">status</span><span class="o">.</span><span class="n">paused</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;Running&quot;</span><span class="si">}{</span><span class="n">capped</span><span class="si">}</span><span class="s2">&lt;br/&gt;</span>
+<span class="s2">        &lt;strong&gt;Steps:&lt;/strong&gt; </span><span class="si">{</span><span class="n">status</span><span class="o">.</span><span class="n">step_count</span><span class="si">}</span><span class="s2">&lt;br/&gt;</span>
+<span class="s2">        &lt;strong&gt;Speed:&lt;/strong&gt; </span><span class="si">{</span><span class="n">status</span><span class="o">.</span><span class="n">speed_label</span><span class="si">}</span><span class="s2">&lt;br/&gt;</span>
+<span class="s2">        &lt;strong&gt;Target RT:&lt;/strong&gt; </span><span class="si">{</span><span class="n">status</span><span class="o">.</span><span class="n">target_realtime</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x&lt;br/&gt;</span>
+<span class="s2">        &lt;strong&gt;Actual RT:&lt;/strong&gt; </span><span class="si">{</span><span class="n">rt_display</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">status</span><span class="o">.</span><span class="n">smoothed_fps</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> FPS)</span><span class="si">{</span><span class="n">error_line</span><span class="si">}</span>
+<span class="s2">      &lt;/div&gt;</span>
+<span class="s2">      &quot;&quot;&quot;</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The mjlab Developers
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, The mjlab Developers.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Mar 10, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
