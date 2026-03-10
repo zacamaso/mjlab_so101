@@ -17,23 +17,37 @@ class MujocoNativeDebugVisualizer(DebugVisualizer):
   and other MuJoCo visualization primitives.
   """
 
-  def __init__(self, scn: mujoco.MjvScene, mj_model: mujoco.MjModel, env_idx: int):
+  def __init__(
+    self,
+    scn: mujoco.MjvScene,
+    mj_model: mujoco.MjModel,
+    env_idx: int,
+    show_all_envs: bool = False,
+  ):
     """Initialize the MuJoCo native visualizer.
 
     Args:
       scn: MuJoCo scene to add visualizations to
       mj_model: MuJoCo model for creating visualization data
       env_idx: Index of the environment being visualized
+      show_all_envs: If True, visualize all environments instead of just env_idx
     """
     self.scn = scn
     self.mj_model = mj_model
     self.env_idx = env_idx
+    self.show_all_envs = show_all_envs
     self._initial_geom_count = scn.ngeom
+    self._meansize: float = mj_model.stat.meansize
 
     self._vopt = mujoco.MjvOption()
     self._vopt.flags[mujoco.mjtVisFlag.mjVIS_TRANSPARENT] = True
     self._pert = mujoco.MjvPerturb()
     self._viz_data = mujoco.MjData(mj_model)
+
+  @property
+  @override
+  def meansize(self) -> float:
+    return self._meansize
 
   @override
   def add_arrow(
@@ -77,6 +91,8 @@ class MujocoNativeDebugVisualizer(DebugVisualizer):
     self,
     qpos: np.ndarray | torch.Tensor,
     model: mujoco.MjModel,
+    mocap_pos: np.ndarray | torch.Tensor | None = None,
+    mocap_quat: np.ndarray | torch.Tensor | None = None,
     alpha: float = 0.5,
     label: str | None = None,
   ) -> None:
@@ -87,6 +103,8 @@ class MujocoNativeDebugVisualizer(DebugVisualizer):
     Args:
       qpos: Joint positions for the ghost pose
       model: MuJoCo model with pre-configured appearance (geom_rgba for colors)
+      mocap_pos: Optional mocap position(s) for fixed-base entities
+      mocap_quat: Optional mocap quaternion(s) for fixed-base entities
       alpha: Transparency override (not used in MuJoCo implementation)
       label: Optional label (not used in MuJoCo implementation)
     """
@@ -94,8 +112,24 @@ class MujocoNativeDebugVisualizer(DebugVisualizer):
 
     if isinstance(qpos, torch.Tensor):
       qpos = qpos.cpu().numpy()
+    if isinstance(mocap_pos, torch.Tensor):
+      mocap_pos = mocap_pos.cpu().numpy()
+    if isinstance(mocap_quat, torch.Tensor):
+      mocap_quat = mocap_quat.cpu().numpy()
 
     self._viz_data.qpos[:] = qpos
+    if mocap_pos is not None and model.nmocap > 0:
+      mocap_pos_arr = np.asarray(mocap_pos)
+      if mocap_pos_arr.ndim == 1:
+        self._viz_data.mocap_pos[0] = mocap_pos_arr
+      else:
+        self._viz_data.mocap_pos[:] = mocap_pos_arr
+    if mocap_quat is not None and model.nmocap > 0:
+      mocap_quat_arr = np.asarray(mocap_quat)
+      if mocap_quat_arr.ndim == 1:
+        self._viz_data.mocap_quat[0] = mocap_quat_arr
+      else:
+        self._viz_data.mocap_quat[:] = mocap_quat_arr
     mujoco.mj_forward(model, self._viz_data)
 
     mujoco.mjv_addGeoms(
@@ -216,6 +250,38 @@ class MujocoNativeDebugVisualizer(DebugVisualizer):
       width=radius,
       from_=start,
       to=end,
+    )
+
+  @override
+  def add_ellipsoid(
+    self,
+    center: np.ndarray | torch.Tensor,
+    size: np.ndarray | torch.Tensor,
+    mat: np.ndarray | torch.Tensor,
+    color: tuple[float, float, float, float],
+    label: str | None = None,
+  ) -> None:
+    """Add an ellipsoid visualization using MuJoCo's ellipsoid geometry."""
+    del label  # Unused.
+
+    if isinstance(center, torch.Tensor):
+      center = center.cpu().numpy()
+    if isinstance(size, torch.Tensor):
+      size = size.cpu().numpy()
+    if isinstance(mat, torch.Tensor):
+      mat = mat.cpu().numpy()
+
+    self.scn.ngeom += 1
+    geom = self.scn.geoms[self.scn.ngeom - 1]
+    geom.category = mujoco.mjtCatBit.mjCAT_DECOR
+
+    mujoco.mjv_initGeom(
+      geom=geom,
+      type=mujoco.mjtGeom.mjGEOM_ELLIPSOID.value,
+      size=np.asarray(size, dtype=np.float64),
+      pos=np.asarray(center, dtype=np.float64),
+      mat=np.asarray(mat, dtype=np.float64).flatten(),
+      rgba=np.asarray(color, dtype=np.float32),
     )
 
   @override

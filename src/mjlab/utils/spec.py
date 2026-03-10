@@ -5,6 +5,14 @@ from typing import Callable
 import mujoco
 import numpy as np
 
+from mjlab.actuator.actuator import TransmissionType
+
+_TRANSMISSION_TYPE_MAP = {
+  TransmissionType.JOINT: mujoco.mjtTrn.mjTRN_JOINT,
+  TransmissionType.TENDON: mujoco.mjtTrn.mjTRN_TENDON,
+  TransmissionType.SITE: mujoco.mjtTrn.mjTRN_SITE,
+}
+
 
 def auto_wrap_fixed_base_mocap(
   spec_fn: Callable[[], mujoco.MjSpec],
@@ -13,6 +21,13 @@ def auto_wrap_fixed_base_mocap(
 
   This enables fixed-base entities to be positioned independently per environment.
   Returns original spec unchanged if entity is floating-base or already mocap.
+
+  .. note::
+    Mocap wrapping is automatic, but positioning only happens when you call a
+    reset event (e.g., reset_root_state_uniform). Without a reset event, all
+    fixed-base robots will remain at the world origin.
+
+  See FAQ: "Why are my fixed-base robots all stacked at the origin?"
   """
 
   def wrapper() -> mujoco.MjSpec:
@@ -28,11 +43,24 @@ def auto_wrap_fixed_base_mocap(
     if root_body and root_body.mocap:
       return original_spec  # Already mocap, no wrapping needed.
 
+    # Extract and delete keyframes before attach (they transfer but we need
+    # them on the wrapper spec, not nested in the attached spec).
+    keyframes = [
+      (np.array(k.qpos), np.array(k.ctrl), k.name) for k in original_spec.keys
+    ]
+    for k in list(original_spec.keys):
+      original_spec.delete(k)
+
     # Wrap in mocap body.
     wrapper_spec = mujoco.MjSpec()
     mocap_body = wrapper_spec.worldbody.add_body(name="mocap_base", mocap=True)
     frame = mocap_body.add_frame()
     wrapper_spec.attach(child=original_spec, prefix="", frame=frame)
+
+    # Re-add keyframes to wrapper spec.
+    for qpos, ctrl, name in keyframes:
+      wrapper_spec.add_key(name=name, qpos=qpos.tolist(), ctrl=ctrl.tolist())
+
     return wrapper_spec
 
   return wrapper
@@ -83,11 +111,12 @@ def create_motor_actuator(
   gear: float = 1.0,
   armature: float = 0.0,
   frictionloss: float = 0.0,
+  transmission_type: TransmissionType = TransmissionType.JOINT,
 ) -> mujoco.MjsActuator:
   """Create a <motor> actuator."""
   actuator = spec.add_actuator(name=joint_name, target=joint_name)
 
-  actuator.trntype = mujoco.mjtTrn.mjTRN_JOINT
+  actuator.trntype = _TRANSMISSION_TYPE_MAP[transmission_type]
   actuator.dyntype = mujoco.mjtDyn.mjDYN_NONE
   actuator.gaintype = mujoco.mjtGain.mjGAIN_FIXED
   actuator.biastype = mujoco.mjtBias.mjBIAS_NONE
@@ -99,9 +128,13 @@ def create_motor_actuator(
   actuator.ctrllimited = True
   actuator.ctrlrange[:] = np.array([-effort_limit, effort_limit])
 
-  # Joint properties.
-  spec.joint(joint_name).armature = armature
-  spec.joint(joint_name).frictionloss = frictionloss
+  # Set armature and frictionloss.
+  if transmission_type == TransmissionType.JOINT:
+    spec.joint(joint_name).armature = armature
+    spec.joint(joint_name).frictionloss = frictionloss
+  elif transmission_type == TransmissionType.TENDON:
+    spec.tendon(joint_name).armature = armature
+    spec.tendon(joint_name).frictionloss = frictionloss
 
   return actuator
 
@@ -115,6 +148,7 @@ def create_position_actuator(
   effort_limit: float | None = None,
   armature: float = 0.0,
   frictionloss: float = 0.0,
+  transmission_type: TransmissionType = TransmissionType.JOINT,
 ) -> mujoco.MjsActuator:
   """Creates a <position> actuator.
 
@@ -124,8 +158,7 @@ def create_position_actuator(
   """
   actuator = spec.add_actuator(name=joint_name, target=joint_name)
 
-  # Use <position> settings.
-  actuator.trntype = mujoco.mjtTrn.mjTRN_JOINT
+  actuator.trntype = _TRANSMISSION_TYPE_MAP[transmission_type]
   actuator.dyntype = mujoco.mjtDyn.mjDYN_NONE
   actuator.gaintype = mujoco.mjtGain.mjGAIN_FIXED
   actuator.biastype = mujoco.mjtBias.mjBIAS_AFFINE
@@ -135,19 +168,43 @@ def create_position_actuator(
   actuator.biasprm[1] = -stiffness
   actuator.biasprm[2] = -damping
 
-  # Limits.
+  # Position actuators must allow setpoints beyond joint limits.
+  # Since force = stiffness * (ctrl - pos), clamping ctrl to the joint range would
+  # produce zero force when the joint is at its limit. Force is still bounded by
+  # forcerange below. Both lines are needed: ctrllimited=False is the primary guard,
+  # and inheritrange=0 prevents MuJoCo from resolving the default ctrllimited=AUTO back
+  # to True when a joint range exists.
+  actuator.inheritrange = 0.0
   actuator.ctrllimited = False
-  # No ctrlrange needed.
   if effort_limit is not None:
     actuator.forcelimited = True
     actuator.forcerange[:] = np.array([-effort_limit, effort_limit])
+
+    # Informational ctrlrange (not enforced since ctrllimited=False).
+    # Assuming zero velocity, force = stiffness * (ctrl - pos). Solving for the ctrl
+    # that saturates force at the worst-case position gives:
+    #   ctrl_max = joint_high + effort_limit / stiffness
+    #   ctrl_min = joint_low  - effort_limit / stiffness
+    # Beyond this range, force is always clamped regardless of position.
+    if transmission_type == TransmissionType.JOINT:
+      target_range = spec.joint(joint_name).range
+    elif transmission_type == TransmissionType.TENDON:
+      target_range = spec.tendon(joint_name).range
+    else:
+      target_range = (0.0, 0.0)
+    delta = effort_limit / stiffness
+    actuator.ctrlrange[:] = np.array([target_range[0] - delta, target_range[1] + delta])
   else:
     actuator.forcelimited = False
     # No forcerange needed.
 
-  # Joint properties.
-  spec.joint(joint_name).armature = armature
-  spec.joint(joint_name).frictionloss = frictionloss
+  # Set armature and frictionloss.
+  if transmission_type == TransmissionType.JOINT:
+    spec.joint(joint_name).armature = armature
+    spec.joint(joint_name).frictionloss = frictionloss
+  elif transmission_type == TransmissionType.TENDON:
+    spec.tendon(joint_name).armature = armature
+    spec.tendon(joint_name).frictionloss = frictionloss
 
   return actuator
 
@@ -161,11 +218,12 @@ def create_velocity_actuator(
   armature: float = 0.0,
   frictionloss: float = 0.0,
   inheritrange: float = 1.0,
+  transmission_type: TransmissionType = TransmissionType.JOINT,
 ) -> mujoco.MjsActuator:
   """Creates a <velocity> actuator."""
   actuator = spec.add_actuator(name=joint_name, target=joint_name)
 
-  actuator.trntype = mujoco.mjtTrn.mjTRN_JOINT
+  actuator.trntype = _TRANSMISSION_TYPE_MAP[transmission_type]
   actuator.dyntype = mujoco.mjtDyn.mjDYN_NONE
   actuator.gaintype = mujoco.mjtGain.mjGAIN_FIXED
   actuator.biastype = mujoco.mjtBias.mjBIAS_AFFINE
@@ -182,8 +240,58 @@ def create_velocity_actuator(
   else:
     actuator.forcelimited = False
 
-  # Joint properties.
-  spec.joint(joint_name).armature = armature
-  spec.joint(joint_name).frictionloss = frictionloss
+  if transmission_type == TransmissionType.JOINT:
+    spec.joint(joint_name).armature = armature
+    spec.joint(joint_name).frictionloss = frictionloss
+  elif transmission_type == TransmissionType.TENDON:
+    spec.tendon(joint_name).armature = armature
+    spec.tendon(joint_name).frictionloss = frictionloss
+
+  return actuator
+
+
+def create_muscle_actuator(
+  spec: mujoco.MjSpec,
+  target_name: str,
+  *,
+  length_range: tuple[float, float] = (0.0, 0.0),
+  gear: float = 1.0,
+  timeconst: tuple[float, float] = (0.01, 0.04),
+  tausmooth: float = 0.0,
+  range: tuple[float, float] = (0.75, 1.05),
+  force: float = -1.0,
+  scale: float = 200.0,
+  lmin: float = 0.5,
+  lmax: float = 1.6,
+  vmax: float = 1.5,
+  fpmax: float = 1.3,
+  fvmax: float = 1.2,
+  transmission_type: TransmissionType = TransmissionType.TENDON,
+) -> mujoco.MjsActuator:
+  """Create a MuJoCo <muscle> actuator with muscle dynamics.
+
+  Muscles use special activation dynamics and force-length-velocity curves.
+  They can actuate tendons or joints.
+  """
+  actuator = spec.add_actuator(name=target_name, target=target_name)
+
+  if transmission_type not in [TransmissionType.JOINT, TransmissionType.TENDON]:
+    raise ValueError("Muscle actuators only support JOINT and TENDON transmissions.")
+  actuator.trntype = _TRANSMISSION_TYPE_MAP[transmission_type]
+  actuator.dyntype = mujoco.mjtDyn.mjDYN_MUSCLE
+  actuator.gaintype = mujoco.mjtGain.mjGAIN_MUSCLE
+  actuator.biastype = mujoco.mjtBias.mjBIAS_MUSCLE
+
+  actuator.gear[0] = gear
+  actuator.dynprm[0:3] = np.array([*timeconst, tausmooth])
+  actuator.gainprm[0:9] = np.array(
+    [*range, force, scale, lmin, lmax, vmax, fpmax, fvmax]
+  )
+  actuator.biasprm[:] = actuator.gainprm[:]
+  actuator.lengthrange[0:2] = length_range
+
+  # TODO(kevin): Double check this.
+  actuator.ctrllimited = True
+  actuator.ctrlrange[:] = np.array([0.0, 1.0])
 
   return actuator

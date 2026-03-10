@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import torch
 
 from mjlab.entity import Entity
-from mjlab.managers.manager_term_config import RewardTermCfg
+from mjlab.managers.reward_manager import RewardTermCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 from mjlab.sensor import BuiltinSensor, ContactSensor
 from mjlab.utils.lab_api.math import quat_apply_inverse
@@ -85,14 +85,26 @@ def flat_orientation(
   return torch.exp(-xy_squared / std**2)
 
 
-def self_collision_cost(env: ManagerBasedRlEnv, sensor_name: str) -> torch.Tensor:
+def self_collision_cost(
+  env: ManagerBasedRlEnv,
+  sensor_name: str,
+  force_threshold: float = 10.0,
+) -> torch.Tensor:
   """Penalize self-collisions.
 
-  Returns the number of self-collisions detected by the specified contact sensor.
+  When the sensor provides force history (from ``history_length > 0``),
+  counts substeps where any contact force exceeds *force_threshold*.
+  Falls back to the instantaneous ``found`` count otherwise.
   """
   sensor: ContactSensor = env.scene[sensor_name]
-  assert sensor.data.found is not None
-  return sensor.data.found.squeeze(-1)
+  data = sensor.data
+  if data.force_history is not None:
+    # force_history: [B, N, H, 3]
+    force_mag = torch.norm(data.force_history, dim=-1)  # [B, N, H]
+    hit = (force_mag > force_threshold).any(dim=1)  # [B, H]
+    return hit.sum(dim=-1).float()  # [B]
+  assert data.found is not None
+  return data.found.squeeze(-1)
 
 
 def body_angular_velocity_penalty(
@@ -289,7 +301,20 @@ def soft_landing(
 
 
 class variable_posture:
-  """Penalize deviation from default pose, with tighter constraints when standing."""
+  """Penalize deviation from default pose with speed-dependent tolerance.
+
+  Uses per-joint standard deviations to control how much each joint can deviate
+  from default pose. Smaller std = stricter (less deviation allowed), larger
+  std = more forgiving. The reward is: exp(-mean(error² / std²))
+
+  Three speed regimes (based on linear + angular command velocity):
+    - std_standing (speed < walking_threshold): Tight tolerance for holding pose.
+    - std_walking (walking_threshold <= speed < running_threshold): Moderate.
+    - std_running (speed >= running_threshold): Loose tolerance for large motion.
+
+  Tune std values per joint based on how much motion that joint needs at each
+  speed. Map joint name patterns to std values, e.g. {".*knee.*": 0.35}.
+  """
 
   def __init__(self, cfg: RewardTermCfg, env: ManagerBasedRlEnv):
     asset: Entity = env.scene[cfg.params["asset_cfg"].name]

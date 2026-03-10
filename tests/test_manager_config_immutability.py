@@ -13,13 +13,12 @@ import torch
 from conftest import get_test_device
 
 from mjlab.entity import Entity, EntityCfg
-from mjlab.managers.manager_term_config import (
+from mjlab.managers.observation_manager import (
   ObservationGroupCfg,
+  ObservationManager,
   ObservationTermCfg,
-  RewardTermCfg,
 )
-from mjlab.managers.observation_manager import ObservationManager
-from mjlab.managers.reward_manager import RewardManager
+from mjlab.managers.reward_manager import RewardManager, RewardTermCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 from mjlab.sim.sim import Simulation, SimulationCfg
 
@@ -70,7 +69,7 @@ def test_manager_preserves_class_func(mock_env):
 
   assert inspect.isclass(term_cfg.func), "precondition: func should be a class"
 
-  cfg = {"policy": ObservationGroupCfg(terms={"obs1": term_cfg})}
+  cfg = {"actor": ObservationGroupCfg(terms={"obs1": term_cfg})}
   _ = ObservationManager(cfg, mock_env)
 
   assert inspect.isclass(term_cfg.func), "func was mutated from class to instance"
@@ -81,13 +80,13 @@ def test_observation_shared_terms_between_groups(mock_env):
   term_cfg = ObservationTermCfg(func=ClassObsTerm, params={})
 
   cfg = {
-    "policy": ObservationGroupCfg(terms={"obs": term_cfg}, history_length=5),
+    "actor": ObservationGroupCfg(terms={"obs": term_cfg}, history_length=5),
     "critic": ObservationGroupCfg(terms={"obs": term_cfg}),  # no history
   }
 
   manager = ObservationManager(cfg, mock_env)
 
-  policy_obs = manager.compute()["policy"]
+  policy_obs = manager.compute()["actor"]
   critic_obs = manager.compute()["critic"]
 
   # Policy has history (5 * 3 = 15), critic doesn't (3).
@@ -95,6 +94,32 @@ def test_observation_shared_terms_between_groups(mock_env):
   assert isinstance(critic_obs, torch.Tensor)
   assert policy_obs.shape[1] == 15  # 3 features * 5 history
   assert critic_obs.shape[1] == 3  # 3 features, no history
+
+
+def test_get_term_cfg_returns_resolved_config(mock_env):
+  """get_term_cfg should return resolved config with func as instance."""
+  term_cfg = ObservationTermCfg(func=ClassObsTerm, params={})
+
+  # Original config has func as a class.
+  assert inspect.isclass(term_cfg.func), "precondition: func should be a class"
+
+  cfg = {"actor": ObservationGroupCfg(terms={"obs1": term_cfg})}
+  manager = ObservationManager(cfg, mock_env)
+
+  # Original config should remain unchanged.
+  assert inspect.isclass(term_cfg.func), "original config should not be mutated"
+  assert inspect.isclass(manager.cfg["actor"].terms["obs1"].func), (
+    "manager.cfg should preserve original class"
+  )
+
+  # Resolved config should have func as an instance.
+  resolved_cfg = manager.get_term_cfg("actor", "obs1")
+  assert not inspect.isclass(resolved_cfg.func), (
+    "get_term_cfg should return resolved config with func as instance"
+  )
+  assert isinstance(resolved_cfg.func, ClassObsTerm), (
+    f"Expected ClassObsTerm instance, got {type(resolved_cfg.func)}"
+  )
 
 
 def test_scene_entity_cfg_in_params_not_mutated(device):

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -21,6 +22,34 @@ class DebugVisualizer(ABC):
 
   env_idx: int
   """Index of the environment being visualized."""
+
+  show_all_envs: bool
+  """If True, visualize all environments instead of just env_idx."""
+
+  def get_env_indices(self, num_envs: int) -> Iterable[int]:
+    """Get the environment indices to visualize.
+
+    This helper method handles the show_all_envs logic so implementations
+    don't need to repeat this boilerplate.
+
+    Args:
+      num_envs: Total number of environments.
+
+    Returns:
+      An iterable of environment indices to visualize.
+    """
+    if self.show_all_envs:
+      return range(num_envs)
+    elif self.env_idx < num_envs:
+      return [self.env_idx]
+    else:
+      return []
+
+  @property
+  @abstractmethod
+  def meansize(self) -> float:
+    """Mean size of the model, used for scaling visualization elements."""
+    ...
 
   @abstractmethod
   def add_arrow(
@@ -47,6 +76,8 @@ class DebugVisualizer(ABC):
     self,
     qpos: np.ndarray | torch.Tensor,
     model: mujoco.MjModel,
+    mocap_pos: np.ndarray | torch.Tensor | None = None,
+    mocap_quat: np.ndarray | torch.Tensor | None = None,
     alpha: float = 0.5,
     label: str | None = None,
   ) -> None:
@@ -55,6 +86,8 @@ class DebugVisualizer(ABC):
     Args:
       qpos: Joint positions for the ghost pose.
       model: MuJoCo model with pre-configured appearance (geom_rgba for colors).
+      mocap_pos: Optional mocap position(s) for fixed-base entities.
+      mocap_quat: Optional mocap quaternion(s) for fixed-base entities.
       alpha: Transparency override (0=transparent, 1=opaque). May not be supported by
         all implementations.
       label: Optional label for this ghost.
@@ -128,6 +161,26 @@ class DebugVisualizer(ABC):
     ...
 
   @abstractmethod
+  def add_ellipsoid(
+    self,
+    center: np.ndarray | torch.Tensor,
+    size: np.ndarray | torch.Tensor,
+    mat: np.ndarray | torch.Tensor,
+    color: tuple[float, float, float, float],
+    label: str | None = None,
+  ) -> None:
+    """Add an ellipsoid visualization.
+
+    Args:
+      center: Center position (3D vector).
+      size: Semi-axes lengths (3D vector: a, b, c).
+      mat: 3x3 rotation matrix (or flattened 9-element array).
+      color: RGBA color (values 0-1).
+      label: Optional label for this ellipsoid.
+    """
+    ...
+
+  @abstractmethod
   def clear(self) -> None:
     """Clear all debug visualizations."""
     ...
@@ -136,13 +189,37 @@ class DebugVisualizer(ABC):
 class NullDebugVisualizer:
   """No-op visualizer when visualization is disabled."""
 
-  def __init__(self, env_idx: int = 0):
+  def __init__(self, env_idx: int = 0, meansize: float = 0.1):
     self.env_idx = env_idx
+    self.show_all_envs = False
+    self._meansize = meansize
+
+  def get_env_indices(self, num_envs: int) -> Iterable[int]:
+    """Get the environment indices to visualize."""
+    if self.show_all_envs:
+      return range(num_envs)
+    elif self.env_idx < num_envs:
+      return [self.env_idx]
+    else:
+      return []
+
+  @property
+  def meansize(self) -> float:
+    return self._meansize
 
   def add_arrow(self, start, end, color, width=0.015, label=None) -> None:
     pass
 
-  def add_ghost_mesh(self, qpos, model, alpha=0.5, label=None) -> None:
+  def add_ghost_mesh(
+    self,
+    qpos,
+    model,
+    mocap_pos=None,
+    mocap_quat=None,
+    alpha=0.5,
+    label=None,
+  ) -> None:
+    del mocap_pos, mocap_quat
     pass
 
   def add_frame(
@@ -161,6 +238,9 @@ class NullDebugVisualizer:
     pass
 
   def add_cylinder(self, start, end, radius, color, label=None) -> None:
+    pass
+
+  def add_ellipsoid(self, center, size, mat, color, label=None) -> None:
     pass
 
   def clear(self) -> None:

@@ -1,19 +1,125 @@
 """Observation manager for computing observations."""
 
 from copy import deepcopy
-from typing import Sequence
+from dataclasses import dataclass
+from typing import Literal, Sequence
 
 import numpy as np
 import torch
 from prettytable import PrettyTable
 
-from mjlab.managers.manager_base import ManagerBase
-from mjlab.managers.manager_term_config import ObservationGroupCfg, ObservationTermCfg
+from mjlab.managers.manager_base import ManagerBase, ManagerTermBaseCfg
 from mjlab.utils.buffers import CircularBuffer, DelayBuffer
 from mjlab.utils.noise import noise_cfg, noise_model
+from mjlab.utils.noise.noise_cfg import NoiseCfg, NoiseModelCfg
+
+
+@dataclass
+class ObservationTermCfg(ManagerTermBaseCfg):
+  """Configuration for an observation term.
+
+  Processing pipeline: compute → noise → clip → scale → delay → history.
+  Delay models sensor latency. History provides temporal context. Both are optional
+  and can be combined.
+  """
+
+  noise: NoiseCfg | NoiseModelCfg | None = None
+  """Noise model to apply to the observation."""
+
+  clip: tuple[float, float] | None = None
+  """Range (min, max) to clip the observation values."""
+
+  scale: tuple[float, ...] | float | torch.Tensor | None = None
+  """Scaling factor(s) to multiply the observation by."""
+
+  delay_min_lag: int = 0
+  """Minimum lag (in steps) for delayed observations. Lag sampled uniformly from
+  [min_lag, max_lag]. Convert to ms: lag * (1000 / control_hz)."""
+
+  delay_max_lag: int = 0
+  """Maximum lag (in steps) for delayed observations. Use min=max for constant delay."""
+
+  delay_per_env: bool = True
+  """If True, each environment samples its own lag. If False, all environments share
+  the same lag at each step."""
+
+  delay_hold_prob: float = 0.0
+  """Probability of reusing the previous lag instead of resampling. Useful for
+  temporally correlated latency patterns."""
+
+  delay_update_period: int = 0
+  """Resample lag every N steps (models multi-rate sensors). If 0, update every step."""
+
+  delay_per_env_phase: bool = True
+  """If True and update_period > 0, stagger update timing across envs to avoid
+  synchronized resampling."""
+
+  history_length: int = 0
+  """Number of past observations to keep in history. 0 = no history."""
+
+  flatten_history_dim: bool = True
+  """Whether to flatten the history dimension into observation.
+
+  When True and concatenate_terms=True, uses term-major ordering:
+  [A_t0, A_t1, ..., A_tH-1, B_t0, B_t1, ..., B_tH-1, ...]
+  See docs/source/observation.rst for details on ordering."""
+
+
+@dataclass
+class ObservationGroupCfg:
+  """Configuration for an observation group.
+
+  An observation group bundles multiple observation terms together. Groups are
+  typically used to separate observations for different purposes (e.g., "actor"
+  for the actor, "critic" for the value function).
+  """
+
+  terms: dict[str, ObservationTermCfg]
+  """Dictionary mapping term names to their configurations."""
+
+  concatenate_terms: bool = True
+  """Whether to concatenate all terms into a single tensor. If False, returns
+  a dict mapping term names to their individual tensors."""
+
+  concatenate_dim: int = -1
+  """Dimension along which to concatenate terms. Default -1 (last dimension)."""
+
+  enable_corruption: bool = False
+  """Whether to apply noise corruption to observations. Set to True during
+  training for domain randomization, False during evaluation."""
+
+  history_length: int | None = None
+  """Group-level history length override. If set, applies to all terms in
+  this group. If None, each term uses its own ``history_length`` setting."""
+
+  flatten_history_dim: bool = True
+  """Whether to flatten history into the observation dimension. If True,
+  observations have shape ``(num_envs, obs_dim * history_length)``. If False,
+  shape is ``(num_envs, history_length, obs_dim)``."""
+
+  nan_policy: Literal["disabled", "warn", "sanitize", "error"] = "disabled"
+  """NaN/Inf handling policy for observations in this group.
+
+  - 'disabled': No checks (default, fastest)
+  - 'warn': Log warning with term name and env IDs, then sanitize (debugging)
+  - 'sanitize': Silent sanitization to 0.0 like reward manager (safe for production)
+  - 'error': Raise ValueError on NaN/Inf (strict development mode)
+  """
+
+  nan_check_per_term: bool = True
+  """If True, check each observation term individually to identify NaN source.
+  If False, check only the final concatenated output (faster but less informative).
+  Only applies when nan_policy != 'disabled'."""
 
 
 class ObservationManager(ManagerBase):
+  """Manages observation computation for the environment.
+
+  The observation manager computes observations from multiple terms organized
+  into groups. Each term can have noise, clipping, scaling, delay, and history
+  applied. Groups can optionally concatenate their terms into a single tensor.
+  """
+
   def __init__(self, cfg: dict[str, ObservationGroupCfg], env):
     self.cfg = deepcopy(cfg)
     super().__init__(env=env)
@@ -122,6 +228,14 @@ class ObservationManager(ManagerBase):
 
   # Methods.
 
+  def get_term_cfg(self, group_name: str, term_name: str) -> ObservationTermCfg:
+    if group_name not in self._group_obs_term_names:
+      raise ValueError(f"Group '{group_name}' not found in active groups.")
+    if term_name not in self._group_obs_term_names[group_name]:
+      raise ValueError(f"Term '{term_name}' not found in group '{group_name}'.")
+    index = self._group_obs_term_names[group_name].index(term_name)
+    return self._group_obs_term_cfgs[group_name][index]
+
   def reset(self, env_ids: torch.Tensor | slice | None = None) -> dict[str, float]:
     # Invalidate cache since reset envs will have different observations.
     self._obs_buffer = None
@@ -143,6 +257,50 @@ class ObservationManager(ManagerBase):
       mod.reset(env_ids=env_ids)
     return {}
 
+  def _check_and_handle_nans(
+    self, tensor: torch.Tensor, context: str, policy: str
+  ) -> torch.Tensor:
+    """Check for NaN/Inf and handle according to policy.
+
+    Args:
+      tensor: Observation tensor to check.
+      context: Context string for error/warning messages (e.g., "actor/base_lin_vel").
+      policy: NaN handling policy ("disabled", "warn", "sanitize", "error").
+
+    Returns:
+      The tensor, potentially sanitized depending on policy.
+
+    Raises:
+      ValueError: If policy is "error" and NaN/Inf detected.
+    """
+    if policy == "disabled":
+      return tensor
+
+    has_nan = torch.isnan(tensor).any()
+    has_inf = torch.isinf(tensor).any()
+
+    if not (has_nan or has_inf):
+      return tensor
+
+    if policy == "error":
+      nan_mask = torch.isnan(tensor).any(dim=-1) | torch.isinf(tensor).any(dim=-1)
+      nan_env_ids = torch.where(nan_mask)[0].cpu().tolist()
+      raise ValueError(
+        f"NaN/Inf detected in observation '{context}' "
+        f"for environments: {nan_env_ids[:10]}"
+      )
+
+    if policy == "warn":
+      nan_mask = torch.isnan(tensor).any(dim=-1) | torch.isinf(tensor).any(dim=-1)
+      nan_env_ids = torch.where(nan_mask)[0].cpu().tolist()
+      print(
+        f"[ObservationManager] NaN/Inf in '{context}' "
+        f"(envs: {nan_env_ids[:5]}). Sanitizing to 0."
+      )
+
+    # Sanitize (applies to both "warn" and "sanitize" policies).
+    return torch.nan_to_num(tensor, nan=0.0, posinf=0.0, neginf=0.0)
+
   def compute(
     self, update_history: bool = False
   ) -> dict[str, torch.Tensor | dict[str, torch.Tensor]]:
@@ -161,6 +319,7 @@ class ObservationManager(ManagerBase):
   def compute_group(
     self, group_name: str, update_history: bool = False
   ) -> torch.Tensor | dict[str, torch.Tensor]:
+    group_cfg = self.cfg[group_name]
     group_term_names = self._group_obs_term_names[group_name]
     group_obs: dict[str, torch.Tensor] = {}
     obs_terms = zip(
@@ -178,6 +337,13 @@ class ObservationManager(ManagerBase):
         scale = term_cfg.scale
         assert isinstance(scale, torch.Tensor)
         obs = obs.mul_(scale)
+
+      # Check for NaN/Inf before delay/history buffers (per-term checking).
+      if group_cfg.nan_check_per_term and group_cfg.nan_policy != "disabled":
+        obs = self._check_and_handle_nans(
+          obs, context=f"{group_name}/{term_name}", policy=group_cfg.nan_policy
+        )
+
       if term_cfg.delay_max_lag > 0:
         delay_buffer = self._group_obs_term_delay_buffer[group_name][term_name]
         delay_buffer.append(obs)
@@ -193,10 +359,30 @@ class ObservationManager(ManagerBase):
           group_obs[term_name] = circular_buffer.buffer
       else:
         group_obs[term_name] = obs
+
+    # Final NaN check for non-per-term checking.
+    if not group_cfg.nan_check_per_term and group_cfg.nan_policy != "disabled":
+      if self._group_obs_concatenate[group_name]:
+        # Will check after concatenation below.
+        pass
+      else:
+        for term_name in group_obs:
+          group_obs[term_name] = self._check_and_handle_nans(
+            group_obs[term_name],
+            context=f"{group_name}/{term_name}",
+            policy=group_cfg.nan_policy,
+          )
+
     if self._group_obs_concatenate[group_name]:
-      return torch.cat(
+      result = torch.cat(
         list(group_obs.values()), dim=self._group_obs_concatenate_dim[group_name]
       )
+      # Final check for concatenated result (non-per-term checking).
+      if not group_cfg.nan_check_per_term and group_cfg.nan_policy != "disabled":
+        result = self._check_and_handle_nans(
+          result, context=group_name, policy=group_cfg.nan_policy
+        )
+      return result
     return group_obs
 
   def _prepare_terms(self) -> None:

@@ -49,23 +49,11 @@ class MotionLoader:
       data["body_ang_vel_w"], dtype=torch.float32, device=device
     )
     self._body_indexes = body_indexes
+    self.body_pos_w = self._body_pos_w[:, self._body_indexes]
+    self.body_quat_w = self._body_quat_w[:, self._body_indexes]
+    self.body_lin_vel_w = self._body_lin_vel_w[:, self._body_indexes]
+    self.body_ang_vel_w = self._body_ang_vel_w[:, self._body_indexes]
     self.time_step_total = self.joint_pos.shape[0]
-
-  @property
-  def body_pos_w(self) -> torch.Tensor:
-    return self._body_pos_w[:, self._body_indexes]
-
-  @property
-  def body_quat_w(self) -> torch.Tensor:
-    return self._body_quat_w[:, self._body_indexes]
-
-  @property
-  def body_lin_vel_w(self) -> torch.Tensor:
-    return self._body_lin_vel_w[:, self._body_indexes]
-
-  @property
-  def body_ang_vel_w(self) -> torch.Tensor:
-    return self._body_ang_vel_w[:, self._body_indexes]
 
 
 class MotionCommand(CommandTerm):
@@ -75,7 +63,7 @@ class MotionCommand(CommandTerm):
   def __init__(self, cfg: MotionCommandCfg, env: ManagerBasedRlEnv):
     super().__init__(cfg, env)
 
-    self.robot: Entity = env.scene[cfg.asset_name]
+    self.robot: Entity = env.scene[cfg.entity_name]
     self.robot_anchor_body_index = self.robot.body_names.index(
       self.cfg.anchor_body_name
     )
@@ -292,7 +280,7 @@ class MotionCommand(CommandTerm):
 
     # Update metrics.
     H = -(sampling_probabilities * (sampling_probabilities + 1e-12).log()).sum()
-    H_norm = H / math.log(self.bin_count)
+    H_norm = H / math.log(self.bin_count) if self.bin_count > 1 else 1.0
     pmax, imax = sampling_probabilities.max(dim=0)
     self.metrics["sampling_entropy"][:] = H_norm
     self.metrics["sampling_top1_prob"][:] = pmax
@@ -372,7 +360,7 @@ class MotionCommand(CommandTerm):
     )
     self.robot.write_root_state_to_sim(root_state, env_ids=env_ids)
 
-    self.robot.clear_state(env_ids=env_ids)
+    self.robot.reset(env_ids=env_ids)
 
   def _update_command(self):
     self.time_steps += 1
@@ -413,69 +401,73 @@ class MotionCommand(CommandTerm):
 
   def _debug_vis_impl(self, visualizer: DebugVisualizer) -> None:
     """Draw ghost robot or frames based on visualization mode."""
+    env_indices = visualizer.get_env_indices(self.num_envs)
+    if not env_indices:
+      return
+
     if self.cfg.viz.mode == "ghost":
       if self._ghost_model is None:
         self._ghost_model = copy.deepcopy(self._env.sim.mj_model)
         self._ghost_model.geom_rgba[:] = self._ghost_color
 
-      entity: Entity = self._env.scene[self.cfg.asset_name]
+      entity: Entity = self._env.scene[self.cfg.entity_name]
       indexing = entity.indexing
       free_joint_q_adr = indexing.free_joint_q_adr.cpu().numpy()
       joint_q_adr = indexing.joint_q_adr.cpu().numpy()
 
-      qpos = np.zeros(self._env.sim.mj_model.nq)
-      qpos[free_joint_q_adr[0:3]] = self.body_pos_w[visualizer.env_idx, 0].cpu().numpy()
-      qpos[free_joint_q_adr[3:7]] = (
-        self.body_quat_w[visualizer.env_idx, 0].cpu().numpy()
-      )
-      qpos[joint_q_adr] = self.joint_pos[visualizer.env_idx].cpu().numpy()
+      for batch in env_indices:
+        qpos = np.zeros(self._env.sim.mj_model.nq)
+        qpos[free_joint_q_adr[0:3]] = self.body_pos_w[batch, 0].cpu().numpy()
+        qpos[free_joint_q_adr[3:7]] = self.body_quat_w[batch, 0].cpu().numpy()
+        qpos[joint_q_adr] = self.joint_pos[batch].cpu().numpy()
 
-      visualizer.add_ghost_mesh(qpos, model=self._ghost_model)
+        visualizer.add_ghost_mesh(qpos, model=self._ghost_model, label=f"ghost_{batch}")
 
     elif self.cfg.viz.mode == "frames":
-      desired_body_pos = self.body_pos_w[visualizer.env_idx].cpu().numpy()
-      desired_body_quat = self.body_quat_w[visualizer.env_idx]
-      desired_body_rotm = matrix_from_quat(desired_body_quat).cpu().numpy()
+      for batch in env_indices:
+        desired_body_pos = self.body_pos_w[batch].cpu().numpy()
+        desired_body_quat = self.body_quat_w[batch]
+        desired_body_rotm = matrix_from_quat(desired_body_quat).cpu().numpy()
 
-      current_body_pos = self.robot_body_pos_w[visualizer.env_idx].cpu().numpy()
-      current_body_quat = self.robot_body_quat_w[visualizer.env_idx]
-      current_body_rotm = matrix_from_quat(current_body_quat).cpu().numpy()
+        current_body_pos = self.robot_body_pos_w[batch].cpu().numpy()
+        current_body_quat = self.robot_body_quat_w[batch]
+        current_body_rotm = matrix_from_quat(current_body_quat).cpu().numpy()
 
-      for i, body_name in enumerate(self.cfg.body_names):
+        for i, body_name in enumerate(self.cfg.body_names):
+          visualizer.add_frame(
+            position=desired_body_pos[i],
+            rotation_matrix=desired_body_rotm[i],
+            scale=0.08,
+            label=f"desired_{body_name}_{batch}",
+            axis_colors=_DESIRED_FRAME_COLORS,
+          )
+          visualizer.add_frame(
+            position=current_body_pos[i],
+            rotation_matrix=current_body_rotm[i],
+            scale=0.12,
+            label=f"current_{body_name}_{batch}",
+          )
+
+        desired_anchor_pos = self.anchor_pos_w[batch].cpu().numpy()
+        desired_anchor_quat = self.anchor_quat_w[batch]
+        desired_rotation_matrix = matrix_from_quat(desired_anchor_quat).cpu().numpy()
         visualizer.add_frame(
-          position=desired_body_pos[i],
-          rotation_matrix=desired_body_rotm[i],
-          scale=0.08,
-          label=f"desired_{body_name}",
+          position=desired_anchor_pos,
+          rotation_matrix=desired_rotation_matrix,
+          scale=0.1,
+          label=f"desired_anchor_{batch}",
           axis_colors=_DESIRED_FRAME_COLORS,
         )
+
+        current_anchor_pos = self.robot_anchor_pos_w[batch].cpu().numpy()
+        current_anchor_quat = self.robot_anchor_quat_w[batch]
+        current_rotation_matrix = matrix_from_quat(current_anchor_quat).cpu().numpy()
         visualizer.add_frame(
-          position=current_body_pos[i],
-          rotation_matrix=current_body_rotm[i],
-          scale=0.12,
-          label=f"current_{body_name}",
+          position=current_anchor_pos,
+          rotation_matrix=current_rotation_matrix,
+          scale=0.15,
+          label=f"current_anchor_{batch}",
         )
-
-      desired_anchor_pos = self.anchor_pos_w[visualizer.env_idx].cpu().numpy()
-      desired_anchor_quat = self.anchor_quat_w[visualizer.env_idx]
-      desired_rotation_matrix = matrix_from_quat(desired_anchor_quat).cpu().numpy()
-      visualizer.add_frame(
-        position=desired_anchor_pos,
-        rotation_matrix=desired_rotation_matrix,
-        scale=0.1,
-        label="desired_anchor",
-        axis_colors=_DESIRED_FRAME_COLORS,
-      )
-
-      current_anchor_pos = self.robot_anchor_pos_w[visualizer.env_idx].cpu().numpy()
-      current_anchor_quat = self.robot_anchor_quat_w[visualizer.env_idx]
-      current_rotation_matrix = matrix_from_quat(current_anchor_quat).cpu().numpy()
-      visualizer.add_frame(
-        position=current_anchor_pos,
-        rotation_matrix=current_rotation_matrix,
-        scale=0.15,
-        label="current_anchor",
-      )
 
 
 @dataclass(kw_only=True)
@@ -483,8 +475,7 @@ class MotionCommandCfg(CommandTermCfg):
   motion_file: str
   anchor_body_name: str
   body_names: tuple[str, ...]
-  asset_name: str
-  class_type: type[CommandTerm] = MotionCommand
+  entity_name: str
   pose_range: dict[str, tuple[float, float]] = field(default_factory=dict)
   velocity_range: dict[str, tuple[float, float]] = field(default_factory=dict)
   joint_position_range: tuple[float, float] = (-0.52, 0.52)
@@ -500,3 +491,6 @@ class MotionCommandCfg(CommandTermCfg):
     ghost_color: tuple[float, float, float, float] = (0.5, 0.7, 0.5, 0.5)
 
   viz: VizCfg = field(default_factory=VizCfg)
+
+  def build(self, env: ManagerBasedRlEnv) -> MotionCommand:
+    return MotionCommand(self, env)

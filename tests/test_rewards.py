@@ -9,9 +9,8 @@ from conftest import get_test_device
 
 from mjlab.actuator import BuiltinPositionActuatorCfg
 from mjlab.entity import Entity, EntityArticulationInfoCfg, EntityCfg
-from mjlab.envs.mdp.rewards import electrical_power_cost
-from mjlab.managers.manager_term_config import RewardTermCfg
-from mjlab.managers.reward_manager import RewardManager
+from mjlab.envs.mdp.rewards import electrical_power_cost, joint_torques_l2
+from mjlab.managers.reward_manager import RewardManager, RewardTermCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 from mjlab.sim.sim import Simulation, SimulationCfg
 
@@ -171,7 +170,7 @@ def test_electrical_power_cost_partially_actuated(device):
     articulation=EntityArticulationInfoCfg(
       actuators=(
         BuiltinPositionActuatorCfg(
-          joint_names_expr=("actuated_joint1", "actuated_joint2"),
+          target_names_expr=("actuated_joint1", "actuated_joint2"),
           effort_limit=10.0,
           stiffness=100.0,
           damping=10.0,
@@ -230,3 +229,128 @@ def test_electrical_power_cost_partially_actuated(device):
   #           env1 = max(0,1.0*2.0) + max(0,-4.0*1.0) = 2.0 + 0 = 2.0.
   expected = torch.tensor([6.0, 2.0], device=device)
   assert torch.allclose(power_cost, expected)
+
+
+def test_reward_manager_handles_nan_values(mock_env):
+  """Test that RewardManager converts NaN/Inf reward values to zero."""
+
+  def nan_reward(env):
+    """Reward function that returns NaN for some environments."""
+    r = torch.ones(env.num_envs, device=env.device)
+    r[1] = float("nan")
+    r[3] = float("inf")
+    return r
+
+  cfg = {"nan_term": RewardTermCfg(func=nan_reward, weight=1.0, params={})}
+  manager = RewardManager(cfg, mock_env)
+
+  rewards = manager.compute(dt=0.01)
+
+  # NaN and Inf should be converted to 0.
+  assert not torch.isnan(rewards).any(), "Reward buffer contains NaN"
+  assert not torch.isinf(rewards).any(), "Reward buffer contains Inf"
+  assert rewards[0] == pytest.approx(0.01)
+  assert rewards[1] == 0.0
+  assert rewards[2] == pytest.approx(0.01)
+  assert rewards[3] == 0.0
+
+
+def test_reward_manager_handles_neginf_values(mock_env):
+  """Test that RewardManager converts negative infinity to zero."""
+
+  def neginf_reward(env):
+    r = torch.ones(env.num_envs, device=env.device)
+    r[2] = float("-inf")
+    return r
+
+  cfg = {"neginf_term": RewardTermCfg(func=neginf_reward, weight=1.0, params={})}
+  manager = RewardManager(cfg, mock_env)
+
+  rewards = manager.compute(dt=0.01)
+
+  assert not torch.isinf(rewards).any()
+  assert rewards[2] == 0.0
+
+
+def test_reward_scaling_enabled(mock_env):
+  """Test that rewards are scaled by dt when scale_by_dt=True (default)."""
+
+  def constant_reward(env):
+    return torch.ones(env.num_envs, device=env.device)
+
+  cfg = {"term": RewardTermCfg(func=constant_reward, weight=2.0, params={})}
+  manager = RewardManager(cfg, mock_env, scale_by_dt=True)
+
+  dt = 0.02
+  rewards = manager.compute(dt=dt)
+
+  # With scaling: reward = raw_value (1.0) * weight (2.0) * dt (0.02) = 0.04
+  expected = 1.0 * 2.0 * dt
+  assert torch.allclose(rewards, torch.full((4,), expected))
+
+  # _step_reward should be unscaled (raw_value * weight)
+  step_reward = manager._step_reward[:, 0]
+  expected_step = 1.0 * 2.0
+  assert torch.allclose(step_reward, torch.full((4,), expected_step))
+
+
+def test_reward_scaling_disabled(mock_env):
+  """Test that rewards are not scaled by dt when scale_by_dt=False."""
+
+  def constant_reward(env):
+    return torch.ones(env.num_envs, device=env.device)
+
+  cfg = {"term": RewardTermCfg(func=constant_reward, weight=2.0, params={})}
+  manager = RewardManager(cfg, mock_env, scale_by_dt=False)
+
+  dt = 0.02
+  rewards = manager.compute(dt=dt)
+
+  # Without scaling: reward = raw_value (1.0) * weight (2.0) = 2.0
+  expected = 1.0 * 2.0
+  assert torch.allclose(rewards, torch.full((4,), expected))
+
+  # _step_reward should still be unscaled (same as reward when not scaling)
+  step_reward = manager._step_reward[:, 0]
+  assert torch.allclose(step_reward, torch.full((4,), expected))
+
+
+def test_reward_scaling_default_is_enabled(mock_env):
+  """Test that scale_by_dt defaults to True for backward compatibility."""
+
+  def constant_reward(env):
+    return torch.ones(env.num_envs, device=env.device)
+
+  cfg = {"term": RewardTermCfg(func=constant_reward, weight=1.0, params={})}
+  # Don't pass scale_by_dt - should default to True
+  manager = RewardManager(cfg, mock_env)
+
+  dt = 0.01
+  rewards = manager.compute(dt=dt)
+
+  # Default (scaling enabled): reward = 1.0 * 1.0 * 0.01 = 0.01
+  assert torch.allclose(rewards, torch.full((4,), 0.01))
+
+
+def test_joint_torques_l2_with_actuator_ids(mock_env):
+  """Test that joint_torques_l2 only penalizes specified actuators."""
+  mock_env.scene["robot"].data.actuator_force = torch.tensor([[1.0, 2.0, 3.0, 4.0]] * 4)
+
+  asset_cfg = SceneEntityCfg(name="robot", actuator_ids=[0, 2])
+  result = joint_torques_l2(mock_env, asset_cfg)
+
+  # Only actuators 0 and 2: 1^2 + 3^2 = 10.0
+  expected = torch.full((4,), 10.0)
+  assert torch.allclose(result, expected)
+
+
+def test_joint_torques_l2_all_actuators(mock_env):
+  """Test that joint_torques_l2 uses all actuators by default."""
+  mock_env.scene["robot"].data.actuator_force = torch.tensor([[1.0, 2.0, 3.0]] * 4)
+
+  asset_cfg = SceneEntityCfg(name="robot")
+  result = joint_torques_l2(mock_env, asset_cfg)
+
+  # All actuators: 1^2 + 2^2 + 3^2 = 14.0
+  expected = torch.full((4,), 14.0)
+  assert torch.allclose(result, expected)

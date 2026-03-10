@@ -25,6 +25,28 @@ _FIELD_CONFIGS = [
   _FieldConfig(
     "actuator_names", "actuator_ids", "find_actuators", "num_actuators", "actuator"
   ),
+  _FieldConfig("tendon_names", "tendon_ids", "find_tendons", "num_tendons", "tendon"),
+  _FieldConfig(
+    "camera_names",
+    "camera_ids",
+    "find_cameras",
+    "num_cameras",
+    "camera",
+  ),
+  _FieldConfig(
+    "light_names",
+    "light_ids",
+    "find_lights",
+    "num_lights",
+    "light",
+  ),
+  _FieldConfig(
+    "material_names",
+    "material_ids",
+    "find_materials",
+    "num_materials",
+    "material",
+  ),
 ]
 
 
@@ -35,41 +57,67 @@ class SceneEntityCfg:
   This configuration allows flexible specification of entity components either by name
   or by ID. During resolution, it ensures consistency between names and IDs, and can
   optimize to slice(None) when all components are selected.
-
-  Attributes:
-    name: The name of the entity in the scene.
-    joint_names: Names of joints to include. Can be a single string or tuple.
-    joint_ids: IDs of joints to include. Can be a list or slice.
-    body_names: Names of bodies to include. Can be a single string or tuple.
-    body_ids: IDs of bodies to include. Can be a list or slice.
-    geom_names: Names of geometries to include. Can be a single string or tuple.
-    geom_ids: IDs of geometries to include. Can be a list or slice.
-    site_names: Names of sites to include. Can be a single string or tuple.
-    site_ids: IDs of sites to include. Can be a list or slice.
-    actuator_names: Names of actuators to include. Can be a single string or list.
-    actuator_ids: IDs of actuators to include. Can be a list or slice.
-    preserve_order: If True, maintains the order of components as specified. If False,
-      allows reordering for optimization.
   """
 
   name: str
+  """The name of the entity in the scene."""
 
   joint_names: str | tuple[str, ...] | None = None
+  """Names of joints to include. Can be a single string or tuple."""
+
   joint_ids: list[int] | slice = field(default_factory=lambda: slice(None))
+  """IDs of joints to include. Can be a list or slice."""
 
   body_names: str | tuple[str, ...] | None = None
+  """Names of bodies to include. Can be a single string or tuple."""
+
   body_ids: list[int] | slice = field(default_factory=lambda: slice(None))
+  """IDs of bodies to include. Can be a list or slice."""
 
   geom_names: str | tuple[str, ...] | None = None
+  """Names of geometries to include. Can be a single string or tuple."""
+
   geom_ids: list[int] | slice = field(default_factory=lambda: slice(None))
+  """IDs of geometries to include. Can be a list or slice."""
 
   site_names: str | tuple[str, ...] | None = None
+  """Names of sites to include. Can be a single string or tuple."""
+
   site_ids: list[int] | slice = field(default_factory=lambda: slice(None))
+  """IDs of sites to include. Can be a list or slice."""
 
   actuator_names: str | list[str] | None = None
+  """Names of actuators to include. Can be a single string or list."""
+
   actuator_ids: list[int] | slice = field(default_factory=lambda: slice(None))
+  """IDs of actuators to include. Can be a list or slice."""
+
+  tendon_names: str | tuple[str, ...] | None = None
+  """Names of tendons to include. Can be a single string or tuple."""
+
+  tendon_ids: list[int] | slice = field(default_factory=lambda: slice(None))
+  """IDs of tendons to include. Can be a list or slice."""
+
+  camera_names: str | tuple[str, ...] | None = None
+  """Names of cameras to include. Can be a single string or tuple."""
+
+  camera_ids: list[int] | slice = field(default_factory=lambda: slice(None))
+  """IDs of cameras to include. Can be a list or slice."""
+
+  light_names: str | tuple[str, ...] | None = None
+  """Names of lights to include. Can be a single string or tuple."""
+
+  light_ids: list[int] | slice = field(default_factory=lambda: slice(None))
+  """IDs of lights to include. Can be a list or slice."""
+
+  material_names: str | tuple[str, ...] | None = None
+  """Names of materials to include. Can be a single string or tuple."""
+
+  material_ids: list[int] | slice = field(default_factory=lambda: slice(None))
+  """IDs of materials to include. Can be a list or slice."""
 
   preserve_order: bool = False
+  """If True, maintains the order of components as specified."""
 
   def resolve(self, scene: Scene) -> None:
     """Resolve names and IDs for all configured fields.

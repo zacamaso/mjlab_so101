@@ -3,6 +3,7 @@ from __future__ import annotations
 import abc
 import inspect
 from collections.abc import Sequence
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 import torch
@@ -11,7 +12,53 @@ from mjlab.managers.scene_entity_config import SceneEntityCfg
 
 if TYPE_CHECKING:
   from mjlab.envs import ManagerBasedRlEnv
-  from mjlab.managers.manager_term_config import ManagerTermBaseCfg
+
+
+@dataclass
+class ManagerTermBaseCfg:
+  """Base configuration for manager terms.
+
+  This is the base config for terms in observation, reward, termination, curriculum,
+  and event managers. It provides a common interface for specifying a callable
+  and its parameters.
+
+  The ``func`` field accepts either a function or a class:
+
+  **Function-based terms** are simpler and suitable for stateless computations:
+
+  .. code-block:: python
+
+      RewardTermCfg(func=mdp.joint_torques_l2, weight=-0.01)
+
+  **Class-based terms** are instantiated with ``(cfg, env)`` and useful when you need
+  to:
+
+  - Cache computed values at initialization (e.g., resolve regex patterns to indices)
+  - Maintain state across calls
+  - Perform expensive setup once rather than every call
+
+  .. code-block:: python
+
+      class posture:
+        def __init__(self, cfg: RewardTermCfg, env: ManagerBasedRlEnv):
+          # Resolve std dict to tensor once at init
+          self.std = resolve_std_to_tensor(cfg.params["std"], env)
+
+        def __call__(self, env, **kwargs) -> torch.Tensor:
+          # Use cached self.std
+          return compute_posture_reward(env, self.std)
+
+      RewardTermCfg(func=posture, params={"std": {".*knee.*": 0.3}}, weight=1.0)
+
+  Class-based terms can optionally implement ``reset(env_ids)`` for per-episode state.
+  """
+
+  func: Any
+  """The callable that computes this term's value. Can be a function or a class.
+  Classes are auto-instantiated with ``(cfg=term_cfg, env=env)``."""
+
+  params: dict[str, Any] = field(default_factory=lambda: {})
+  """Additional keyword arguments passed to func when called."""
 
 
 class ManagerTermBase:

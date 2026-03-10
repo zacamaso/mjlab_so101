@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import abc
+from collections.abc import Callable
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Sequence
 
 import torch
@@ -11,9 +13,35 @@ from prettytable import PrettyTable
 from mjlab.managers.manager_base import ManagerBase, ManagerTermBase
 
 if TYPE_CHECKING:
+  import viser
+
   from mjlab.envs.manager_based_rl_env import ManagerBasedRlEnv
-  from mjlab.managers.manager_term_config import CommandTermCfg
   from mjlab.viewer.debug_visualizer import DebugVisualizer
+
+
+@dataclass(kw_only=True)
+class CommandTermCfg(abc.ABC):
+  """Configuration for a command generator term.
+
+  Command terms generate goal commands for the agent (e.g., target velocity,
+  target position). Commands are automatically resampled at configurable
+  intervals and can track metrics for logging.
+  """
+
+  resampling_time_range: tuple[float, float]
+  """Time range in seconds for command resampling. When the timer expires, a new
+  command is sampled and the timer is reset to a value uniformly drawn from
+  ``[min, max]``. Set both values equal for fixed-interval resampling."""
+
+  debug_vis: bool = False
+  """Whether to enable debug visualization for this command term. When True,
+  the command term's ``_debug_vis_impl`` method is called each frame to render
+  visual aids (e.g., velocity arrows, target markers)."""
+
+  @abc.abstractmethod
+  def build(self, env: ManagerBasedRlEnv) -> CommandTerm:
+    """Build the command term from this config."""
+    raise NotImplementedError
 
 
 class CommandTerm(ManagerTermBase):
@@ -27,13 +55,29 @@ class CommandTerm(ManagerTermBase):
     self.command_counter = torch.zeros(
       self.num_envs, device=self.device, dtype=torch.long
     )
+    self._debug_vis_enabled: bool = True
 
   def debug_vis(self, visualizer: "DebugVisualizer") -> None:
-    if self.cfg.debug_vis:
+    if self.cfg.debug_vis and self._debug_vis_enabled:
       self._debug_vis_impl(visualizer)
 
   def _debug_vis_impl(self, visualizer: "DebugVisualizer") -> None:
     pass
+
+  def create_gui(
+    self,
+    name: str,
+    server: "viser.ViserServer",
+    get_env_idx: Callable[[], int],
+  ) -> None:
+    """Create interactive GUI controls for this command term.
+
+    Override in subclasses to add task-specific controls (e.g., velocity
+    sliders) to the Viser viewer. Called once during viewer setup.
+
+    The *name* argument is the term's key in the command manager config
+    (e.g., ``"twist"``).
+    """
 
   @property
   @abc.abstractmethod
@@ -83,6 +127,13 @@ class CommandTerm(ManagerTermBase):
 
 
 class CommandManager(ManagerBase):
+  """Manages command generation for the environment.
+
+  The command manager generates and updates goal commands for the agent (e.g.,
+  target velocity, target position). Commands are resampled at configurable
+  intervals and can track metrics for logging.
+  """
+
   _env: ManagerBasedRlEnv
 
   def __init__(self, cfg: dict[str, CommandTermCfg], env: ManagerBasedRlEnv):
@@ -107,6 +158,31 @@ class CommandManager(ManagerBase):
   def debug_vis(self, visualizer: "DebugVisualizer") -> None:
     for term in self._terms.values():
       term.debug_vis(visualizer)
+
+  def create_gui(
+    self,
+    server: "viser.ViserServer",
+    get_env_idx: Callable[[], int],
+  ) -> None:
+    """Let each command term create its GUI controls."""
+    for name, term in self._terms.items():
+      term.create_gui(name, server, get_env_idx)
+
+  def create_debug_vis_gui(self, server: "viser.ViserServer") -> None:
+    """Add per-term debug visualization checkboxes."""
+    vis_terms = {name: term for name, term in self._terms.items() if term.cfg.debug_vis}
+    if not vis_terms:
+      return
+    for name, term in vis_terms.items():
+      cb = server.gui.add_checkbox(
+        name.capitalize(),
+        initial_value=term._debug_vis_enabled,
+      )
+
+      def _on_update(_ev, _term: CommandTerm = term, _cb=cb) -> None:
+        _term._debug_vis_enabled = _cb.value
+
+      cb.on_update(_on_update)
 
   # Properties.
 
@@ -151,7 +227,7 @@ class CommandManager(ManagerBase):
       if term_cfg is None:
         print(f"term: {term_name} set to None, skipping...")
         continue
-      term = term_cfg.class_type(term_cfg, self._env)
+      term = term_cfg.build(self._env)
       if not isinstance(term, CommandTerm):
         raise TypeError(
           f"Returned object for the term {term_name} is not of type CommandType."
@@ -174,6 +250,16 @@ class NullCommandManager:
     return "NullCommandManager()"
 
   def debug_vis(self, visualizer: "DebugVisualizer") -> None:
+    pass
+
+  def create_gui(
+    self,
+    server: "viser.ViserServer",
+    get_env_idx: Callable[[], int],
+  ) -> None:
+    pass
+
+  def create_debug_vis_gui(self, server: "viser.ViserServer") -> None:
     pass
 
   def get_active_iterable_terms(

@@ -16,6 +16,7 @@ import numpy as np
 import tyro
 import viser
 
+import mjlab
 from mjlab.viewer.viser import ViserMujocoScene
 
 
@@ -38,6 +39,9 @@ class NanDumpViewer:
     self.state_keys = sorted(
       [k for k in self.dump.keys() if k.startswith("states_step_")],
       key=lambda x: int(x.split("_")[-1]),
+    )
+    self.state_spec = self.metadata.get(
+      "state_spec", mujoco.mjtState.mjSTATE_PHYSICS.value
     )
     self.num_steps = len(self.state_keys)
     self.num_envs_dumped = self.metadata["num_envs_dumped"]
@@ -126,7 +130,7 @@ class NanDumpViewer:
     state = states[self.current_env]
 
     # Set state and compute derived quantities.
-    mujoco.mj_setState(self.model, self.data, state, mujoco.mjtState.mjSTATE_PHYSICS)
+    mujoco.mj_setState(self.model, self.data, state, self.state_spec)
     mujoco.mj_forward(self.model, self.data)
 
     # Update scene from single-environment MuJoCo data.
@@ -167,7 +171,8 @@ def run_viewer(dump_path: tyro.conf.Positional[str]):
 
 def main():
   """CLI entry point for viz-nan command."""
-  tyro.cli(run_viewer, description=__doc__)
+
+  tyro.cli(run_viewer, description=__doc__, config=mjlab.TYRO_FLAGS)
 
 
 if __name__ == "__main__":

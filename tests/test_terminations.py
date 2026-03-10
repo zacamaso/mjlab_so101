@@ -8,8 +8,7 @@ import torch
 from conftest import get_test_device
 
 from mjlab.envs.mdp.terminations import nan_detection
-from mjlab.managers.manager_term_config import TerminationTermCfg
-from mjlab.managers.termination_manager import TerminationManager
+from mjlab.managers.termination_manager import TerminationManager, TerminationTermCfg
 from mjlab.sim.sim import Simulation, SimulationCfg
 
 

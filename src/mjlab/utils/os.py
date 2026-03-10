@@ -1,13 +1,13 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
 import yaml
 
 
 def update_assets(
   assets: Dict[str, Any],
-  path: Union[str, Path],
+  path: str | Path,
   meshdir: str | None = None,
   glob: str = "*",
   recursive: bool = False,
@@ -89,7 +89,9 @@ def get_checkpoint_path(
   return run_path / checkpoint_file
 
 
-def get_wandb_checkpoint_path(log_path: Path, run_path: Path) -> tuple[Path, bool]:
+def get_wandb_checkpoint_path(
+  log_path: Path, run_path: Path, checkpoint_name: str | None = None
+) -> tuple[Path, bool]:
   """Get checkpoint path from wandb, downloading if needed.
 
   Returns:
@@ -104,8 +106,19 @@ def get_wandb_checkpoint_path(log_path: Path, run_path: Path) -> tuple[Path, boo
   # Query wandb API to find the latest checkpoint.
   api = wandb.Api()
   wandb_run = api.run(str(run_path))
-  files = [file.name for file in wandb_run.files() if "model" in file.name]
-  checkpoint_file = max(files, key=lambda x: int(x.split("_")[1].split(".")[0]))
+  files = [
+    file.name for file in wandb_run.files() if re.match(r"^model_\d+\.pt$", file.name)
+  ]
+  if checkpoint_name is None:
+    checkpoint_file = max(files, key=lambda x: int(x.split("_")[1].split(".")[0]))
+  else:
+    if checkpoint_name not in files:
+      raise ValueError(
+        f"Checkpoint '{checkpoint_name}' not found in run {run_path}."
+        f" Available: {files}"
+      )
+    checkpoint_file = checkpoint_name
+
   checkpoint_path = download_dir / checkpoint_file
 
   # If this checkpoint is not cached locally, download it.

@@ -11,10 +11,7 @@ from conftest import get_test_device
 from mjlab.actuator import XmlMotorActuatorCfg
 from mjlab.entity import EntityArticulationInfoCfg, EntityCfg
 from mjlab.envs import ManagerBasedRlEnv, ManagerBasedRlEnvCfg, mdp
-from mjlab.managers.manager_term_config import (
-  ObservationGroupCfg,
-  ObservationTermCfg,
-)
+from mjlab.managers.observation_manager import ObservationGroupCfg, ObservationTermCfg
 from mjlab.rl.exporter_utils import (
   attach_metadata_to_onnx,
   get_base_metadata,
@@ -22,7 +19,7 @@ from mjlab.rl.exporter_utils import (
 )
 from mjlab.scene import SceneCfg
 from mjlab.sim import MujocoCfg, SimulationCfg
-from mjlab.terrains import TerrainImporterCfg
+from mjlab.terrains import TerrainEntityCfg
 
 
 def test_list_to_csv_str():
@@ -133,19 +130,19 @@ def test_get_base_metadata_skips_non_actuated_joints(device):
   robot_cfg = EntityCfg(
     spec_fn=lambda: mujoco.MjSpec.from_string(ROBOT_XML_UNDERACTUATED),
     articulation=EntityArticulationInfoCfg(
-      actuators=(XmlMotorActuatorCfg(joint_names_expr=(".*",)),)
+      actuators=(XmlMotorActuatorCfg(target_names_expr=(".*",)),)
     ),
   )
 
   env_cfg = ManagerBasedRlEnvCfg(
     scene=SceneCfg(
-      terrain=TerrainImporterCfg(terrain_type="plane"),
+      terrain=TerrainEntityCfg(terrain_type="plane"),
       num_envs=1,
       extent=1.0,
       entities={"robot": robot_cfg},
     ),
     observations={
-      "policy": ObservationGroupCfg(
+      "actor": ObservationGroupCfg(
         terms={
           "joint_pos": ObservationTermCfg(
             func=lambda env: env.scene["robot"].data.joint_pos
@@ -155,7 +152,7 @@ def test_get_base_metadata_skips_non_actuated_joints(device):
     },
     actions={
       "joint_pos": mdp.JointPositionActionCfg(
-        asset_name="robot", actuator_names=(".*",), scale=1.0
+        entity_name="robot", actuator_names=(".*",), scale=1.0
       )
     },
     sim=SimulationCfg(mujoco=MujocoCfg(timestep=0.01, iterations=1)),

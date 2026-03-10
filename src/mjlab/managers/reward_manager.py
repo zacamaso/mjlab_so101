@@ -3,25 +3,63 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any
 
 import torch
 from prettytable import PrettyTable
 
-from mjlab.managers.manager_base import ManagerBase
-from mjlab.managers.manager_term_config import RewardTermCfg
+from mjlab.managers.manager_base import ManagerBase, ManagerTermBaseCfg
 
 if TYPE_CHECKING:
   from mjlab.envs.manager_based_rl_env import ManagerBasedRlEnv
 
 
+@dataclass(kw_only=True)
+class RewardTermCfg(ManagerTermBaseCfg):
+  """Configuration for a reward term."""
+
+  func: Any
+  """The callable that computes this reward term's value."""
+
+  weight: float
+  """Weight multiplier for this reward term."""
+
+
 class RewardManager(ManagerBase):
+  """Manages reward computation by aggregating weighted reward terms.
+
+  Reward Scaling Behavior:
+    By default, rewards are scaled by the environment step duration (dt). This
+    normalizes cumulative episodic rewards across different simulation frequencies.
+    The scaling can be disabled via the ``scale_by_dt`` parameter.
+
+    When ``scale_by_dt=True`` (default):
+      - ``reward_buf`` (returned by ``compute()``) = raw_value * weight * dt
+      - ``_episode_sums`` (cumulative rewards) are scaled by dt
+      - ``Episode_Reward/*`` logged metrics are scaled by dt
+
+    When ``scale_by_dt=False``:
+      - ``reward_buf`` = raw_value * weight (no dt scaling)
+
+    Regardless of the scaling setting:
+      - ``_step_reward`` (via ``get_active_iterable_terms()``) always contains
+        the unscaled reward rate (raw_value * weight)
+  """
+
   _env: ManagerBasedRlEnv
 
-  def __init__(self, cfg: dict[str, RewardTermCfg], env: ManagerBasedRlEnv):
+  def __init__(
+    self,
+    cfg: dict[str, RewardTermCfg],
+    env: ManagerBasedRlEnv,
+    *,
+    scale_by_dt: bool = True,
+  ):
     self._term_names: list[str] = list()
     self._term_cfgs: list[RewardTermCfg] = list()
     self._class_term_cfgs: list[RewardTermCfg] = list()
+    self._scale_by_dt = scale_by_dt
 
     self.cfg = deepcopy(cfg)
     super().__init__(env=env)
@@ -76,16 +114,19 @@ class RewardManager(ManagerBase):
 
   def compute(self, dt: float) -> torch.Tensor:
     self._reward_buf[:] = 0.0
+    scale = dt if self._scale_by_dt else 1.0
     for term_idx, (name, term_cfg) in enumerate(
       zip(self._term_names, self._term_cfgs, strict=False)
     ):
       if term_cfg.weight == 0.0:
         self._step_reward[:, term_idx] = 0.0
         continue
-      value = term_cfg.func(self._env, **term_cfg.params) * term_cfg.weight * dt
+      value = term_cfg.func(self._env, **term_cfg.params) * term_cfg.weight * scale
+      # NaN/Inf can occur from corrupted physics state; zero them to avoid policy crash.
+      value = torch.nan_to_num(value, nan=0.0, posinf=0.0, neginf=0.0)
       self._reward_buf += value
       self._episode_sums[name] += value
-      self._step_reward[:, term_idx] = value / dt
+      self._step_reward[:, term_idx] = value / scale
     return self._reward_buf
 
   def get_active_iterable_terms(self, env_idx):

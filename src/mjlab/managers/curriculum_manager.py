@@ -3,19 +3,37 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Sequence
 
 import torch
 from prettytable import PrettyTable
 
-from mjlab.managers.manager_base import ManagerBase
-from mjlab.managers.manager_term_config import CurriculumTermCfg
+from mjlab.managers.manager_base import ManagerBase, ManagerTermBaseCfg
 
 if TYPE_CHECKING:
   from mjlab.envs.manager_based_rl_env import ManagerBasedRlEnv
 
 
+@dataclass(kw_only=True)
+class CurriculumTermCfg(ManagerTermBaseCfg):
+  """Configuration for a curriculum term.
+
+  Curriculum terms modify environment parameters during training to implement
+  curriculum learning strategies (e.g., gradually increasing task difficulty).
+  """
+
+  pass
+
+
 class CurriculumManager(ManagerBase):
+  """Manages curriculum learning for the environment.
+
+  The curriculum manager updates environment parameters during training based
+  on agent performance. Each term can modify different aspects of the task
+  difficulty (e.g., terrain complexity, command ranges).
+  """
+
   _env: ManagerBasedRlEnv
 
   def __init__(self, cfg: dict[str, CurriculumTermCfg], env: ManagerBasedRlEnv):
@@ -47,6 +65,13 @@ class CurriculumManager(ManagerBase):
   @property
   def active_terms(self) -> list[str]:
     return self._term_names
+
+  # Methods.
+
+  def get_term_cfg(self, term_name: str) -> CurriculumTermCfg:
+    if term_name not in self._term_names:
+      raise ValueError(f"Term '{term_name}' not found in active terms.")
+    return self._term_cfgs[self._term_names.index(term_name)]
 
   def get_active_iterable_terms(
     self, env_idx: int

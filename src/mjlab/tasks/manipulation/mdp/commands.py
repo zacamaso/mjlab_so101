@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING, Literal
 import torch
 
 from mjlab.entity import Entity
-from mjlab.managers.command_manager import CommandTerm
-from mjlab.managers.manager_term_config import CommandTermCfg
+from mjlab.managers.command_manager import CommandTerm, CommandTermCfg
 from mjlab.utils.lab_api.math import (
   quat_from_euler_xyz,
   sample_uniform,
@@ -25,7 +24,7 @@ class LiftingCommand(CommandTerm):
   def __init__(self, cfg: LiftingCommandCfg, env: ManagerBasedRlEnv):
     super().__init__(cfg, env)
 
-    self.object: Entity = env.scene[cfg.asset_name]
+    self.object: Entity = env.scene[cfg.entity_name]
     self.target_pos = torch.zeros(self.num_envs, 3, device=self.device)
     self.episode_success = torch.zeros(self.num_envs, device=self.device)
 
@@ -102,23 +101,24 @@ class LiftingCommand(CommandTerm):
     pass
 
   def _debug_vis_impl(self, visualizer: DebugVisualizer) -> None:
-    batch = visualizer.env_idx
-    if batch >= self.num_envs:
+    env_indices = visualizer.get_env_indices(self.num_envs)
+    if not env_indices:
       return
 
-    target_pos = self.target_pos[batch].cpu().numpy()
-    visualizer.add_sphere(
-      center=target_pos,
-      radius=self.cfg.viz.target_sphere_radius,
-      color=self.cfg.viz.target_color,
-      label="target_position",
-    )
+    for batch in env_indices:
+      target_pos = self.target_pos[batch].cpu().numpy()
+      visualizer.add_sphere(
+        center=target_pos,
+        radius=0.03,
+        color=self.cfg.viz.target_color,
+        label=f"target_position_{batch}",
+      )
+
 
 
 @dataclass(kw_only=True)
 class LiftingCommandCfg(CommandTermCfg):
-  asset_name: str
-  class_type: type[CommandTerm] = LiftingCommand
+  entity_name: str
   success_threshold: float = 0.05
   difficulty: Literal["fixed", "dynamic"] = "fixed"
 
@@ -154,3 +154,6 @@ class LiftingCommandCfg(CommandTermCfg):
     target_sphere_radius: float = 0.03
 
   viz: VizCfg = field(default_factory=VizCfg)
+
+  def build(self, env: ManagerBasedRlEnv) -> LiftingCommand:
+    return LiftingCommand(self, env)

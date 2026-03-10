@@ -1,5 +1,3 @@
-from typing import Any, cast
-
 import torch
 from rsl_rl.env import VecEnv
 from tensordict import TensorDict
@@ -48,7 +46,7 @@ class RslRlVecEnvWrapper(VecEnv):
 
   @property
   def unwrapped(self) -> ManagerBasedRlEnv:
-    return self.env
+    return self.env.unwrapped
 
   # Properties.
 
@@ -57,7 +55,7 @@ class RslRlVecEnvWrapper(VecEnv):
     return self.unwrapped.episode_length_buf
 
   @episode_length_buf.setter
-  def episode_length_buf(self, value: torch.Tensor) -> None:  # type: ignore
+  def episode_length_buf(self, value: torch.Tensor) -> None:  # pyright: ignore[reportIncompatibleVariableOverride]
     self.unwrapped.episode_length_buf = value
 
   def seed(self, seed: int = -1) -> int:
@@ -65,13 +63,11 @@ class RslRlVecEnvWrapper(VecEnv):
 
   def get_observations(self) -> TensorDict:
     obs_dict = self.unwrapped.observation_manager.compute()
-    return TensorDict(cast(dict[str, Any], obs_dict), batch_size=[self.num_envs])
+    return TensorDict(obs_dict, batch_size=[self.num_envs])
 
   def reset(self) -> tuple[TensorDict, dict]:
     obs_dict, extras = self.env.reset()
-    return TensorDict(
-      cast(dict[str, Any], obs_dict), batch_size=[self.num_envs]
-    ), extras
+    return TensorDict(obs_dict, batch_size=[self.num_envs]), extras
 
   def step(
     self, actions: torch.Tensor
@@ -86,7 +82,7 @@ class RslRlVecEnvWrapper(VecEnv):
     if not self.cfg.is_finite_horizon:
       extras["time_outs"] = truncated
     return (
-      TensorDict(cast(dict[str, Any], obs_dict), batch_size=[self.num_envs]),
+      TensorDict(obs_dict, batch_size=[self.num_envs]),
       rew,
       dones,
       extras,

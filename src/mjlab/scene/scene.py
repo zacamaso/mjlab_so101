@@ -1,27 +1,54 @@
+from __future__ import annotations
+
+import shutil
+import warnings
+import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
 import mujoco
 import mujoco_warp as mjwarp
+import numpy as np
 import torch
 
 from mjlab.entity import Entity, EntityCfg
 from mjlab.sensor import BuiltinSensor, Sensor, SensorCfg
-from mjlab.terrains.terrain_importer import TerrainImporter, TerrainImporterCfg
+from mjlab.sensor.camera_sensor import CameraSensor
+from mjlab.sensor.raycast_sensor import RayCastSensor
+from mjlab.sensor.sensor_context import SensorContext
+from mjlab.terrains.terrain_entity import TerrainEntity, TerrainEntityCfg
+from mjlab.utils.xml import fix_spec_xml, strip_buffer_textures
 
 _SCENE_XML = Path(__file__).parent / "scene.xml"
 
 
 @dataclass(kw_only=True)
 class SceneCfg:
+  """Configuration for a simulation scene."""
+
   num_envs: int = 1
+  """Number of parallel environments."""
+
   env_spacing: float = 2.0
-  terrain: TerrainImporterCfg | None = None
+  """Spacing between environment origins in meters."""
+
+  terrain: TerrainEntityCfg | None = None
+  """Terrain configuration. If ``None``, no terrain is added."""
+
   entities: dict[str, EntityCfg] = field(default_factory=dict)
+  """Mapping of entity names to their configurations."""
+
   sensors: tuple[SensorCfg, ...] = field(default_factory=tuple)
+  """Sensor configurations to attach to the scene."""
+
   extent: float | None = None
+  """Override for ``mjModel.stat.extent``. If ``None``, MuJoCo computes
+  it automatically."""
+
   spec_fn: Callable[[mujoco.MjSpec], None] | None = None
+  """Optional callback to modify the ``MjSpec`` after entities and sensors
+  have been added but before compilation."""
 
 
 class Scene:
@@ -30,8 +57,9 @@ class Scene:
     self._device = device
     self._entities: dict[str, Entity] = {}
     self._sensors: dict[str, Sensor] = {}
-    self._terrain: TerrainImporter | None = None
+    self._terrain: TerrainEntity | None = None
     self._default_env_origins: torch.Tensor | None = None
+    self._sensor_context: SensorContext | None = None
 
     self._spec = mujoco.MjSpec.from_file(str(_SCENE_XML))
     if self._cfg.extent is not None:
@@ -45,20 +73,46 @@ class Scene:
   def compile(self) -> mujoco.MjModel:
     return self._spec.compile()
 
-  def to_zip(self, path: Path) -> None:
-    """Export the scene to a zip file.
+  def write(self, output_dir: Path, *, zip: bool = False) -> None:
+    """Write the scene XML and mesh assets to a directory.
 
-    Warning: The generated zip may require manual adjustment of asset paths
-    to be reloadable. Specifically, you may need to add assetdir="assets"
-    to the compiler directive in the XML.
+    Creates ``scene.xml`` and an ``assets/`` subdirectory containing
+    all mesh files referenced by the spec. When *zip* is True the
+    directory is compressed into a ``.zip`` archive and the directory
+    is removed. Operates on a copy of the spec to avoid mutation.
 
     Args:
-      path: Output path for the zip file.
-
-    TODO: Verify if this is fixed in future MuJoCo releases.
+      output_dir: Destination directory (created if it doesn't exist).
+      zip: If True, produce ``<output_dir>.zip`` instead of a directory.
     """
-    with path.open("wb") as f:
-      mujoco.MjSpec.to_zip(self._spec, f)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    tmp = self._spec.copy()
+    strip_buffer_textures(tmp)
+    xml = fix_spec_xml(tmp.to_xml(), meshdir="assets")
+    (output_dir / "scene.xml").write_text(xml)
+    assets_dir = output_dir / "assets"
+    assets_dir.mkdir(parents=True, exist_ok=True)
+    for name, data in tmp.assets.items():
+      clean = name.removeprefix("assets/")
+      path = assets_dir / clean
+      path.parent.mkdir(parents=True, exist_ok=True)
+      path.write_bytes(data)
+    if zip:
+      zip_path = output_dir.with_suffix(".zip")
+      with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        for file in sorted(output_dir.rglob("*")):
+          if file.is_file():
+            zf.write(file, file.relative_to(output_dir))
+      shutil.rmtree(output_dir)
+
+  def to_zip(self, path: Path) -> None:
+    """Deprecated. Use ``write(output_dir, zip=True)`` instead."""
+    warnings.warn(
+      "Scene.to_zip() is deprecated. Use Scene.write(path, zip=True).",
+      DeprecationWarning,
+      stacklevel=2,
+    )
+    self.write(path, zip=True)
 
   # Attributes.
 
@@ -87,7 +141,7 @@ class Scene:
     return self._sensors
 
   @property
-  def terrain(self) -> TerrainImporter | None:
+  def terrain(self) -> TerrainEntity | None:
     return self._terrain
 
   @property
@@ -99,11 +153,6 @@ class Scene:
     return self._device
 
   def __getitem__(self, key: str) -> Any:
-    if key == "terrain":
-      if self._terrain is None:
-        raise KeyError("No terrain configured in this scene.")
-      return self._terrain
-
     if key in self._sensors:
       return self._sensors[key]
     if key in self._entities:
@@ -111,11 +160,14 @@ class Scene:
 
     # Not found, raise helpful error.
     available = list(self._entities.keys()) + list(self._sensors.keys())
-    if self._terrain is not None:
-      available.append("terrain")
     raise KeyError(f"Scene element '{key}' not found. Available: {available}")
 
   # Methods.
+
+  @property
+  def sensor_context(self) -> SensorContext | None:
+    """Shared sensing resources, or None if no cameras/raycasts."""
+    return self._sensor_context
 
   def initialize(
     self,
@@ -130,6 +182,20 @@ class Scene:
       ent.initialize(mj_model, model, data, self._device)
     for sensor in self._sensors.values():
       sensor.initialize(mj_model, model, data, self._device)
+
+    # Create SensorContext if any sensors require it.
+    ctx_sensors = [s for s in self._sensors.values() if s.requires_sensor_context]
+    if ctx_sensors:
+      camera_sensors = [s for s in ctx_sensors if isinstance(s, CameraSensor)]
+      raycast_sensors = [s for s in ctx_sensors if isinstance(s, RayCastSensor)]
+      self._sensor_context = SensorContext(
+        mj_model=mj_model,
+        model=model,
+        data=data,
+        camera_sensors=camera_sensors,
+        raycast_sensors=raycast_sensors,
+        device=self._device,
+      )
 
   def reset(self, env_ids: torch.Tensor | slice | None = None) -> None:
     for ent in self._entities.values():
@@ -150,20 +216,46 @@ class Scene:
   # Private methods.
 
   def _add_entities(self) -> None:
+    # Collect keyframes from each entity to merge into a single scene keyframe.
+    # Order matters: qpos/ctrl are concatenated in entity iteration order.
+    key_qpos: list[np.ndarray] = []
+    key_ctrl: list[np.ndarray] = []
     for ent_name, ent_cfg in self._cfg.entities.items():
       ent = ent_cfg.build()
       self._entities[ent_name] = ent
+      # Extract keyframe before attach (must delete before attach to avoid corruption).
+      if ent.spec.keys:
+        if len(ent.spec.keys) > 1:
+          warnings.warn(
+            f"Entity '{ent_name}' has {len(ent.spec.keys)} keyframes; only the "
+            "first one will be used.",
+            stacklevel=2,
+          )
+        key_qpos.append(np.array(ent.spec.keys[0].qpos))
+        key_ctrl.append(np.array(ent.spec.keys[0].ctrl))
+        ent.spec.delete(ent.spec.keys[0])
       frame = self._spec.worldbody.add_frame()
       self._spec.attach(ent.spec, prefix=f"{ent_name}/", frame=frame)
+    # Add merged keyframe to scene spec.
+    if key_qpos:
+      combined_qpos = np.concatenate(key_qpos)
+      combined_ctrl = np.concatenate(key_ctrl)
+      self._spec.add_key(
+        name="init_state",
+        qpos=combined_qpos.tolist(),
+        ctrl=combined_ctrl.tolist(),
+      )
 
   def _add_terrain(self) -> None:
     if self._cfg.terrain is None:
       return
     self._cfg.terrain.num_envs = self._cfg.num_envs
     self._cfg.terrain.env_spacing = self._cfg.env_spacing
-    self._terrain = TerrainImporter(self._cfg.terrain, self._device)
+    terrain = TerrainEntity(self._cfg.terrain, device=self._device)
+    self._terrain = terrain
+    self._entities["terrain"] = terrain
     frame = self._spec.worldbody.add_frame()
-    self._spec.attach(self._terrain.spec, prefix="", frame=frame)
+    self._spec.attach(terrain.spec, prefix="", frame=frame)
 
   def _add_sensors(self) -> None:
     for sensor_cfg in self._cfg.sensors:

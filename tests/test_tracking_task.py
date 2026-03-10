@@ -25,7 +25,6 @@ def test_tracking_tasks_have_motion_command(tracking_task_ids: list[str]) -> Non
   for task_id in tracking_task_ids:
     cfg = load_env_cfg(task_id)
 
-    assert cfg.commands is not None, f"Task {task_id} has no commands"
     assert "motion" in cfg.commands, f"Task {task_id} missing 'motion' command"
 
     motion_cmd = cfg.commands["motion"]
@@ -58,16 +57,16 @@ def test_tracking_no_state_estimation_observations() -> None:
     cfg = load_env_cfg(task_id, play=play_mode)
     mode_str = "play mode" if play_mode else "training mode"
 
-    assert "policy" in cfg.observations, (
+    assert "actor" in cfg.observations, (
       f"Task {task_id} ({mode_str}) missing policy observations"
     )
-    policy_terms = cfg.observations["policy"].terms
+    actor_terms = cfg.observations["actor"].terms
 
-    assert "motion_anchor_pos_b" not in policy_terms, (
+    assert "motion_anchor_pos_b" not in actor_terms, (
       f"Task {task_id} ({mode_str}) has motion_anchor_pos_b in policy, "
       "expected it to be removed for no-state-estimation variant"
     )
-    assert "base_lin_vel" not in policy_terms, (
+    assert "base_lin_vel" not in actor_terms, (
       f"Task {task_id} ({mode_str}) has base_lin_vel in policy, "
       "expected it to be removed for no-state-estimation variant"
     )
@@ -83,7 +82,6 @@ def test_tracking_play_disables_rsi_randomization() -> None:
   for task_id in tracking_tasks:
     cfg = load_env_cfg(task_id, play=True)
 
-    assert cfg.commands is not None, f"Task {task_id} (play mode) has no commands"
     motion_cmd = cfg.commands["motion"]
     assert isinstance(motion_cmd, MotionCommandCfg), (
       f"Task {task_id} (play mode) motion command is not MotionCommandCfg"
@@ -109,7 +107,6 @@ def test_tracking_play_uses_start_sampling_mode() -> None:
   for task_id in tracking_tasks:
     cfg = load_env_cfg(task_id, play=True)
 
-    assert cfg.commands is not None, f"Task {task_id} (play mode) has no commands"
     motion_cmd = cfg.commands["motion"]
     assert isinstance(motion_cmd, MotionCommandCfg), (
       f"Task {task_id} (play mode) motion command is not MotionCommandCfg"

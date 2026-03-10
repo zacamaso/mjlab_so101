@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 import mujoco
 import mujoco_warp as mjwarp
@@ -94,6 +94,20 @@ class ContactSensorCfg(SensorCfg):
   secondary_policy: Literal["first", "any", "error"] = "first"
   track_air_time: bool = False
   global_frame: bool = False
+  history_length: int = 0
+  """Number of substeps to store in history buffer for force/torque/dist fields.
+
+  When 0 (default): No history buffer is allocated. History fields (force_history,
+  torque_history, dist_history) are None. Use the regular fields (force, torque, dist)
+  for the current instantaneous values.
+
+  When >0: Allocates a history buffer that stores the last N substeps of contact data.
+  Shape is [B, N, history_length, ...] where index 0 is the most recent substep.
+  Set to your decimation value to capture all substeps within one policy step.
+
+  Note: history_length=1 is redundant with the regular fields but provides a consistent
+  [B, N, H, ...] shape if your code expects a history dimension.
+  """
   debug: bool = False
 
   def build(self) -> ContactSensor:
@@ -149,11 +163,19 @@ class ContactData:
   last_contact_time: torch.Tensor | None = None
   """[B, N] duration of last contact phase (if track_air_time=True)"""
 
+  force_history: torch.Tensor | None = None
+  """[B, N, H, 3] contact forces over last H substeps (index 0 = most recent)"""
+  torque_history: torch.Tensor | None = None
+  """[B, N, H, 3] contact torques over last H substeps (index 0 = most recent)"""
+  dist_history: torch.Tensor | None = None
+  """[B, N, H] penetration depth over last H substeps (index 0 = most recent)"""
+
 
 class ContactSensor(Sensor[ContactData]):
   """Tracks contacts with automatic pattern expansion to multiple MuJoCo sensors."""
 
   def __init__(self, cfg: ContactSensorCfg) -> None:
+    super().__init__()
     self.cfg = cfg
 
     if cfg.global_frame and cfg.reduce != "netforce":
@@ -167,6 +189,7 @@ class ContactSensor(Sensor[ContactData]):
     self._data: mjwarp.Data | None = None
     self._device: str | None = None
     self._air_time_state: _AirTimeState | None = None
+    self._history_state: dict[str, torch.Tensor] | None = None
 
   def edit_spec(self, scene_spec: mujoco.MjSpec, entities: dict[str, Entity]) -> None:
     """Expand patterns and add MuJoCo sensors (one per primary x field pair)."""
@@ -227,35 +250,63 @@ class ContactSensor(Sensor[ContactData]):
         last_time=torch.zeros((n_envs,), device=device),
       )
 
-  @property
-  def data(self) -> ContactData:
+    if self.cfg.history_length > 0:
+      n_envs = data.time.shape[0]
+      n_primary = len(set(slot.primary_name for slot in self._slots))
+      n_contacts = n_primary * self.cfg.num_slots
+      h = self.cfg.history_length
+      self._history_state = {}
+      if "force" in self.cfg.fields:
+        self._history_state["force"] = torch.zeros(
+          (n_envs, n_contacts, h, 3), device=device
+        )
+      if "torque" in self.cfg.fields:
+        self._history_state["torque"] = torch.zeros(
+          (n_envs, n_contacts, h, 3), device=device
+        )
+      if "dist" in self.cfg.fields:
+        self._history_state["dist"] = torch.zeros(
+          (n_envs, n_contacts, h), device=device
+        )
+
+  def _compute_data(self) -> ContactData:
     out = self._extract_sensor_data()
     if self._air_time_state is not None:
       out.current_air_time = self._air_time_state.current_air_time
       out.last_air_time = self._air_time_state.last_air_time
       out.current_contact_time = self._air_time_state.current_contact_time
       out.last_contact_time = self._air_time_state.last_contact_time
+    if self._history_state is not None:
+      out.force_history = self._history_state.get("force")
+      out.torque_history = self._history_state.get("torque")
+      out.dist_history = self._history_state.get("dist")
     return out
 
   def reset(self, env_ids: torch.Tensor | slice | None = None) -> None:
-    if self._air_time_state is None:
-      return
-
+    super().reset(env_ids)
     if env_ids is None:
       env_ids = slice(None)
 
     # Reset air time state for specified envs.
-    self._air_time_state.current_air_time[env_ids] = 0.0
-    self._air_time_state.last_air_time[env_ids] = 0.0
-    self._air_time_state.current_contact_time[env_ids] = 0.0
-    self._air_time_state.last_contact_time[env_ids] = 0.0
-    if self._data is not None:
-      self._air_time_state.last_time[env_ids] = self._data.time[env_ids]
+    if self._air_time_state is not None:
+      self._air_time_state.current_air_time[env_ids] = 0.0
+      self._air_time_state.last_air_time[env_ids] = 0.0
+      self._air_time_state.current_contact_time[env_ids] = 0.0
+      self._air_time_state.last_contact_time[env_ids] = 0.0
+      if self._data is not None:
+        self._air_time_state.last_time[env_ids] = self._data.time[env_ids]
+
+    # Reset history state for specified envs.
+    if self._history_state is not None:
+      for buf in self._history_state.values():
+        buf[env_ids] = 0.0
 
   def update(self, dt: float) -> None:
-    del dt  # Unused.
+    super().update(dt)
     if self._air_time_state is not None:
       self._update_air_time_tracking()
+    if self._history_state is not None:
+      self._update_history()
 
   def compute_first_contact(self, dt: float, abs_tol: float = 1.0e-8) -> torch.Tensor:
     """Returns [B, N] bool: True for contacts established within last dt seconds."""
@@ -365,6 +416,24 @@ class ContactSensor(Sensor[ContactData]):
     )
 
     state.last_time[:] = current_time
+
+  def _update_history(self) -> None:
+    """Roll history buffer and insert current contact data at index 0."""
+    assert self._history_state is not None
+
+    contact_data = self._extract_sensor_data()
+
+    if "force" in self._history_state and contact_data.force is not None:
+      self._history_state["force"] = self._history_state["force"].roll(1, dims=2)
+      self._history_state["force"][:, :, 0, :] = contact_data.force
+
+    if "torque" in self._history_state and contact_data.torque is not None:
+      self._history_state["torque"] = self._history_state["torque"].roll(1, dims=2)
+      self._history_state["torque"][:, :, 0, :] = contact_data.torque
+
+    if "dist" in self._history_state and contact_data.dist is not None:
+      self._history_state["dist"] = self._history_state["dist"].roll(1, dims=2)
+      self._history_state["dist"][:, :, 0] = contact_data.dist
 
   def _resolve_primary_names(
     self, entities: dict[str, Entity], match: ContactMatch
@@ -487,7 +556,7 @@ class ContactSensor(Sensor[ContactData]):
     else:
       prefixed_primary = primary_name
 
-    kwargs = {
+    kwargs: dict[str, Any] = {
       "name": sensor_name,
       "type": mujoco.mjtSensor.mjSENS_CONTACT,
       "objtype": _MODE_TO_OBJTYPE[self.cfg.primary.mode],

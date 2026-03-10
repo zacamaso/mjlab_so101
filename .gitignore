@@ -9,8 +9,12 @@ debug.py
 *.ipynb_checkpoints/
 motions/
 *_rerun*
-*.mp4
 artifacts/
 .venv/
 render_robots.py
 benchmark_results/
+
+# Documentation outputs.
+**/_build/*
+**/generated/*
+

@@ -268,11 +268,15 @@ class BuiltinSensor(Sensor[torch.Tensor]):
   Can add a new sensor to the spec, or wrap an existing sensor from entity XML.
   Returns raw MuJoCo sensordata as torch.Tensor with shape depending on sensor type
   (e.g., accelerometer: (N, 3), framequat: (N, 4)).
+
+  Note: Caching provides minimal benefit here since data access is just a tensor
+  slice view into MuJoCo's sensordata buffer.
   """
 
   def __init__(
     self, cfg: BuiltinSensorCfg | None = None, name: str | None = None
   ) -> None:
+    super().__init__()
     if cfg is not None:
       self._name = cfg.name
       self.cfg: BuiltinSensorCfg | None = cfg
@@ -310,19 +314,19 @@ class BuiltinSensor(Sensor[torch.Tensor]):
           )
 
     # Add sensor to spec.
-    kwargs = {
-      "name": self.cfg.name,
-      "type": _SENSOR_TYPE_MAP[self.cfg.sensor_type],
-    }
-    if self.cfg.obj is not None:
-      kwargs["objtype"] = _OBJECT_TYPE_MAP[self.cfg.obj.type]
-      kwargs["objname"] = self.cfg.obj.prefixed_name()
-    if self.cfg.ref is not None:
-      kwargs["reftype"] = _OBJECT_TYPE_MAP[self.cfg.ref.type]
-      kwargs["refname"] = self.cfg.ref.prefixed_name()
-    if self.cfg.cutoff > 0:
-      kwargs["cutoff"] = self.cfg.cutoff
-    scene_spec.add_sensor(**kwargs)
+    scene_spec.add_sensor(
+      name=self.cfg.name,
+      type=_SENSOR_TYPE_MAP[self.cfg.sensor_type],
+      objtype=(
+        _OBJECT_TYPE_MAP[self.cfg.obj.type] if self.cfg.obj is not None else None
+      ),
+      objname=(self.cfg.obj.prefixed_name() if self.cfg.obj is not None else None),
+      reftype=(
+        _OBJECT_TYPE_MAP[self.cfg.ref.type] if self.cfg.ref is not None else None
+      ),
+      refname=(self.cfg.ref.prefixed_name() if self.cfg.ref is not None else None),
+      cutoff=self.cfg.cutoff if self.cfg.cutoff > 0 else None,
+    )
 
   def initialize(
     self, mj_model: mujoco.MjModel, model: mjwarp.Model, data: mjwarp.Data, device: str
@@ -334,7 +338,6 @@ class BuiltinSensor(Sensor[torch.Tensor]):
     dim = sensor.dim[0]
     self._data_view = self._data.sensordata[:, start : start + dim]
 
-  @property
-  def data(self) -> torch.Tensor:
+  def _compute_data(self) -> torch.Tensor:
     assert self._data_view is not None
     return self._data_view

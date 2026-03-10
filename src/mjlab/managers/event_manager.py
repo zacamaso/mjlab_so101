@@ -2,20 +2,152 @@
 
 from __future__ import annotations
 
+import enum
+from collections.abc import Callable
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Literal
 
 import torch
 from prettytable import PrettyTable
 
-from mjlab.managers.manager_base import ManagerBase
-from mjlab.managers.manager_term_config import EventMode, EventTermCfg
+from mjlab.managers.manager_base import ManagerBase, ManagerTermBaseCfg
 
 if TYPE_CHECKING:
   from mjlab.envs import ManagerBasedRlEnv
+  from mjlab.viewer.debug_visualizer import DebugVisualizer
+
+F = Callable[..., None]
+
+EventMode = Literal["startup", "reset", "interval", "step"]
+
+
+class RecomputeLevel(enum.IntEnum):
+  """Recomputation level for derived model constants after domain randomization.
+
+  Higher values are more expensive and recompute a superset of the lower levels.
+
+  .. note::
+
+    All levels above ``none`` are expensive (forward kinematics, mass matrix
+    factorization, etc.). Prefer ``startup`` or ``reset`` event modes for
+    DR terms that require recomputation.
+  """
+
+  none = 0
+  """No recomputation needed (e.g. geom_friction, dof_damping)."""
+
+  set_const_fixed = 1
+  """Recompute ``body_subtreemass``. Use after modifying ``body_gravcomp``."""
+
+  set_const_0 = 2
+  """Recompute ``dof_invweight0``, ``body_invweight0``, ``tendon_length0``,
+  ``tendon_invweight0``. Use after modifying ``dof_armature``, ``body_inertia``,
+  ``body_pos``, ``body_quat``, or ``qpos0``."""
+
+  set_const = 3
+  """Full recomputation (superset of all lower levels). Use after modifying
+  ``body_mass`` or ``body_ipos``."""
+
+
+_DERIVED_FIELDS: dict[RecomputeLevel, tuple[str, ...]] = {
+  RecomputeLevel.none: (),
+  RecomputeLevel.set_const_fixed: ("body_subtreemass",),
+  RecomputeLevel.set_const_0: (
+    "dof_invweight0",
+    "body_invweight0",
+    "tendon_length0",
+    "tendon_invweight0",
+  ),
+}
+_DERIVED_FIELDS[RecomputeLevel.set_const] = (
+  _DERIVED_FIELDS[RecomputeLevel.set_const_fixed]
+  + _DERIVED_FIELDS[RecomputeLevel.set_const_0]
+)
+
+
+def requires_model_fields(
+  *fields: str, recompute: RecomputeLevel = RecomputeLevel.none
+) -> Callable[[F], F]:
+  """Mark an event function as requiring specific model fields expanded per-world.
+
+  Fields listed here are registered in ``EventManager.domain_randomization_fields``
+  so that ``sim.expand_model_fields()`` allocates real per-world memory for them.
+
+  Args:
+    *fields: Model field names to expand per-world.
+    recompute: Recomputation level after modifying these fields.
+      Derived fields are automatically appended to the model_fields list.
+
+  Example::
+
+    @requires_model_fields("body_mass", recompute=RecomputeLevel.set_const)
+    def body_mass(env, env_ids, ...):
+      ...
+  """
+  derived = _DERIVED_FIELDS[recompute]
+  all_fields = fields + tuple(f for f in derived if f not in fields)
+
+  def decorator(func: F) -> F:
+    func.model_fields = all_fields  # type: ignore[attr-defined]
+    func.recompute = recompute  # type: ignore[attr-defined]
+    return func
+
+  return decorator
+
+
+@dataclass(kw_only=True)
+class EventTermCfg(ManagerTermBaseCfg):
+  """Configuration for an event term.
+
+  Event terms trigger operations at specific simulation events. They're commonly
+  used for domain randomization, state resets, and periodic perturbations.
+
+  The four modes determine when the event fires:
+
+  - ``"startup"``: Once when the environment initializes. Use for parameters that
+    should be randomized per-environment but stay constant within an episode (e.g.,
+    domain randomization).
+
+  - ``"reset"``: On every episode reset. Use for parameters that should vary between
+    episodes (e.g., initial robot pose, domain randomization).
+
+  - ``"interval"``: Periodically during simulation, controlled by ``interval_range_s``.
+    Use for perturbations that should happen during episodes (e.g., pushing the robot,
+    external disturbances).
+
+  - ``"step"``: Every environment step, unconditionally on all envs. Use for terms that
+    manage per-step state such as force lifetimes (e.g., ``apply_body_impulse``).
+  """
+
+  mode: EventMode
+  """When the event triggers: ``"startup"`` (once at init), ``"reset"`` (every
+  episode), ``"interval"`` (periodically during simulation), or ``"step"`` (every
+  environment step)."""
+
+  interval_range_s: tuple[float, float] | None = None
+  """Time range in seconds for interval mode. The next trigger time is uniformly
+  sampled from ``[min, max]``. Required when ``mode="interval"``."""
+
+  is_global_time: bool = False
+  """Whether all environments share the same timer. If True, all envs trigger
+  simultaneously. If False (default), each env has an independent timer that
+  resets on episode reset. Only applies to ``mode="interval"``."""
+
+  min_step_count_between_reset: int = 0
+  """Minimum environment steps between triggers. Prevents the event from firing
+  too frequently when episodes reset rapidly. Only applies to ``mode="reset"``.
+  Set to 0 (default) to trigger on every reset."""
 
 
 class EventManager(ManagerBase):
+  """Manages event-based operations for the environment.
+
+  The event manager triggers operations at different simulation events: startup
+  (once at initialization), reset (on episode reset), or interval (periodically
+  during simulation). Common uses include domain randomization and state resets.
+  """
+
   _env: ManagerBasedRlEnv
 
   def __init__(self, cfg: dict[str, EventTermCfg], env: ManagerBasedRlEnv):
@@ -120,8 +252,15 @@ class EventManager(ManagerBase):
       raise ValueError(
         f"Event mode '{mode}' requires the total number of environment steps to be provided."
       )
+    if mode == "step" and dt is None:
+      raise ValueError(
+        f"Event mode '{mode}' requires the time-step of the environment."
+      )
+
+    strongest_fired = RecomputeLevel.none
 
     for index, term_cfg in enumerate(self._mode_term_cfgs[mode]):
+      fired = False
       if mode == "interval":
         time_left = self._interval_term_time_left[index]
         assert dt is not None
@@ -133,6 +272,7 @@ class EventManager(ManagerBase):
             sampled_interval = torch.rand(1) * (upper - lower) + lower
             self._interval_term_time_left[index][:] = sampled_interval
             term_cfg.func(self._env, None, **term_cfg.params)
+            fired = True
         else:
           valid_env_ids = (time_left < 1e-6).nonzero().flatten()
           if len(valid_env_ids) > 0:
@@ -144,6 +284,10 @@ class EventManager(ManagerBase):
             )
             self._interval_term_time_left[index][valid_env_ids] = sampled_time
             term_cfg.func(self._env, valid_env_ids, **term_cfg.params)
+            fired = True
+      elif mode == "step":
+        term_cfg.func(self._env, None, **term_cfg.params)
+        fired = True
       elif mode == "reset":
         assert global_env_step_count is not None
         min_step_count = term_cfg.min_step_count_between_reset
@@ -155,6 +299,7 @@ class EventManager(ManagerBase):
           )
           self._reset_term_last_triggered_once[index][env_ids] = True
           term_cfg.func(self._env, env_ids, **term_cfg.params)
+          fired = True
         else:
           last_triggered_step = self._reset_term_last_triggered_step_id[index][env_ids]
           triggered_at_least_once = self._reset_term_last_triggered_once[index][env_ids]
@@ -171,8 +316,24 @@ class EventManager(ManagerBase):
               global_env_step_count
             )
             term_cfg.func(self._env, valid_env_ids, **term_cfg.params)
+            fired = True
       else:
         term_cfg.func(self._env, env_ids, **term_cfg.params)
+        fired = True
+
+      if fired:
+        level = getattr(term_cfg.func, "recompute", RecomputeLevel.none)
+        strongest_fired = max(strongest_fired, level)
+
+    if strongest_fired != RecomputeLevel.none:
+      self._env.sim.recompute_constants(strongest_fired)
+
+  def debug_vis(self, visualizer: "DebugVisualizer") -> None:
+    """Delegate debug visualization to class-based event terms."""
+    for mode_cfgs in self._mode_class_term_cfgs.values():
+      for term_cfg in mode_cfgs:
+        if hasattr(term_cfg.func, "debug_vis"):
+          term_cfg.func.debug_vis(visualizer)
 
   def _prepare_terms(self) -> None:
     self._interval_term_time_left: list[torch.Tensor] = list()
@@ -214,7 +375,8 @@ class EventManager(ManagerBase):
         no_trigger = torch.zeros(self.num_envs, device=self.device, dtype=torch.bool)
         self._reset_term_last_triggered_once.append(no_trigger)
 
-      if term_cfg.domain_randomization:
-        field_name = term_cfg.params["field"]
-        if field_name not in self._domain_randomization_fields:
-          self._domain_randomization_fields.append(field_name)
+      func = term_cfg.func
+      if hasattr(func, "model_fields"):
+        for field in func.model_fields:
+          if field not in self._domain_randomization_fields:
+            self._domain_randomization_fields.append(field)

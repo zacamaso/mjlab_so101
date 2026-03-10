@@ -10,22 +10,26 @@ from prettytable import PrettyTable
 
 from mjlab.envs import types
 from mjlab.envs.mdp.events import reset_scene_to_default
-from mjlab.managers.action_manager import ActionManager
-from mjlab.managers.command_manager import CommandManager, NullCommandManager
-from mjlab.managers.curriculum_manager import CurriculumManager, NullCurriculumManager
-from mjlab.managers.event_manager import EventManager
-from mjlab.managers.manager_term_config import (
-  ActionTermCfg,
+from mjlab.managers.action_manager import ActionManager, ActionTermCfg
+from mjlab.managers.command_manager import (
+  CommandManager,
   CommandTermCfg,
-  CurriculumTermCfg,
-  EventTermCfg,
-  ObservationGroupCfg,
-  RewardTermCfg,
-  TerminationTermCfg,
+  NullCommandManager,
 )
-from mjlab.managers.observation_manager import ObservationManager
-from mjlab.managers.reward_manager import RewardManager
-from mjlab.managers.termination_manager import TerminationManager
+from mjlab.managers.curriculum_manager import (
+  CurriculumManager,
+  CurriculumTermCfg,
+  NullCurriculumManager,
+)
+from mjlab.managers.event_manager import EventManager, EventTermCfg
+from mjlab.managers.metrics_manager import (
+  MetricsManager,
+  MetricsTermCfg,
+  NullMetricsManager,
+)
+from mjlab.managers.observation_manager import ObservationGroupCfg, ObservationManager
+from mjlab.managers.reward_manager import RewardManager, RewardTermCfg
+from mjlab.managers.termination_manager import TerminationManager, TerminationTermCfg
 from mjlab.scene import Scene
 from mjlab.scene.scene import SceneCfg
 from mjlab.sim import SimulationCfg
@@ -41,14 +45,35 @@ from mjlab.viewer.viewer_config import ViewerConfig
 
 @dataclass(kw_only=True)
 class ManagerBasedRlEnvCfg:
-  """Configuration for a manager-based RL environment."""
+  """Configuration for a manager-based RL environment.
+
+  This config defines all aspects of an RL environment: the physical scene,
+  observations, actions, rewards, terminations, and optional features like
+  commands and curriculum learning.
+
+  The environment step size is ``sim.mujoco.timestep * decimation``. For example,
+  with a 2ms physics timestep and decimation=10, the environment runs at 50Hz.
+  """
 
   # Base environment configuration.
+
   decimation: int
-  """Number of simulation steps per environment step."""
+  """Number of physics simulation steps per environment step. Higher values mean
+  coarser control frequency. Environment step duration = physics_dt * decimation."""
+
   scene: SceneCfg
-  observations: dict[str, ObservationGroupCfg]
-  actions: dict[str, ActionTermCfg]
+  """Scene configuration defining terrain, entities, and sensors. The scene
+  specifies ``num_envs``, the number of parallel environments."""
+
+  observations: dict[str, ObservationGroupCfg] = field(default_factory=dict)
+  """Observation groups configuration. Each group (e.g., "actor", "critic") contains
+  observation terms that are concatenated. Groups can have different settings for
+  noise, history, and delay."""
+
+  actions: dict[str, ActionTermCfg] = field(default_factory=dict)
+  """Action terms configuration. Each term controls a specific entity/aspect
+  (e.g., joint positions). Action dimensions are concatenated across terms."""
+
   events: dict[str, EventTermCfg] = field(
     default_factory=lambda: {
       "reset_scene_to_default": EventTermCfg(
@@ -57,25 +82,46 @@ class ManagerBasedRlEnvCfg:
       )
     }
   )
+  """Event terms for domain randomization and state resets. Default includes
+  ``reset_scene_to_default`` which resets entities to their initial state.
+  Can be set to empty to disable all events including default reset."""
+
   seed: int | None = None
+  """Random seed for reproducibility. If None, a random seed is used. The actual
+  seed used is stored back into this field after initialization."""
+
   sim: SimulationCfg = field(default_factory=SimulationCfg)
+  """Simulation configuration including physics timestep, solver iterations,
+  contact parameters, and NaN guarding."""
+
   viewer: ViewerConfig = field(default_factory=ViewerConfig)
+  """Viewer configuration for rendering (camera position, resolution, etc.)."""
 
   # RL-specific configuration.
+
   episode_length_s: float = 0.0
   """Duration of an episode (in seconds).
 
   Episode length in steps is computed as:
     ceil(episode_length_s / (sim.mujoco.timestep * decimation))
   """
+
   rewards: dict[str, RewardTermCfg] = field(default_factory=dict)
   """Reward terms configuration."""
+
   terminations: dict[str, TerminationTermCfg] = field(default_factory=dict)
-  """Termination terms configuration."""
-  commands: dict[str, CommandTermCfg] | None = None
-  """Command terms configuration. If None, no commands are used."""
-  curriculum: dict[str, CurriculumTermCfg] | None = None
-  """Curriculum terms configuration. If None, no curriculum is used."""
+  """Termination terms configuration. If empty, episodes never reset. Use
+  ``mdp.time_out`` with ``time_out=True`` for episode time limits."""
+
+  commands: dict[str, CommandTermCfg] = field(default_factory=dict)
+  """Command generator terms (e.g., velocity targets)."""
+
+  curriculum: dict[str, CurriculumTermCfg] = field(default_factory=dict)
+  """Curriculum terms for adaptive difficulty."""
+
+  metrics: dict[str, MetricsTermCfg] = field(default_factory=dict)
+  """Custom metric terms for logging per-step values as episode averages."""
+
   is_finite_horizon: bool = False
   """Whether the task has a finite or infinite horizon. Defaults to False (infinite).
 
@@ -84,6 +130,14 @@ class ManagerBasedRlEnvCfg:
   - **Infinite horizon (False)**: The time limit is an artificial cutoff. The agent
     receives a truncated done signal to bootstrap the value of continuing beyond the
     limit.
+  """
+
+  scale_rewards_by_dt: bool = True
+  """Whether to multiply rewards by the environment step duration (dt).
+
+  When True (default), reward values are scaled by step_dt to normalize cumulative
+  episodic rewards across different simulation frequencies. Set to False for
+  algorithms that expect unscaled reward signals (e.g., HER, static reward scaling).
   """
 
 
@@ -128,6 +182,10 @@ class ManagerBasedRlEnv:
       data=self.sim.data,
     )
 
+    # Wire sensor context to simulation for sense_graph.
+    if self.scene.sensor_context is not None:
+      self.sim.set_sensor_context(self.scene.sensor_context)
+
     # Print environment info.
     print_info("")
     table = PrettyTable()
@@ -156,7 +214,7 @@ class ManagerBasedRlEnv:
       )
       renderer.initialize()
       self._offline_renderer = renderer
-    self.metadata["render_fps"] = 1.0 / self.step_dt  # type: ignore
+    self.metadata["render_fps"] = 1.0 / self.step_dt
 
     # Load all managers.
     self.load_managers()
@@ -205,6 +263,7 @@ class ManagerBasedRlEnv:
     self.manager_visualizers = {}
     if getattr(self.command_manager, "active_terms", None):
       self.manager_visualizers["command_manager"] = self.command_manager
+    self.manager_visualizers["event_manager"] = self.event_manager
 
   def load_managers(self) -> None:
     """Load and initialize all managers.
@@ -220,7 +279,7 @@ class ManagerBasedRlEnv:
 
     # Command manager (must be before observation manager since observations
     # may reference commands).
-    if self.cfg.commands is not None:
+    if len(self.cfg.commands) > 0:
       self.command_manager = CommandManager(self.cfg.commands, self)
     else:
       self.command_manager = NullCommandManager()
@@ -236,13 +295,20 @@ class ManagerBasedRlEnv:
 
     self.termination_manager = TerminationManager(self.cfg.terminations, self)
     print_info(f"[INFO] {self.termination_manager}")
-    self.reward_manager = RewardManager(self.cfg.rewards, self)
+    self.reward_manager = RewardManager(
+      self.cfg.rewards, self, scale_by_dt=self.cfg.scale_rewards_by_dt
+    )
     print_info(f"[INFO] {self.reward_manager}")
-    if self.cfg.curriculum is not None:
+    if len(self.cfg.curriculum) > 0:
       self.curriculum_manager = CurriculumManager(self.cfg.curriculum, self)
     else:
       self.curriculum_manager = NullCurriculumManager()
     print_info(f"[INFO] {self.curriculum_manager}")
+    if len(self.cfg.metrics) > 0:
+      self.metrics_manager = MetricsManager(self.cfg.metrics, self)
+    else:
+      self.metrics_manager = NullMetricsManager()
+    print_info(f"[INFO] {self.metrics_manager}")
 
     # Configure spaces for the environment.
     self._configure_gym_env_spaces()
@@ -250,7 +316,6 @@ class ManagerBasedRlEnv:
     # Initialize startup events if defined.
     if "startup" in self.event_manager.available_modes:
       self.event_manager.apply(mode="startup")
-      self.sim.create_graph()
 
   def reset(
     self,
@@ -267,10 +332,40 @@ class ManagerBasedRlEnv:
     self._reset_idx(env_ids)
     self.scene.write_data_to_sim()
     self.sim.forward()
+    self.command_manager.compute(dt=0.0)
+    self.sim.sense()
     self.obs_buf = self.observation_manager.compute(update_history=True)
     return self.obs_buf, self.extras
 
   def step(self, action: torch.Tensor) -> types.VecEnvStepReturn:
+    """Run one environment step: apply actions, simulate, compute RL signals.
+
+    **Forward-call placement.** MuJoCo's ``mj_step`` runs forward kinematics
+    *before* integration, so after stepping, derived quantities (``xpos``,
+    ``xquat``, ``site_xpos``, ``cvel``, ``sensordata``) lag ``qpos``/``qvel``
+    by one physics substep. Rather than calling ``sim.forward()`` twice (once
+    after the decimation loop and once after the reset block), this method
+    calls it **once**, right before observation computation. This single call
+    refreshes derived quantities for *all* envs: non-reset envs pick up
+    post-decimation kinematics, reset envs pick up post-reset kinematics.
+
+    The tradeoff is that termination and reward managers see derived
+    quantities that are stale by one physics substep (the last ``mj_step``
+    ran ``mj_forward`` from *pre*-integration ``qpos``). In practice, the
+    staleness is negligible for reward shaping and termination
+    checks. Critically, the staleness is *consistent*: every env,
+    every step, always sees the same lag, so the MDP is well-defined
+    and the value function can learn the correct mapping.
+
+    .. note::
+
+      Event and command authors do not need to call ``sim.forward()``
+      themselves. This method handles it. The only constraint is: do not
+      read derived quantities (``root_link_pose_w``, ``body_link_vel_w``,
+      etc.) in the same function that writes state
+      (``write_root_state_to_sim``, ``write_joint_state_to_sim``, etc.).
+      See :ref:`faq` for details.
+    """
     self.action_manager.process_action(action.to(self.device))
 
     for _ in range(self.cfg.decimation):
@@ -284,25 +379,36 @@ class ManagerBasedRlEnv:
     self.episode_length_buf += 1
     self.common_step_counter += 1
 
-    # Check terminations.
+    # Check terminations and compute rewards.
+    # NOTE: Derived quantities (xpos, xquat, ...) are stale by one physics
+    # substep here. See the docstring above for why this is acceptable.
     self.reset_buf = self.termination_manager.compute()
     self.reset_terminated = self.termination_manager.terminated
     self.reset_time_outs = self.termination_manager.time_outs
 
     self.reward_buf = self.reward_manager.compute(dt=self.step_dt)
+    self.metrics_manager.compute()
 
     # Reset envs that terminated/timed-out and log the episode info.
     reset_env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)
     if len(reset_env_ids) > 0:
       self._reset_idx(reset_env_ids)
       self.scene.write_data_to_sim()
-      self.sim.forward()
+
+    # Single forward() call: recompute derived quantities from current
+    # qpos/qvel for every env. For non-reset envs this resolves the
+    # one-substep staleness left by mj_step; for reset envs it picks up
+    # the freshly written reset state.
+    self.sim.forward()
 
     self.command_manager.compute(dt=self.step_dt)
 
+    if "step" in self.event_manager.available_modes:
+      self.event_manager.apply(mode="step", dt=self.step_dt)
     if "interval" in self.event_manager.available_modes:
       self.event_manager.apply(mode="interval", dt=self.step_dt)
 
+    self.sim.sense()
     self.obs_buf = self.observation_manager.compute(update_history=True)
 
     return (
@@ -345,6 +451,8 @@ class ManagerBasedRlEnv:
   def update_visualizers(self, visualizer: DebugVisualizer) -> None:
     for mod in self.manager_visualizers.values():
       mod.debug_vis(visualizer)
+    for sensor in self.scene.sensors.values():
+      sensor.debug_vis(visualizer)
 
   # Private methods.
 
@@ -381,7 +489,7 @@ class ManagerBasedRlEnv:
 
   def _reset_idx(self, env_ids: torch.Tensor | None = None) -> None:
     self.curriculum_manager.compute(env_ids=env_ids)
-    # Reset the internal buffers of the scene elements.
+    self.sim.reset(env_ids)
     self.scene.reset(env_ids)
 
     if "reset" in self.event_manager.available_modes:
@@ -400,6 +508,9 @@ class ManagerBasedRlEnv:
     self.extras["log"].update(info)
     # rewards manager.
     info = self.reward_manager.reset(env_ids)
+    self.extras["log"].update(info)
+    # metrics manager.
+    info = self.metrics_manager.reset(env_ids)
     self.extras["log"].update(info)
     # curriculum manager.
     info = self.curriculum_manager.reset(env_ids)

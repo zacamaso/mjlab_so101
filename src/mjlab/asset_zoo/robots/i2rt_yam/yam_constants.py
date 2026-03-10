@@ -40,6 +40,16 @@ def get_spec() -> mujoco.MjSpec:
 # Actuator config.
 ##
 
+EFFECTIVE_INERTIAS = {
+  "joint1": 0.123153,
+  "joint2": 0.277411,
+  "joint3": 0.232763,
+  "joint4": 0.030154,
+  "joint5": 0.009126,
+  "joint6": 0.002868,
+  "left_finger": 2.781624,
+}
+
 ARMATURE_DM_4340 = 0.032
 ARMATURE_DM_4310 = 0.0018
 
@@ -56,28 +66,27 @@ DM_4310 = ElectricActuator(
   effort_limit=10.0,
 )
 
-NATURAL_FREQ = 10 * 2.0 * 3.1415926535  # 10Hz
+NATURAL_FREQ = 2 * 2.0 * 3.1415926535  # 2Hz
 DAMPING_RATIO = 2.0
 
-STIFFNESS_DM_4340 = ARMATURE_DM_4340 * NATURAL_FREQ**2
-STIFFNESS_DM_4310 = ARMATURE_DM_4310 * NATURAL_FREQ**2
-
-DAMPING_DM_4340 = 2.0 * DAMPING_RATIO * ARMATURE_DM_4340 * NATURAL_FREQ
-DAMPING_DM_4310 = 2.0 * DAMPING_RATIO * ARMATURE_DM_4310 * NATURAL_FREQ
-
-ACTUATOR_DM_4340 = BuiltinPositionActuatorCfg(
-  joint_names_expr=("joint1", "joint2", "joint3"),
-  stiffness=STIFFNESS_DM_4340,
-  damping=DAMPING_DM_4340,
-  effort_limit=DM_4340.effort_limit,
-  armature=DM_4340.reflected_inertia,
-)
-ACTUATOR_DM_4310 = BuiltinPositionActuatorCfg(
-  joint_names_expr=("joint4", "joint5", "joint6"),
-  stiffness=STIFFNESS_DM_4310,
-  damping=DAMPING_DM_4310,
-  effort_limit=DM_4310.effort_limit,
-  armature=DM_4310.reflected_inertia,
+# Per-joint PD gains using effective inertia, and actuator configs.
+_ARM_JOINTS: dict[str, ElectricActuator] = {
+  "joint1": DM_4340,
+  "joint2": DM_4340,
+  "joint3": DM_4340,
+  "joint4": DM_4310,
+  "joint5": DM_4310,
+  "joint6": DM_4310,
+}
+ARM_ACTUATORS = tuple(
+  BuiltinPositionActuatorCfg(
+    target_names_expr=(name,),
+    stiffness=EFFECTIVE_INERTIAS[name] * NATURAL_FREQ**2,
+    damping=2.0 * DAMPING_RATIO * EFFECTIVE_INERTIAS[name] * NATURAL_FREQ,
+    effort_limit=motor.effort_limit,
+    armature=motor.reflected_inertia,
+  )
+  for name, motor in _ARM_JOINTS.items()
 )
 
 ##
@@ -109,11 +118,11 @@ GRIPPER_TRANSMISSION_RATIO_CRANK = (
   transmission_ratio=GRIPPER_TRANSMISSION_RATIO_CRANK,
 )
 
-# PD controller gains.
-NATURAL_FREQ_GRIPPER = 2 * 2.0 * 3.1415926535  # 2Hz
-STIFFNESS_DM_4310_LINEAR_CRANK = ARMATURE_DM_4310_LINEAR_CRANK * NATURAL_FREQ_GRIPPER**2
-DAMPING_DM_4310_LINEAR_CRANK = (
-  2.0 * DAMPING_RATIO * ARMATURE_DM_4310_LINEAR_CRANK * NATURAL_FREQ_GRIPPER
+# PD controller gains using effective inertia.
+NATURAL_FREQ_GRIPPER = 1.0 * 2.0 * 3.1415926535  # 1Hz
+STIFFNESS_GRIPPER = EFFECTIVE_INERTIAS["left_finger"] * NATURAL_FREQ_GRIPPER**2
+DAMPING_GRIPPER = (
+  2.0 * DAMPING_RATIO * EFFECTIVE_INERTIAS["left_finger"] * NATURAL_FREQ_GRIPPER
 )
 
 # Artificially limit gripper force for sim stability (must also be done on hardware).
@@ -121,9 +130,9 @@ EFFORT_LIMIT_DM_4310_LINEAR_CRANK_SAFE = EFFORT_LIMIT_DM_4310_LINEAR_CRANK * 0.1
 
 # Only actuate left_finger; right_finger is coupled via equality constraint.
 ACTUATOR_DM_4310_LINEAR_CRANK = BuiltinPositionActuatorCfg(
-  joint_names_expr=("left_finger",),
-  stiffness=STIFFNESS_DM_4310_LINEAR_CRANK,
-  damping=DAMPING_DM_4310_LINEAR_CRANK,
+  target_names_expr=("left_finger",),
+  stiffness=STIFFNESS_GRIPPER,
+  damping=DAMPING_GRIPPER,
   effort_limit=EFFORT_LIMIT_DM_4310_LINEAR_CRANK_SAFE,
   armature=ARMATURE_DM_4310_LINEAR_CRANK,
 )
@@ -137,6 +146,7 @@ HOME_KEYFRAME = EntityCfg.InitialStateCfg(
   joint_pos={
     "joint2": 1.047,
     "joint3": 1.05,
+    "joint4": -0.9,
     "left_finger": 0.0375 / 2,
     "right_finger": -0.0375 / 2,
   },
@@ -196,7 +206,7 @@ GRIPPER_ONLY_COLLISION = CollisionCfg(
 ##
 
 ARTICULATION = EntityArticulationInfoCfg(
-  actuators=(ACTUATOR_DM_4340, ACTUATOR_DM_4310, ACTUATOR_DM_4310_LINEAR_CRANK),
+  actuators=(*ARM_ACTUATORS, ACTUATOR_DM_4310_LINEAR_CRANK),
   soft_joint_pos_limit_factor=0.9,
 )
 
@@ -215,7 +225,7 @@ for a in ARTICULATION.actuators:
   assert isinstance(a, BuiltinPositionActuatorCfg)
   e = a.effort_limit
   s = a.stiffness
-  names = a.joint_names_expr
+  names = a.target_names_expr
   assert e is not None
   for n in names:
     YAM_ACTION_SCALE[n] = 0.25 * e / s

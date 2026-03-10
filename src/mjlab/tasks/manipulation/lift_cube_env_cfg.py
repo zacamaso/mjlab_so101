@@ -1,23 +1,21 @@
 from mjlab.envs import ManagerBasedRlEnvCfg
+from mjlab.envs.mdp import dr
 from mjlab.envs.mdp.actions import JointPositionActionCfg
-from mjlab.managers.manager_term_config import (
-  ActionTermCfg,
-  CommandTermCfg,
-  CurriculumTermCfg,
-  EventTermCfg,
-  ObservationGroupCfg,
-  ObservationTermCfg,
-  RewardTermCfg,
-  TerminationTermCfg,
-)
+from mjlab.managers.action_manager import ActionTermCfg
+from mjlab.managers.command_manager import CommandTermCfg
+from mjlab.managers.curriculum_manager import CurriculumTermCfg
+from mjlab.managers.event_manager import EventTermCfg
+from mjlab.managers.observation_manager import ObservationGroupCfg, ObservationTermCfg
+from mjlab.managers.reward_manager import RewardTermCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
+from mjlab.managers.termination_manager import TerminationTermCfg
 from mjlab.scene import SceneCfg
 from mjlab.sensor import ContactMatch, ContactSensorCfg
 from mjlab.sim import MujocoCfg, SimulationCfg
 from mjlab.tasks.manipulation import mdp as manipulation_mdp
 from mjlab.tasks.manipulation.mdp import LiftingCommandCfg
 from mjlab.tasks.velocity import mdp
-from mjlab.terrains import TerrainImporterCfg
+from mjlab.terrains import TerrainEntityCfg
 from mjlab.utils.noise import UniformNoiseCfg as Unoise
 from mjlab.viewer import ViewerConfig
 
@@ -25,7 +23,7 @@ from mjlab.viewer import ViewerConfig
 def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
   """Create base cube lifting task configuration."""
 
-  policy_terms = {
+  actor_terms = {
     "joint_pos": ObservationTermCfg(
       func=mdp.joint_pos_rel,
       noise=Unoise(n_min=-0.01, n_max=0.01),
@@ -43,7 +41,7 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
       noise=Unoise(n_min=-0.01, n_max=0.01),
     ),
     "cube_to_goal": ObservationTermCfg(
-      func=manipulation_mdp.object_position_error,
+      func=manipulation_mdp.object_to_goal_distance,
       params={
         "object_name": "cube",
         "command_name": "lift_height",
@@ -53,16 +51,16 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
     "actions": ObservationTermCfg(func=mdp.last_action),
   }
 
-  critic_terms = {**policy_terms}
+  critic_terms = {**actor_terms}
 
   observations = {
-    "policy": ObservationGroupCfg(policy_terms, enable_corruption=True),
+    "actor": ObservationGroupCfg(actor_terms, enable_corruption=True),
     "critic": ObservationGroupCfg(critic_terms, enable_corruption=False),
   }
 
   actions: dict[str, ActionTermCfg] = {
     "joint_pos": JointPositionActionCfg(
-      asset_name="robot",
+      entity_name="robot",
       actuator_names=(".*",),
       scale=0.5,  # Override per-robot.
       use_default_offset=True,
@@ -71,7 +69,7 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
 
   commands: dict[str, CommandTermCfg] = {
     "lift_height": LiftingCommandCfg(
-      asset_name="cube",
+      entity_name="cube",
       resampling_time_range=(8.0, 12.0),
       debug_vis=True,
       difficulty="dynamic",
@@ -88,7 +86,7 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
     # For positioning the base of the robot at env_origins.
     "reset_base": EventTermCfg(
       func=mdp.reset_root_state_uniform,
-      mode="startup",
+      mode="reset",
       params={
         "pose_range": {},
         "velocity_range": {},
@@ -105,12 +103,10 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
     ),
     "fingertip_friction_slide": EventTermCfg(
       mode="startup",
-      func=mdp.randomize_field,
-      domain_randomization=True,
+      func=dr.geom_friction,
       params={
         "asset_cfg": SceneEntityCfg("robot", geom_names=()),  # Set per-robot.
         "operation": "abs",
-        "field": "geom_friction",
         "distribution": "uniform",
         "axes": [0],
         "ranges": (0.3, 1.5),
@@ -118,12 +114,10 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
     ),
     "fingertip_friction_spin": EventTermCfg(
       mode="startup",
-      func=mdp.randomize_field,
-      domain_randomization=True,
+      func=dr.geom_friction,
       params={
         "asset_cfg": SceneEntityCfg("robot", geom_names=()),  # Set per-robot.
         "operation": "abs",
-        "field": "geom_friction",
         "distribution": "log_uniform",
         "axes": [1],
         "ranges": (1e-4, 2e-2),
@@ -131,12 +125,10 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
     ),
     "fingertip_friction_roll": EventTermCfg(
       mode="startup",
-      func=mdp.randomize_field,
-      domain_randomization=True,
+      func=dr.geom_friction,
       params={
         "asset_cfg": SceneEntityCfg("robot", geom_names=()),  # Set per-robot.
         "operation": "abs",
-        "field": "geom_friction",
         "distribution": "log_uniform",
         "axes": [2],
         "ranges": (1e-5, 5e-3),
@@ -153,9 +145,10 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
       entity="robot",
     ),
     secondary=ContactMatch(mode="body", pattern="terrain"),
-    fields=("found",),
+    fields=("found", "force"),
     reduce="none",
     num_slots=1,
+    history_length=4,
   )
 
   rewards = {
@@ -199,7 +192,7 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
     "time_out": TerminationTermCfg(func=mdp.time_out, time_out=True),
     "ee_ground_collision": TerminationTermCfg(
       func=manipulation_mdp.illegal_contact,
-      params={"sensor_name": "ee_ground_collision"},
+      params={"sensor_name": "ee_ground_collision", "force_threshold": 10.0},
     ),
   }
 
@@ -210,8 +203,8 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
         "reward_name": "joint_vel_hinge",
         "weight_stages": [
           {"step": 0, "weight": -0.01},
-          {"step": 1000 * 24, "weight": -0.1},
-          {"step": 1500 * 24, "weight": -1.0},
+          {"step": 500 * 24, "weight": -0.1},
+          {"step": 1000 * 24, "weight": -1.0},
         ],
       },
     ),
@@ -219,7 +212,7 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
 
   return ManagerBasedRlEnvCfg(
     scene=SceneCfg(
-      terrain=TerrainImporterCfg(terrain_type="plane"),
+      terrain=TerrainEntityCfg(terrain_type="plane"),
       num_envs=1,
       env_spacing=1.0,
       sensors=(ee_ground_collision_cfg,),
@@ -233,7 +226,7 @@ def make_lift_cube_env_cfg() -> ManagerBasedRlEnvCfg:
     curriculum=curriculum,
     viewer=ViewerConfig(
       origin_type=ViewerConfig.OriginType.ASSET_BODY,
-      asset_name="robot",
+      entity_name="robot",
       body_name="",  # Set per-robot.
       distance=1.5,
       elevation=-5.0,

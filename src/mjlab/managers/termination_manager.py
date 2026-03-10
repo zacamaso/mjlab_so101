@@ -3,19 +3,34 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Sequence
 
 import torch
 from prettytable import PrettyTable
 
-from mjlab.managers.manager_base import ManagerBase
-from mjlab.managers.manager_term_config import TerminationTermCfg
+from mjlab.managers.manager_base import ManagerBase, ManagerTermBaseCfg
 
 if TYPE_CHECKING:
   from mjlab.envs.manager_based_rl_env import ManagerBasedRlEnv
 
 
+@dataclass
+class TerminationTermCfg(ManagerTermBaseCfg):
+  """Configuration for a termination term."""
+
+  time_out: bool = False
+  """Whether the term contributes towards episodic timeouts."""
+
+
 class TerminationManager(ManagerBase):
+  """Manages termination conditions for the environment.
+
+  The termination manager aggregates multiple termination terms to compute
+  episode done signals. Terms can be either truncations (time-based) or
+  terminations (failure conditions).
+  """
+
   _env: ManagerBasedRlEnv
 
   def __init__(self, cfg: dict[str, TerminationTermCfg], env: ManagerBasedRlEnv):
@@ -98,6 +113,11 @@ class TerminationManager(ManagerBase):
 
   def get_term(self, name: str) -> torch.Tensor:
     return self._term_dones[name]
+
+  def get_term_cfg(self, term_name: str) -> TerminationTermCfg:
+    if term_name not in self._term_names:
+      raise ValueError(f"Term '{term_name}' not found in active terms.")
+    return self._term_cfgs[self._term_names.index(term_name)]
 
   def get_active_iterable_terms(
     self, env_idx: int

@@ -5,7 +5,7 @@ from __future__ import annotations
 import mujoco
 import pytest
 import torch
-from conftest import get_test_device
+from conftest import get_test_device, load_fixture_xml
 
 from mjlab.entity import EntityCfg
 from mjlab.scene import Scene, SceneCfg
@@ -31,27 +31,7 @@ FALLING_BOX_XML = """
 </mujoco>
 """
 
-BIPED_XML = """
-<mujoco>
-  <worldbody>
-    <body name="ground" pos="0 0 0">
-      <geom name="ground_geom" type="plane" size="5 5 0.1" rgba="0.5 0.5 0.5 1"/>
-    </body>
-    <body name="base" pos="0 0 0.5">
-      <freejoint name="base_joint"/>
-      <geom name="torso_geom" type="box" size="0.15 0.1 0.2" mass="5.0"/>
-      <body name="left_foot" pos="0.1 0 -0.25">
-        <joint name="left_ankle" type="hinge" axis="0 1 0" range="-0.5 0.5"/>
-        <geom name="left_foot_geom" type="box" size="0.05 0.08 0.02" mass="0.2"/>
-      </body>
-      <body name="right_foot" pos="-0.1 0 -0.25">
-        <joint name="right_ankle" type="hinge" axis="0 1 0" range="-0.5 0.5"/>
-        <geom name="right_foot_geom" type="box" size="0.05 0.08 0.02" mass="0.2"/>
-      </body>
-    </body>
-  </worldbody>
-</mujoco>
-"""
+BIPED_XML = load_fixture_xml("biped")
 
 SIMPLE_ROBOT_XML = """
 <mujoco>
@@ -310,7 +290,10 @@ def test_regex_pattern_matching(device):
   root_state[:, 3] = 1.0
   biped_entity.write_root_state_to_sim(root_state)
 
-  step_and_settle(sim, num_steps=20)
+  # Run simulation and update scene to invalidate cache.
+  for _ in range(20):
+    sim.step()
+    scene.update(dt=sim.cfg.mujoco.timestep)
 
   data = sensor.data
   # Both feet should detect ground contact.
@@ -572,6 +555,7 @@ def test_air_time_tracking(device):
   # Let it settle and establish ground contact.
   for _ in range(30):
     sim.step()
+    scene.update(dt=sim.cfg.mujoco.timestep)
 
   data1 = sensor.data
   # Check that we have ground contact initially.
@@ -584,6 +568,7 @@ def test_air_time_tracking(device):
   # Simulate being in air.
   for _ in range(20):
     sim.step()
+    scene.update(dt=sim.cfg.mujoco.timestep)
 
   data2 = sensor.data
   # Should have no ground contact while in air.
@@ -599,6 +584,7 @@ def test_air_time_tracking(device):
 
   for _ in range(30):
     sim.step()
+    scene.update(dt=sim.cfg.mujoco.timestep)
 
   data3 = sensor.data
   # Should have ground contact again.
@@ -755,3 +741,282 @@ def test_num_slots_greater_than_one(device):
   assert data_3.found.shape == (2, 6)
   assert data_3.force.shape == (2, 6, 3)
   assert data_3.normal.shape == (2, 6, 3)
+
+
+##
+# History tests.
+##
+
+
+def test_history_shape(device):
+  """Verify history tensors have correct shape [B, N, H, 3]."""
+  history_len = 5
+  sensor_cfg = ContactSensorCfg(
+    name="box_contact",
+    primary=ContactMatch(mode="geom", pattern="box_geom", entity="box"),
+    secondary=None,
+    fields=("found", "force", "torque", "dist"),
+    history_length=history_len,
+  )
+
+  scene, sim = create_scene_with_sensor(FALLING_BOX_XML, "box", sensor_cfg, device)
+
+  sensor = scene["box_contact"]
+  box_entity = scene["box"]
+
+  # Place box on ground.
+  root_state = torch.zeros((2, 13), device=sim.device)
+  root_state[:, 2] = 0.11
+  root_state[:, 3] = 1.0
+  box_entity.write_root_state_to_sim(root_state)
+
+  # Step a few times to populate history.
+  for _ in range(10):
+    sim.step()
+    scene.update(dt=sim.cfg.mujoco.timestep)
+
+  data = sensor.data
+
+  # Verify history shapes: [B, N, H, ...].
+  assert data.force_history is not None
+  assert data.torque_history is not None
+  assert data.dist_history is not None
+  assert data.force_history.shape == (2, 1, history_len, 3)
+  assert data.torque_history.shape == (2, 1, history_len, 3)
+  assert data.dist_history.shape == (2, 1, history_len)
+
+
+def test_history_ordering(device):
+  """Verify index 0 is most recent data in history buffer."""
+  history_len = 3
+  sensor_cfg = ContactSensorCfg(
+    name="box_contact",
+    primary=ContactMatch(mode="geom", pattern="box_geom", entity="box"),
+    secondary=None,
+    fields=("force",),
+    history_length=history_len,
+  )
+
+  scene, sim = create_scene_with_sensor(FALLING_BOX_XML, "box", sensor_cfg, device)
+
+  sensor = scene["box_contact"]
+  box_entity = scene["box"]
+
+  # Place box on ground to get contact.
+  root_state = torch.zeros((2, 13), device=sim.device)
+  root_state[:, 2] = 0.11
+  root_state[:, 3] = 1.0
+  box_entity.write_root_state_to_sim(root_state)
+
+  # Step and capture history at each step.
+  forces_over_time = []
+  for _ in range(5):
+    sim.step()
+    scene.update(dt=sim.cfg.mujoco.timestep)
+    # Clone to avoid tensor aliasing.
+    forces_over_time.append(sensor.data.force.clone())
+
+  data = sensor.data
+
+  # Index 0 should be most recent (last force we captured).
+  assert data.force_history is not None
+  torch.testing.assert_close(data.force_history[:, :, 0, :], forces_over_time[-1])
+
+  # Index 1 should be second most recent.
+  torch.testing.assert_close(data.force_history[:, :, 1, :], forces_over_time[-2])
+
+  # Index 2 should be third most recent.
+  torch.testing.assert_close(data.force_history[:, :, 2, :], forces_over_time[-3])
+
+
+def test_history_reset(device):
+  """Verify reset clears history for specified environments."""
+  history_len = 5
+  sensor_cfg = ContactSensorCfg(
+    name="box_contact",
+    primary=ContactMatch(mode="geom", pattern="box_geom", entity="box"),
+    secondary=None,
+    fields=("force",),
+    history_length=history_len,
+  )
+
+  scene, sim = create_scene_with_sensor(FALLING_BOX_XML, "box", sensor_cfg, device)
+
+  sensor = scene["box_contact"]
+  box_entity = scene["box"]
+
+  # Drop box from height to ensure impact forces.
+  root_state = torch.zeros((2, 13), device=sim.device)
+  root_state[:, 2] = 0.5  # Drop from 0.5m
+  root_state[:, 3] = 1.0
+  box_entity.write_root_state_to_sim(root_state)
+
+  # Let box fall and impact ground.
+  for _ in range(50):
+    sim.step()
+    scene.update(dt=sim.cfg.mujoco.timestep)
+
+  data_before = sensor.data
+  assert data_before.force_history is not None
+
+  # Manually set history to known non-zero values to test reset behavior.
+  sensor._history_state["force"][:] = 1.0
+
+  # Reset only env 0.
+  sensor.reset(torch.tensor([0], device=device))
+
+  data_after = sensor.data
+
+  # Env 0 history should be zeroed.
+  assert torch.all(data_after.force_history[0] == 0)
+
+  # Env 1 history should still have our test value.
+  assert torch.all(data_after.force_history[1] == 1.0)
+
+
+def test_history_disabled_by_default(device):
+  """Verify history is None when history_length=0 (default)."""
+  sensor_cfg = ContactSensorCfg(
+    name="box_contact",
+    primary=ContactMatch(mode="geom", pattern="box_geom", entity="box"),
+    secondary=None,
+    fields=("force",),
+    # history_length defaults to 0
+  )
+
+  scene, _ = create_scene_with_sensor(FALLING_BOX_XML, "box", sensor_cfg, device)
+
+  sensor = scene["box_contact"]
+  data = sensor.data
+
+  # History should be None when disabled.
+  assert data.force_history is None
+  assert data.torque_history is None
+  assert data.dist_history is None
+
+
+def test_history_captures_physically_correct_forces(device):
+  """Verify history captures forces that match expected physics (F = mg).
+
+  This test validates that the history buffer stores actual physics values,
+  not just that the buffer mechanics work correctly. A 1kg box at rest on
+  ground should experience a net contact force of approximately 9.81 N.
+  """
+  history_len = 10
+  sensor_cfg = ContactSensorCfg(
+    name="box_contact",
+    primary=ContactMatch(mode="geom", pattern="box_geom", entity="box"),
+    secondary=None,
+    fields=("force",),
+    history_length=history_len,
+    reduce="netforce",  # Sum all contact forces (already in global frame).
+  )
+
+  scene, sim = create_scene_with_sensor(FALLING_BOX_XML, "box", sensor_cfg, device)
+
+  sensor = scene["box_contact"]
+  box_entity = scene["box"]
+
+  # Place box just above ground and let it settle.
+  root_state = torch.zeros((2, 13), device=sim.device)
+  root_state[:, 2] = 0.11  # Just above ground (box half-height is 0.1).
+  root_state[:, 3] = 1.0  # Unit quaternion.
+  box_entity.write_root_state_to_sim(root_state)
+
+  # Let the box settle to steady state.
+  for _ in range(100):
+    sim.step()
+    scene.update(dt=sim.cfg.mujoco.timestep)
+
+  data = sensor.data
+
+  # Box mass is 1.0 kg, gravity is ~9.81 m/s².
+  # Expected normal force magnitude ≈ 9.81 N in z direction.
+  expected_force_magnitude = 9.81
+  tolerance = 1.0  # Allow 1 N tolerance for numerical settling.
+
+  # Check that the most recent force in history matches expected physics.
+  assert data.force_history is not None
+  force_z = data.force_history[
+    :, :, 0, 2
+  ]  # [B, N, H, 3] -> z-component of most recent.
+
+  # Force magnitude should match mg (sign depends on contact frame convention).
+  assert torch.allclose(
+    force_z.abs(), torch.full_like(force_z, expected_force_magnitude), atol=tolerance
+  ), f"Expected |force_z| ~{expected_force_magnitude} N, got {force_z}"
+
+  # Verify forces are consistent across recent history (steady state).
+  # In steady state, all history entries should have similar force magnitudes.
+  force_magnitudes = torch.norm(data.force_history, dim=-1)  # [B, N, H]
+  mean_force = force_magnitudes.mean(dim=2, keepdim=True)
+  max_deviation = (force_magnitudes - mean_force).abs().max()
+  assert max_deviation < 1.0, f"Forces should be steady, max deviation: {max_deviation}"
+
+
+def test_history_captures_impact_forces(device):
+  """Verify history captures transient impact forces during a drop.
+
+  This is the primary use case for the history feature: catching peak forces
+  that occur during impact but might be missed if only sampling at policy rate.
+  When a box drops and impacts the ground, the peak force should exceed the
+  steady-state force (mg) due to the impulse from deceleration.
+  """
+  history_len = 20  # Capture enough substeps to see the impact transient.
+  sensor_cfg = ContactSensorCfg(
+    name="box_contact",
+    primary=ContactMatch(mode="geom", pattern="box_geom", entity="box"),
+    secondary=None,
+    fields=("force",),
+    history_length=history_len,
+    reduce="netforce",  # Sum all contact forces.
+  )
+
+  scene, sim = create_scene_with_sensor(FALLING_BOX_XML, "box", sensor_cfg, device)
+
+  sensor = scene["box_contact"]
+  box_entity = scene["box"]
+
+  # Drop box from a height to create impact.
+  drop_height = 0.5  # 0.5m above ground (box half-height is 0.1).
+  root_state = torch.zeros((2, 13), device=sim.device)
+  root_state[:, 2] = drop_height
+  root_state[:, 3] = 1.0  # Unit quaternion.
+  box_entity.write_root_state_to_sim(root_state)
+
+  # Step until we detect contact and capture the impact.
+  max_force_seen = torch.zeros(2, device=sim.device)
+  contact_detected = False
+
+  for _ in range(200):  # Enough steps for box to fall and settle.
+    sim.step()
+    scene.update(dt=sim.cfg.mujoco.timestep)
+
+    data = sensor.data
+    if data.force_history is not None:
+      # Track the maximum force magnitude seen in history.
+      force_magnitudes = torch.norm(data.force_history, dim=-1)  # [B, N, H]
+      current_max = force_magnitudes.max(dim=-1).values.squeeze(-1)  # [B]
+      max_force_seen = torch.maximum(max_force_seen, current_max)
+
+      # Check if we have contact.
+      if torch.any(force_magnitudes > 0):
+        contact_detected = True
+
+  assert contact_detected, "Box should have made contact with ground"
+
+  # Steady state force is mg ≈ 9.81 N for 1 kg box.
+  steady_state_force = 9.81
+
+  # Peak impact force should exceed steady state due to impulse.
+  # For a drop from 0.5m, v = sqrt(2gh) ≈ 3.1 m/s at impact.
+  # The peak force depends on contact stiffness, but should be > mg.
+  assert torch.all(max_force_seen > steady_state_force), (
+    f"Peak impact force ({max_force_seen}) should exceed steady state ({steady_state_force})"
+  )
+
+  # Verify the peak force was significantly above steady state, demonstrating
+  # that the history captured the transient impact spike.
+  assert torch.all(max_force_seen > steady_state_force * 1.5), (
+    f"Peak force {max_force_seen} should be significantly above mg={steady_state_force}"
+  )

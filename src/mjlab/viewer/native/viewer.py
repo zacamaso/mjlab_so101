@@ -1,11 +1,51 @@
-"""Environment viewer built on MuJoCo's passive viewer."""
+"""Environment viewer built on MuJoCo's passive viewer.
+
+Overview
+--------
+The simulation runs on the GPU via mujoco_warp, but MuJoCo's passive viewer
+requires CPU ``MjModel`` and ``MjData`` structures. Each frame, this module
+copies the GPU state for one environment into CPU buffers, calls
+``mj_forward`` to recompute kinematics and contacts, and hands the result to
+the render thread via ``v.sync()``. Contacts visible in the viewer are
+computed by C MuJoCo on the CPU, not by mujoco_warp on the GPU.
+
+The per frame sync has four steps:
+
+1. ``_sync_env_state_to_mjdata``: copy ``qpos``, ``qvel``, ``mocap``, and
+   ``xfrc_applied`` from GPU tensors into CPU ``MjData``.
+2. ``mj_forward``: recompute kinematics, collisions, and derived quantities.
+3. ``_sync_model_fields``: if domain randomization expanded visual fields
+   (geom colors, body poses, camera parameters, etc.), copy the per world
+   values from GPU ``sim.model`` into CPU ``MjModel``.
+4. ``v.sync()``: hand ``MjModel``/``MjData`` to the passive viewer's render
+   thread.
+
+For multi environment scenes, steps 1 and 2 are repeated for neighboring
+environments into a secondary ``MjData`` (``self.vd``), and their geoms are
+injected via ``mjv_addGeoms``.
+
+External force channels
+-----------------------
+MuJoCo sums two external force inputs during forward dynamics:
+
+* ``xfrc_applied``: Cartesian forces per body (GPU to CPU, for rendering).
+* ``qfrc_applied``: generalized forces per DoF (CPU to GPU, for mouse input).
+
+Programmatic forces (e.g. ``apply_body_impulse``) write to ``xfrc_applied``
+on the GPU and flow one way to the CPU ``MjData`` for visualization. Mouse
+perturbation forces flow the opposite direction: the viewer computes them on
+the CPU via ``mjv_applyPerturbForce``, converts to joint space with
+``mj_applyFT``, and writes to ``qfrc_applied`` on the GPU. Each field flows
+in one direction only, so the two sources never overwrite each other.
+"""
 
 from __future__ import annotations
 
+import math
 from collections import deque
 from dataclasses import dataclass
 from threading import Lock
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Callable, Optional, Protocol
 
 import mujoco
 import mujoco.viewer
@@ -37,9 +77,38 @@ class PlotCfg:
   init_yrange: tuple[float, float] = (-0.01, 0.01)  # Initial y-range.
   grid_size: tuple[int, int] = (3, 4)  # Grid size (rows, columns).
   max_viewports: int = 12  # Cap number of plots shown.
+  min_rows_per_col: int = 4  # Minimum rows for height calc (prevents stretching).
   max_rows_per_col: int = 6  # Stack up to this many per column.
   plot_strip_fraction: float = 1 / 3  # Right-side width reserved for plots.
   background_alpha: float = 0.5  # Background alpha for plots.
+
+
+class _SimDataProtocol(Protocol):
+  qpos: "_TensorArrayProtocol"
+  qvel: "_TensorArrayProtocol"
+  mocap_pos: "_TensorArrayProtocol"
+  mocap_quat: "_TensorArrayProtocol"
+  xfrc_applied: "_TensorArrayProtocol"
+  qfrc_applied: "_TensorArrayProtocol"
+
+
+class _CpuArrayProtocol(Protocol):
+  def cpu(self) -> "_CpuArrayProtocol": ...
+  def numpy(self) -> np.ndarray: ...
+
+
+class _TensorArrayProtocol(Protocol):
+  def __getitem__(self, idx: int) -> _CpuArrayProtocol: ...
+
+
+class _SimModelProtocol(Protocol):
+  def __getattr__(self, name: str) -> object: ...
+
+
+class _SimProtocol(Protocol):
+  data: _SimDataProtocol
+  model: _SimModelProtocol
+  expanded_fields: set[str]
 
 
 class NativeMujocoViewer(BaseViewer):
@@ -69,9 +138,12 @@ class NativeMujocoViewer(BaseViewer):
     self._figures: dict[str, mujoco.MjvFigure] = {}  # Per-term figure.
     self._histories: dict[str, deque[float]] = {}  # Per-term ring buffer.
     self._yrange: dict[str, tuple[float, float]] = {}  # Per-term y-range.
-    self._show_plots: bool = True
+    self._scale: dict[str, float] = {}  # Per-term display scale factor.
+    self._show_plots: bool = False
     self._show_debug_vis: bool = True
+    self._show_all_envs: bool = False
     self._plot_cfg = plot_cfg or PlotCfg()
+    self._figures_dirty: bool = False
 
     self.env_idx = self.cfg.env_idx
     self._mj_lock = Lock()
@@ -81,21 +153,23 @@ class NativeMujocoViewer(BaseViewer):
     sim = self.env.unwrapped.sim
     self.mjm = sim.mj_model
     self.mjd = sim.mj_data
+    assert self.mjm is not None
+    if self.cfg.fovy is not None:
+      self.mjm.vis.global_.fovy = self.cfg.fovy
 
     if self.env.unwrapped.num_envs > 1:
-      assert self.mjm is not None
       self.vd = mujoco.MjData(self.mjm)
 
     self.pert = mujoco.MjvPerturb() if self.enable_perturbations else None
     self.vopt = mujoco.MjvOption()
 
-    # self._term_names = [
-    #   name
-    #   for name, _ in self.env.unwrapped.reward_manager.get_active_iterable_terms(
-    #     self.env_idx
-    #   )
-    # ]
-    # self._init_reward_plots(self._term_names)
+    self._term_names = [
+      name
+      for name, _ in self.env.unwrapped.reward_manager.get_active_iterable_terms(
+        self.env_idx
+      )
+    ]
+    self._init_reward_plots(self._term_names)
 
     assert self.mjm is not None
     assert self.mjd is not None
@@ -112,6 +186,8 @@ class NativeMujocoViewer(BaseViewer):
     if not self.cfg.enable_shadows:
       self.viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] = 0
 
+    self.viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_SCLINERTIA] = 1
+
     self._setup_camera()
 
     if self.enable_perturbations:
@@ -126,94 +202,233 @@ class NativeMujocoViewer(BaseViewer):
     assert v is not None
     assert self.mjm is not None and self.mjd is not None and self.vopt is not None
 
+    # Window may have been closed between is_running() check and here.
+    if not v.is_running():
+      return
+
     with self._mj_lock:
-      sim_data = self.env.unwrapped.sim.data
-      self.mjd.qpos[:] = sim_data.qpos[self.env_idx].cpu().numpy()
-      self.mjd.qvel[:] = sim_data.qvel[self.env_idx].cpu().numpy()
-      if self.mjm.nmocap > 0:
-        self.mjd.mocap_pos[:] = sim_data.mocap_pos[self.env_idx].cpu().numpy()
-        self.mjd.mocap_quat[:] = sim_data.mocap_quat[self.env_idx].cpu().numpy()
+      sim = self.env.unwrapped.sim
+      sim_data = sim.data
+      self._sync_env_state_to_mjdata(self.mjd, sim_data, self.env_idx)
+      self._sync_model_fields(sim, self.env_idx)
       mujoco.mj_forward(self.mjm, self.mjd)
 
-      # text_1 = "Env\nStep\nStatus\nSpeed\nFPS"
-      # text_2 = (
-      #   f"{self.env_idx + 1}/{self.env.num_envs}\n"
-      #   f"{self._step_count}\n"
-      #   f"{'PAUSED' if self._is_paused else 'RUNNING'}\n"
-      #   f"{self._time_multiplier * 100:.1f}%\n"
-      #   f"{self._smoothed_fps:.1f}"
-      # )
-      # overlay = (
-      #   mujoco.mjtFontScale.mjFONTSCALE_150.value,
-      #   mujoco.mjtGridPos.mjGRID_TOPLEFT.value,
-      #   text_1,
-      #   text_2,
-      # )
-      # v.set_texts(overlay)
+      # The viewer window can close at any time. Re-check before set_texts
+      # / set_figures since those use spin-wait sync with the render loop.
+      if not v.is_running():
+        return
+      self._set_status_overlay(v)
+      if not v.is_running():
+        return
+      self._update_reward_figures(v)
 
-      # if self._show_plots and self._term_names:
-      #   terms = list(
-      #     self.env.unwrapped.reward_manager.get_active_iterable_terms(self.env_idx)
-      #   )
-      #   if not self._is_paused:
-      #     for name, arr in terms:
-      #       if name in self._histories:
-      #         self._append_point(name, float(arr[0]))
-      #         self._write_history_to_figure(name)
+      self._update_debug_visualizers(v)
+      self._render_other_env_geoms(v, sim, sim_data)
 
-      #   viewports = compute_viewports(len(self._term_names), v.viewport, self._plot_cfg)
-      #   viewport_figs = [
-      #     (viewports[i], self._figures[self._term_names[i]])
-      #     for i in range(
-      #       min(len(viewports), len(self._term_names), self._plot_cfg.max_viewports)
-      #     )
-      #   ]
-      #   v.set_figures(viewport_figs)
-      # else:
-      #   v.set_figures([])
+      # Pin tracking camera to body frame origin so DR-induced COM shifts don't move
+      # the camera.
+      if sim.expanded_fields & self._INERTIAL_FIELDS:
+        self._stabilize_tracking_camera()
 
-      v.user_scn.ngeom = 0
-      if self._show_debug_vis and hasattr(self.env.unwrapped, "update_visualizers"):
-        visualizer = MujocoNativeDebugVisualizer(v.user_scn, self.mjm, self.env_idx)
-        self.env.unwrapped.update_visualizers(visualizer)
+      has_visual_dr = bool(sim.expanded_fields & self._VISUAL_FIELDS)
+      v.sync(state_only=not has_visual_dr)
 
-      if self.vd is not None:
-        for i in range(self.env.unwrapped.num_envs):
-          if i == self.env_idx:
-            continue
-          self.vd.qpos[:] = sim_data.qpos[i].cpu().numpy()
-          self.vd.qvel[:] = sim_data.qvel[i].cpu().numpy()
-          if self.mjm.nmocap > 0:
-            self.vd.mocap_pos[:] = sim_data.mocap_pos[i].cpu().numpy()
-            self.vd.mocap_quat[:] = sim_data.mocap_quat[i].cpu().numpy()
-          mujoco.mj_forward(self.mjm, self.vd)
-          assert self.pert is not None
-          mujoco.mjv_addGeoms(
-            self.mjm, self.vd, self.vopt, self.pert, self.catmask, v.user_scn
-          )
+  def _set_status_overlay(self, viewer: mujoco.viewer.Handle) -> None:
+    status = self.get_status()
+    capped = " [CAPPED]" if status.capped else ""
+    text_1 = "Env\nStep\nStatus\nSpeed\nTarget RT\nActual RT"
+    text_2 = (
+      f"{self.env_idx + 1}/{self.env.num_envs}\n"
+      f"{status.step_count}\n"
+      f"{'PAUSED' if status.paused else 'RUNNING'}{capped}\n"
+      f"{status.speed_label}\n"
+      f"{status.target_realtime:.2f}x\n"
+      f"{status.actual_realtime:.2f}x ({status.smoothed_fps:.0f} FPS)"
+    )
+    overlay = (
+      mujoco.mjtFontScale.mjFONTSCALE_150.value,
+      mujoco.mjtGridPos.mjGRID_TOPLEFT.value,
+      text_1,
+      text_2,
+    )
+    viewer.set_texts(overlay)
 
-      v.sync(state_only=True)
+  def _update_reward_figures(self, viewer: mujoco.viewer.Handle) -> None:
+    if not self._show_plots or not self._term_names:
+      # Only send an empty set_figures when transitioning from shown to hidden, to
+      # avoid a spin-wait round trip every frame.
+      if self._figures_dirty:
+        viewer.set_figures([])
+        self._figures_dirty = False
+      return
+
+    terms = list(
+      self.env.unwrapped.reward_manager.get_active_iterable_terms(self.env_idx)
+    )
+    if not self._is_paused:
+      for name, arr in terms:
+        if name in self._histories:
+          self._append_point(name, float(arr[0]))
+          self._write_history_to_figure(name)
+
+    viewports = compute_viewports(
+      len(self._term_names), viewer.viewport, self._plot_cfg
+    )
+    viewport_figs = [
+      (viewports[i], self._figures[self._term_names[i]])
+      for i in range(
+        min(len(viewports), len(self._term_names), self._plot_cfg.max_viewports)
+      )
+    ]
+    viewer.set_figures(viewport_figs)
+    self._figures_dirty = True
+
+  def _update_debug_visualizers(self, viewer: mujoco.viewer.Handle) -> None:
+    viewer.user_scn.ngeom = 0
+    if self._show_debug_vis and hasattr(self.env.unwrapped, "update_visualizers"):
+      assert self.mjm is not None
+      visualizer = MujocoNativeDebugVisualizer(
+        viewer.user_scn, self.mjm, self.env_idx, self._show_all_envs
+      )
+      self.env.unwrapped.update_visualizers(visualizer)
+
+  def _sync_env_state_to_mjdata(
+    self, target_data: mujoco.MjData, sim_data: _SimDataProtocol, env_idx: int
+  ) -> None:
+    """Copy one environment state from batched sim data into a MjData buffer."""
+    assert self.mjm is not None
+    if self.mjm.nq > 0:
+      target_data.qpos[:] = sim_data.qpos[env_idx].cpu().numpy()
+      target_data.qvel[:] = sim_data.qvel[env_idx].cpu().numpy()
+    if self.mjm.nmocap > 0:
+      target_data.mocap_pos[:] = sim_data.mocap_pos[env_idx].cpu().numpy()
+      target_data.mocap_quat[:] = sim_data.mocap_quat[env_idx].cpu().numpy()
+    target_data.xfrc_applied[:] = sim_data.xfrc_applied[env_idx].cpu().numpy()
+
+  def _render_other_env_geoms(
+    self,
+    viewer: mujoco.viewer.Handle,
+    sim: _SimProtocol,
+    sim_data: _SimDataProtocol,
+  ) -> None:
+    """Render non-selected environments into the native viewer scene."""
+    if self.vd is None:
+      return
+    assert self.mjm is not None
+    assert self.vopt is not None
+    assert self.pert is not None
+
+    for i in range(self.env.unwrapped.num_envs):
+      if i == self.env_idx:
+        continue
+      self._sync_env_state_to_mjdata(self.vd, sim_data, i)
+      self._sync_model_fields(sim, i)
+      mujoco.mj_forward(self.mjm, self.vd)
+      mujoco.mjv_addGeoms(
+        self.mjm, self.vd, self.vopt, self.pert, self.catmask, viewer.user_scn
+      )
+
+    # Restore main env's model fields.
+    self._sync_model_fields(sim, self.env_idx)
+
+  # Inertial fields that shift subtree_com (and thus the tracking camera).
+  _INERTIAL_FIELDS = frozenset({"body_ipos", "body_mass"})
+
+  # Fields that affect rendering. Physics-only fields (geom_aabb,
+  # geom_rbound, dof_*, jnt_*, actuator_*, tendon_*, etc.) are skipped.
+  _VISUAL_FIELDS = frozenset(
+    {
+      "qpos0",  # Needed for correct mj_forward kinematics (qpos - qpos0).
+      "geom_rgba",
+      "geom_size",
+      "geom_pos",
+      "geom_quat",
+      "mat_rgba",
+      "site_pos",
+      "site_quat",
+      "body_pos",
+      "body_quat",
+      "body_ipos",
+      "body_inertia",
+      "body_iquat",
+      "body_mass",
+      "cam_pos",
+      "cam_quat",
+      "cam_fovy",
+      "cam_intrinsic",
+      "light_pos",
+      "light_dir",
+    }
+  )
+
+  def _sync_model_fields(self, sim: _SimProtocol, env_idx: int) -> None:
+    """Sync visually-relevant DR'd model fields from GPU to MjModel."""
+    for field_name in sim.expanded_fields & self._VISUAL_FIELDS:
+      src = getattr(sim.model, field_name)[env_idx].cpu().numpy()
+      dst = getattr(self.mjm, field_name)
+      dst[:] = src.reshape(dst.shape)
+
+  def _stabilize_tracking_camera(self) -> None:
+    """Pin the tracked body's subtree_com to its frame origin (xpos).
+
+    MuJoCo's tracking camera centers on ``subtree_com[trackbodyid]``, which
+    shifts when inertial fields (body_ipos, body_mass) are domain randomized.
+    Overwriting that single entry with ``xpos`` (the body frame origin,
+    unaffected by body_ipos) keeps the camera stable.
+    """
+    assert self.mjd is not None
+    if not (
+      self.viewer and self.viewer.cam.type == mujoco.mjtCamera.mjCAMERA_TRACKING.value
+    ):
+      return
+    bid = self.viewer.cam.trackbodyid
+    if bid >= 0:
+      self.mjd.subtree_com[bid] = self.mjd.xpos[bid]
 
   def sync_viewer_to_env(self) -> None:
-    """Copy perturbation forces from viewer to env (when not paused)."""
-    if not (self.enable_perturbations and not self._is_paused and self.mjd):
+    """Sync mouse perturbation to sim via ``qfrc_applied``.
+
+    Mouse perturbation forces are converted from Cartesian body space
+    (``xfrc_applied``) to generalized joint space (``qfrc_applied``)
+    so that they coexist with programmatic forces on ``xfrc_applied``.
+    See the module docstring for details on the channel separation.
+    """
+    v = self.viewer
+    if v is None or self.mjm is None or self.mjd is None:
       return
-    with self._mj_lock:
-      xfrc = torch.as_tensor(
-        self.mjd.xfrc_applied, dtype=torch.float, device=self.env.device
+
+    sim_data = self.env.unwrapped.sim.data
+    pert = v.perturb
+
+    if pert.active != 0 and pert.select > 0:
+      # Compute mouse perturbation force in Cartesian space.
+      mujoco.mjv_applyPerturbForce(self.mjm, self.mjd, pert)
+
+      body_id = pert.select
+      force = self.mjd.xfrc_applied[body_id, :3].copy()
+      torque = self.mjd.xfrc_applied[body_id, 3:].copy()
+      point = self.mjd.xipos[body_id].copy()
+
+      # Convert to generalized forces.
+      qfrc = np.zeros(self.mjm.nv)
+      mujoco.mj_applyFT(self.mjm, self.mjd, force, torque, point, body_id, qfrc)
+
+      sim_data.qfrc_applied[self.env_idx] = torch.from_numpy(qfrc).to(
+        device=sim_data.qfrc_applied.device
       )
-    self.env.unwrapped.sim.data.xfrc_applied[:] = xfrc[None]
+
+      # Clear so _sync_env_state_to_mjdata writes clean programmatic
+      # forces next frame.
+      self.mjd.xfrc_applied[body_id] = 0.0
+    else:
+      sim_data.qfrc_applied[self.env_idx] = 0.0
 
   def close(self) -> None:
     """Close viewer and cleanup."""
     v = self.viewer
     self.viewer = None
     if v:
-      try:
-        if v.is_running():
-          v.close()
-      except Exception as e:
-        self.log(f"[WARN] Error while closing viewer: {e}", VerbosityLevel.INFO)
+      v.close()
     self.log("[INFO] MuJoCo viewer closed", VerbosityLevel.INFO)
 
   def reset_environment(self) -> None:
@@ -224,6 +439,7 @@ class NativeMujocoViewer(BaseViewer):
   def _safe_key_callback(self, key: int) -> None:
     """Runs on MuJoCo viewer thread; must not touch env/sim directly."""
     from mjlab.viewer.native.keys import (
+      KEY_A,
       KEY_COMMA,
       KEY_ENTER,
       KEY_EQUAL,
@@ -231,6 +447,7 @@ class NativeMujocoViewer(BaseViewer):
       KEY_P,
       KEY_PERIOD,
       KEY_R,
+      KEY_RIGHT,
       KEY_SPACE,
     )
 
@@ -247,9 +464,13 @@ class NativeMujocoViewer(BaseViewer):
     elif key == KEY_PERIOD:
       self.request_action("NEXT_ENV")
     elif key == KEY_P:
-      self.request_action("TOGGLE_PLOTS", "TOGGLE_PLOTS")
+      self.request_action("TOGGLE_PLOTS")
     elif key == KEY_R:
-      self.request_action("TOGGLE_DEBUG_VIS", "TOGGLE_DEBUG_VIS")
+      self.request_action("TOGGLE_DEBUG_VIS")
+    elif key == KEY_A:
+      self.request_action("TOGGLE_SHOW_ALL_ENVS")
+    elif key == KEY_RIGHT:
+      self.request_single_step()
 
     if self.user_key_callback:
       try:
@@ -257,80 +478,121 @@ class NativeMujocoViewer(BaseViewer):
       except Exception as e:
         self.log(f"[WARN] user key_callback raised: {e}", VerbosityLevel.INFO)
 
-  def _handle_custom_action(self, action, payload) -> bool:
+  def _forward_paused(self) -> None:
+    """Run forward kinematics while paused to keep perturbation visuals accurate."""
+    if self.mjm is not None and self.mjd is not None:
+      with self._mj_lock:
+        mujoco.mj_forward(self.mjm, self.mjd)
+
+  def _handle_custom_action(self, action: ViewerAction, payload: object | None) -> bool:
+    del payload
     if action == ViewerAction.PREV_ENV and self.env.unwrapped.num_envs > 1:
       self.env_idx = (self.env_idx - 1) % self.env.unwrapped.num_envs
       self._clear_histories()
       self.log(f"[INFO] Switched to environment {self.env_idx}", VerbosityLevel.INFO)
       return True
-    elif action == ViewerAction.NEXT_ENV and self.env.unwrapped.num_envs > 1:
+    if action == ViewerAction.NEXT_ENV and self.env.unwrapped.num_envs > 1:
       self.env_idx = (self.env_idx + 1) % self.env.unwrapped.num_envs
       self._clear_histories()
       self.log(f"[INFO] Switched to environment {self.env_idx}", VerbosityLevel.INFO)
       return True
-    else:
-      if hasattr(action, "value") and action.value == "custom":
-        if payload == "TOGGLE_PLOTS":
-          self._show_plots = not self._show_plots
-          self.log(
-            f"[INFO] Reward plots {'shown' if self._show_plots else 'hidden'}",
-            VerbosityLevel.INFO,
-          )
-          return True
-        elif payload == "TOGGLE_DEBUG_VIS":
-          self._show_debug_vis = not self._show_debug_vis
-          self.log(
-            f"[INFO] Debug visualization {'shown' if self._show_debug_vis else 'hidden'}",
-            VerbosityLevel.INFO,
-          )
-          return True
+    if action == ViewerAction.TOGGLE_PLOTS:
+      self._show_plots = not self._show_plots
+      self.log(
+        f"[INFO] Reward plots {'shown' if self._show_plots else 'hidden'}",
+        VerbosityLevel.INFO,
+      )
+      return True
+    if action == ViewerAction.TOGGLE_DEBUG_VIS:
+      self._show_debug_vis = not self._show_debug_vis
+      self.log(
+        f"[INFO] Debug visualization {'shown' if self._show_debug_vis else 'hidden'}",
+        VerbosityLevel.INFO,
+      )
+      return True
+    if action == ViewerAction.TOGGLE_SHOW_ALL_ENVS:
+      self._show_all_envs = not self._show_all_envs
+      self.log(
+        f"[INFO] Show all envs {'enabled' if self._show_all_envs else 'disabled'}",
+        VerbosityLevel.INFO,
+      )
+      return True
     return False
 
   def _setup_camera(self) -> None:
-    # TODO(kevin): This function is gross and has lots of redundant code. Clean it up.
+    """Configure native viewer camera from viewer config."""
     assert self.viewer is not None
     self.viewer.opt.frame = mujoco.mjtFrame.mjFRAME_WORLD.value
 
-    if self.cfg and hasattr(self.cfg, "origin_type"):
-      if self.cfg.origin_type == self.cfg.OriginType.WORLD:
-        self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_FREE.value
-        self.viewer.cam.fixedcamid = -1
-        self.viewer.cam.trackbodyid = -1
+    if not self.cfg or not hasattr(self.cfg, "origin_type"):
+      self._set_camera_auto_track()
+      return
 
-      elif self.cfg.origin_type == self.cfg.OriginType.ASSET_ROOT:
-        if not self.cfg.asset_name:
-          raise ValueError("Asset name must be specified for ASSET_ROOT origin type")
-        robot: Entity = self.env.unwrapped.scene[self.cfg.asset_name]
-        body_id = robot.indexing.root_body_id
+    if self.cfg.origin_type == self.cfg.OriginType.AUTO:
+      self._set_camera_auto_track()
+    elif self.cfg.origin_type == self.cfg.OriginType.WORLD:
+      self._set_camera_world()
+    elif self.cfg.origin_type == self.cfg.OriginType.ASSET_ROOT:
+      self._set_camera_asset_root()
+    else:  # ASSET_BODY
+      self._set_camera_asset_body()
+
+    self.viewer.cam.lookat = getattr(self.cfg, "lookat", self.viewer.cam.lookat)
+    self.viewer.cam.elevation = getattr(
+      self.cfg, "elevation", self.viewer.cam.elevation
+    )
+    self.viewer.cam.azimuth = getattr(self.cfg, "azimuth", self.viewer.cam.azimuth)
+    self.viewer.cam.distance = getattr(self.cfg, "distance", self.viewer.cam.distance)
+
+  def _set_camera_auto_track(self) -> None:
+    """Track first non-fixed body; fall back to free camera if none exists."""
+    assert self.viewer is not None
+    assert self.mjm is not None
+    for body_id in range(self.mjm.nbody):
+      is_weld = self.mjm.body_weldid[body_id] == 0
+      root_id = self.mjm.body_rootid[body_id]
+      root_is_mocap = self.mjm.body_mocapid[root_id] >= 0
+      if not (is_weld and not root_is_mocap):
         self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING.value
         self.viewer.cam.trackbodyid = body_id
         self.viewer.cam.fixedcamid = -1
+        return
+    self._set_camera_world()
 
-      else:  # ASSET_BODY
-        if not self.cfg.asset_name or not self.cfg.body_name:
-          raise ValueError("asset_name/body_name required for ASSET_BODY origin type")
-        robot: Entity = self.env.unwrapped.scene[self.cfg.asset_name]
-        if self.cfg.body_name not in robot.body_names:
-          raise ValueError(
-            f"Body '{self.cfg.body_name}' not found in asset '{self.cfg.asset_name}'"
-          )
-        body_id_list, _ = robot.find_bodies(self.cfg.body_name)
-        body_id = robot.indexing.bodies[body_id_list[0]].id
+  def _set_camera_world(self) -> None:
+    """Configure free camera in world frame."""
+    assert self.viewer is not None
+    self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_FREE.value
+    self.viewer.cam.fixedcamid = -1
+    self.viewer.cam.trackbodyid = -1
 
-        self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING.value
-        self.viewer.cam.trackbodyid = body_id
-        self.viewer.cam.fixedcamid = -1
+  def _set_camera_asset_root(self) -> None:
+    """Track the root body of a configured asset."""
+    assert self.viewer is not None
+    if not self.cfg.entity_name:
+      raise ValueError("Asset name must be specified for ASSET_ROOT origin type")
+    robot: Entity = self.env.unwrapped.scene[self.cfg.entity_name]
+    body_id = robot.indexing.root_body_id
+    self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING.value
+    self.viewer.cam.trackbodyid = body_id
+    self.viewer.cam.fixedcamid = -1
 
-      self.viewer.cam.lookat = getattr(self.cfg, "lookat", self.viewer.cam.lookat)
-      self.viewer.cam.elevation = getattr(
-        self.cfg, "elevation", self.viewer.cam.elevation
+  def _set_camera_asset_body(self) -> None:
+    """Track a specific body of a configured asset."""
+    assert self.viewer is not None
+    if not self.cfg.entity_name or not self.cfg.body_name:
+      raise ValueError("entity_name/body_name required for ASSET_BODY origin type")
+    robot: Entity = self.env.unwrapped.scene[self.cfg.entity_name]
+    if self.cfg.body_name not in robot.body_names:
+      raise ValueError(
+        f"Body '{self.cfg.body_name}' not found in asset '{self.cfg.entity_name}'"
       )
-      self.viewer.cam.azimuth = getattr(self.cfg, "azimuth", self.viewer.cam.azimuth)
-      self.viewer.cam.distance = getattr(self.cfg, "distance", self.viewer.cam.distance)
-    else:
-      self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_FREE.value
-      self.viewer.cam.fixedcamid = -1
-      self.viewer.cam.trackbodyid = -1
+    body_id_list, _ = robot.find_bodies(self.cfg.body_name)
+    body_id = robot.indexing.bodies[body_id_list[0]].id
+
+    self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING.value
+    self.viewer.cam.trackbodyid = body_id
+    self.viewer.cam.fixedcamid = -1
 
   # Reward plotting helpers.
 
@@ -339,6 +601,7 @@ class NativeMujocoViewer(BaseViewer):
     self._figures.clear()
     self._histories.clear()
     self._yrange.clear()
+    self._scale.clear()
     for name in term_names:
       self._figures[name] = make_empty_figure(
         name,
@@ -349,13 +612,16 @@ class NativeMujocoViewer(BaseViewer):
       )
       self._histories[name] = deque(maxlen=self._plot_cfg.history)
       self._yrange[name] = self._plot_cfg.init_yrange
+      self._scale[name] = 1.0
 
   def _clear_histories(self) -> None:
     """Clear histories and reset figures."""
     for name in self._term_names:
       self._histories[name].clear()
       self._yrange[name] = self._plot_cfg.init_yrange
+      self._scale[name] = 1.0
       fig = self._figures[name]
+      fig.title = name
       fig.linepnt[0] = 0
       fig.range[1][0] = float(self._plot_cfg.init_yrange[0])
       fig.range[1][1] = float(self._plot_cfg.init_yrange[1])
@@ -372,12 +638,7 @@ class NativeMujocoViewer(BaseViewer):
     hist = self._histories[name]
     n = min(len(hist), self._plot_cfg.history)
 
-    fig.linepnt[0] = n
-    for i in range(n):
-      fig.linedata[0][2 * i] = float(-i)
-      fig.linedata[0][2 * i + 1] = float(hist[-1 - i])
-
-    # Autoscale y-axis.
+    # Autoscale y-axis (in raw units).
     if n >= 5:
       data = np.fromiter(hist, dtype=float, count=n)
       lo = float(np.percentile(data, self._plot_cfg.p_lo))
@@ -392,8 +653,40 @@ class NativeMujocoViewer(BaseViewer):
     else:
       lo, hi = self._plot_cfg.init_yrange
 
-    fig.range[1][0] = float(lo)
-    fig.range[1][1] = float(hi)
+    # Compute scale factor so axis labels avoid scientific notation.
+    scale = _display_scale(lo, hi)
+    self._scale[name] = scale
+
+    # Write scaled data into figure.
+    fig.linepnt[0] = n
+    for i in range(n):
+      fig.linedata[0][2 * i] = float(-i)
+      fig.linedata[0][2 * i + 1] = float(hist[-1 - i]) * scale
+
+    fig.range[1][0] = float(lo * scale)
+    fig.range[1][1] = float(hi * scale)
+
+    # Update title with scale suffix.
+    if scale == 1.0:
+      fig.title = name
+    else:
+      exp = round(math.log10(1.0 / scale))
+      fig.title = f"{name} (1e{exp})"
+
+
+def _display_scale(lo: float, hi: float) -> float:
+  """Return a power-of-10 multiplier that brings *lo*/*hi* into a readable range.
+
+  Values in [0.01, 100] render as clean decimals in MuJoCo's ``%g``
+  tick labels, so we only rescale outside that band.
+  """
+  max_abs = max(abs(lo), abs(hi))
+  if max_abs < 1e-15:
+    return 1.0
+  exp = math.floor(math.log10(max_abs))
+  if -2 <= exp <= 2:
+    return 1.0
+  return 10.0 ** (-exp)
 
 
 def compute_viewports(
@@ -407,16 +700,16 @@ def compute_viewports(
   cols = 1 if num_plots <= cfg.max_rows_per_col else 2
   rows = min(cfg.max_rows_per_col, (num_plots + cols - 1) // cols)
 
-  strip_w = int(rect.width * cfg.plot_strip_fraction)
-  vp_w = strip_w // cols
-  vp_h = rect.height // rows
+  vp_w = int(rect.width * cfg.plot_strip_fraction) // 2
+  strip_w = vp_w * cols
+  vp_h = rect.height // max(rows, cfg.min_rows_per_col)
 
   left0 = rect.left + rect.width - strip_w
   vps: list[mujoco.MjrRect] = []
   for idx in range(min(num_plots, cfg.max_viewports)):
     c = idx // rows
     r = idx % rows
-    left = left0 + c * vp_w
+    left = left0 + (cols - 1 - c) * vp_w
     bottom = rect.bottom + rect.height - (r + 1) * vp_h
     vps.append(mujoco.MjrRect(left=left, bottom=bottom, width=vp_w, height=vp_h))
   return vps
